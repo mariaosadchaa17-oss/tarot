@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таро AI Компаньйон v2.3</title>
+    <title>Таро AI Компаньйон v2.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -46,6 +46,12 @@
         .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; border-radius: 16px; }
         .flip-card-front { background: linear-gradient(45deg, #2d004b, #5f006b); font-size: 80px; }
         .flip-card-back { background: #140f24; transform: rotateY(180deg); font-size: 24px; font-weight: bold; padding: 20px; text-align: center; }
+
+        #rules-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
     </style>
 </head>
 <body class="p-3 md:p-8 min-h-screen">
@@ -64,7 +70,6 @@
             </div>
         </header>
 
-        <!-- Кнопка Карта Дня -->
         <div class="text-center mb-8">
             <button onclick="getCardOfTheDay()" class="bg-gradient-to-r from-mystic-gold to-yellow-500 text-mystic-900 font-bold py-3 px-8 rounded-full hover:shadow-lg hover:shadow-yellow-500/20 transition-all duration-300 transform hover:scale-105">
                 ✨ Карта Дня ✨
@@ -74,7 +79,6 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
             <div class="lg:col-span-7 space-y-6">
-                <!-- Блок налаштувань -->
                 <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60">
                     <h2 class="text-lg font-semibold mb-4 text-mystic-gold">1. Створити розклад</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
@@ -105,7 +109,6 @@
                     </div>
                 </div>
 
-                <!-- Блок вибору карт -->
                 <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60">
                     <h2 class="text-lg font-semibold mb-4 text-mystic-gold">2. Конструктор карт</h2>
                      <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-mystic-700"></p>
@@ -130,7 +133,6 @@
                     </div>
                 </div>
 
-                <!-- Блок схеми розкладу -->
                 <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-semibold text-mystic-gold">3. Схема розкладу</h2>
@@ -140,7 +142,6 @@
                 </div>
             </div>
 
-            <!-- Права колонка з результатом -->
             <div class="lg:col-span-5 space-y-6">
                 <div id="ai-response-container" class="bg-mystic-800 p-5 rounded-2xl border border-purple-500/30 shadow-2xl">
                     <h2 class="text-lg font-semibold text-mystic-gold mb-3">4. Тлумачення від ШІ</h2>
@@ -161,6 +162,21 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Блок Правил Ворожіння -->
+        <div class="mt-12 bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60">
+            <button onclick="toggleRules()" class="w-full flex justify-between items-center text-left">
+                <h2 class="text-lg font-semibold text-mystic-gold">📜 Правила ворожіння</h2>
+                <span id="rules-arrow" class="transform transition-transform duration-300">▼</span>
+            </button>
+            <div id="rules-content" class="mt-4 text-sm text-gray-300 space-y-3 leading-relaxed">
+                <p><strong>1. Сформулюйте чітке питання.</strong> Чим конкретніше ваше питання, тим точнішою буде відповідь карт. Уникайте закритих питань, що передбачають лише "так" або "ні" (окрім спеціального розкладу).</p>
+                <p><strong>2. Будьте в спокійному стані.</strong> Не варто робити розклад в стані гніву, страху чи сильного емоційного збудження. Знайдіть тихе місце, зробіть кілька глибоких вдихів.</p>
+                <p><strong>3. Не повторюйте те саме питання.</strong> Якщо відповідь карт вам не сподобалася, не варто робити той самий розклад знову і знову. Карти вже сказали свою думку. Краще запитати: "Що я можу зробити, щоб змінити ситуацію?".</p>
+                <p><strong>4. Довіряйте своїй інтуїції.</strong> ШІ дає потужну базу для тлумачення, але ваша власна інтуїція — ключ до розуміння глибинних смислів. Які асоціації, думки та почуття викликає у вас карта?</p>
+                <p><strong>5. Карти — це порадник, а не вирок.</strong> Таро показує найбільш ймовірний сценарій розвитку подій, виходячи з поточної ситуації. Ваша воля та ваші дії можуть змінити майбутнє.</p>
             </div>
         </div>
     </div>
@@ -185,6 +201,20 @@
         function init() {
             changeSpread();
             populateRankSelect();
+            // Початково ховаємо правила
+            document.getElementById('rules-content').style.maxHeight = '0';
+        }
+
+        function toggleRules() {
+            const content = document.getElementById('rules-content');
+            const arrow = document.getElementById('rules-arrow');
+            if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+                content.style.maxHeight = '0';
+                arrow.style.transform = 'rotate(0deg)';
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                arrow.style.transform = 'rotate(180deg)';
+            }
         }
 
         function changeSpread() {
