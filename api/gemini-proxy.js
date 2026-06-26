@@ -26,7 +26,8 @@ export async function POST(request) {
             });
         }
 
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
+        // ИСПРАВЛЕНО: Указываем точное имя модели 'gemini-1.5-flash' вместо '...-latest'
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
         const payload = {
             contents: [{
