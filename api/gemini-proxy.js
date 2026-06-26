@@ -15,14 +15,16 @@ export async function POST(request) {
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
         if (!GEMINI_API_KEY) {
-            return new Response(JSON.stringify({ error: 'API-ключ не настроен на сервере. Обратитесь к администратору.' }), {
+            return new Response(JSON.stringify({ error: 'API-ключ не настроен на сервере.' }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' },
             });
         }
 
-        // ДИАГНОСТИКА: Временно переключаемся на самую стандартную модель 'gemini-pro' для проверки.
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
+        // ФИНАЛЬНОЕ ИСПРАВЛЕНИЕ:
+        // 1. Меняем устаревшую версию API 'v1beta' на стабильную 'v1'.
+        // 2. Возвращаем модель 'gemini-1.5-flash', так как с 'v1' она должна быть доступна.
+        const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
         const payload = {
             contents: [{
@@ -43,7 +45,6 @@ export async function POST(request) {
         if (!geminiResponse.ok) {
             const errorBody = await geminiResponse.text();
             console.error("Ошибка Gemini API:", errorBody);
-            // Возвращаем текст ошибки от Google, чтобы было понятнее
             return new Response(JSON.stringify({ error: `Ошибка от API Google: ${errorBody}` }), {
                 status: geminiResponse.status,
                 headers: { 'Content-Type': 'application/json' },
@@ -52,7 +53,6 @@ export async function POST(request) {
 
         const geminiData = await geminiResponse.json();
 
-        // Добавим проверку на случай, если ответ пустой
         if (!geminiData.candidates || !geminiData.candidates[0].content || !geminiData.candidates[0].content.parts[0].text) {
              return new Response(JSON.stringify({ error: 'ИИ вернул пустой или некорректный ответ.' }), {
                 status: 500,
