@@ -107,6 +107,7 @@
 
     <script>
     const App = {
+        // 1. STATE & CONFIG
         state: {
             lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self',
             spreadKey: 'cross', activeSuit: 'major', selectedCards: {}, activePositionIndex: 0,
@@ -118,7 +119,7 @@
                 mode_mystical: "Містичний", mode_psychologist: "Психологічний",
                 label_sphere: "Сфера життя",
                 section_title_context_spread: "🃏 2. Контекст та Розклад", label_target: "На кого ворожимо?",
-                target_self: "На себе", target_other: "На партнера", target_friend: "На друга/подругу", target_rival: "На ворога/конкурента",
+                target_self: "На себе", target_other: "На партнера", target_friend: "На друга", target_rival: "На ворога",
                 placeholder_other_person: "Ім'я або роль (напр., 'Партнер')",
                 label_spread_type: "Тип розкладу",
                 section_title_constructor: "🛠️ 3. Конструктор карт", major_arcana_title: "✨ Головні Аркани (Доленосні події)", minor_arcana_title: "🃏 Допоміжні Аркани (Повсякденні справи)",
@@ -141,7 +142,7 @@
                 mode_mystical: "Мистический", mode_psychologist: "Психологический",
                 label_sphere: "Сфера жизни",
                 section_title_context_spread: "🃏 2. Контекст и Расклад", label_target: "На кого гадаем?",
-                target_self: "На себя", target_other: "На партнера", target_friend: "На друга/подругу", target_rival: "На врага/конкурента",
+                target_self: "На себя", target_other: "На партнера", target_friend: "На друга", target_rival: "На врага",
                 placeholder_other_person: "Имя или роль (напр., 'Партнер')",
                 label_spread_type: "Тип расклада",
                 section_title_constructor: "🛠️ 3. Конструктор карт", major_arcana_title: "✨ Главные Арканы (Судьбоносные события)", minor_arcana_title: "🃏 Вспомогательные Арканы (Повседневные дела)",
@@ -250,7 +251,7 @@
                         return;
                     }
                     break;
-                case 'target': this.state.target = key; document.getElementById('other-person-input').classList.toggle('hidden', key === 'self'); if(doUpdate) this.resetSpread(); break;
+                case 'target': this.state.target = key; if(doUpdate) this.resetSpread(); break;
                 case 'spread': this.state.spreadKey = key; if (doUpdate) this.resetSpread(); break;
                 case 'suit': this.state.activeSuit = key; this.renderRankSelector(); break;
             }
