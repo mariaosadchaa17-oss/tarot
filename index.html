@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate-key="page_title">Таро AI Компаньйон v4.7</title>
+    <title data-translate-key="page_title">Таро AI Компаньйон v4.8 (Stable)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -17,11 +17,10 @@
         }
         html, body { height: 100%; }
         body {
-            background-color: #06020c;
-            background-image: radial-gradient(ellipse at top, #100a1f, #06020c 70%);
+            background-color: var(--bg-main);
+            background-image: radial-gradient(ellipse at top, var(--bg-surface), var(--bg-main) 70%);
             color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif;
         }
-
         .neon-glow { box-shadow: 0 0 8px var(--primary-glow-color), 0 0 20px var(--secondary-glow-color); transition: box-shadow 0.5s; }
         .text-gold { color: var(--text-gold); transition: color 0.5s; }
         .text-purple { color: var(--text-purple); transition: color 0.5s; }
@@ -29,7 +28,7 @@
         .bg-surface { background-color: var(--bg-surface); transition: background-color 0.5s; }
 
         .control-card { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px; }
-        .control-card span { font-size: 0.8rem; line-height: 1.2; word-break: break-word; }
+        .control-card span { font-size: 0.8rem; line-height: 1.2; }
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
 
@@ -83,12 +82,12 @@
             </div>
             <div class="lg:col-span-5 space-y-6">
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
-                    <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold text-gold" data-translate-key="section_title_schema"></h2><button onclick="App.resetSpread()" class="text-xs text-red-400 hover:text-red-300 transition">🗑 <span data-translate-key="btn_reset"></span></button></div>
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold text-gold" data-translate-key="section_title_schema"></h2><button id="reset-btn" class="text-xs text-red-400 hover:text-red-300 transition">🗑 <span data-translate-key="btn_reset"></span></button></div>
                     <div id="spread-schema-container" class="schema-container"></div>
                 </div>
                 <div id="ai-response-container" class="bg-surface p-5 rounded-2xl border border-purple-500/30 shadow-2xl neon-glow">
                     <h2 class="text-lg font-semibold text-gold mb-3" data-translate-key="section_title_interpretation"></h2>
-                    <button onclick="App.getSpreadInterpretation()" id="ai-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:brightness-110 transition uppercase tracking-wider text-sm mb-3" data-translate-key="btn_get_interpretation"></button>
+                    <button id="ai-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:brightness-110 transition uppercase tracking-wider text-sm mb-3" data-translate-key="btn_get_interpretation"></button>
                     <div id="ai-response-box" class="text-base bg-mystic-900 p-4 rounded-xl border border-color min-h-[200px] max-h-[60vh] overflow-y-auto flex justify-center items-center"><span id="ai-placeholder" data-translate-key="placeholder_ai_response"></span></div>
                 </div>
             </div>
@@ -100,9 +99,10 @@
 
     <script>
     const App = {
+        // 1. STATE & CONFIG
         state: {
-            lang: 'ua', aiMode: 'mystical', sphere: 'general', target: 'self',
-            spreadKey: 'three-cards', activeSuit: 'major', selectedCards: {}, activePositionIndex: 0,
+            lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self',
+            spreadKey: 'cross', activeSuit: 'major', selectedCards: {}, activePositionIndex: 0,
         },
         translations: {
             ua: {
@@ -162,7 +162,7 @@
             spreads: {
                 "yes-no": { cards: 1, ua: "Так/Ні", ru: "Да/Нет", positions: { ua: ["Відповідь"], ru: ["Ответ"] }, grid: `"pos1"` },
                 "three-cards": { cards: 3, ua: "Три Карти", ru: "Три Карты", positions: { ua: ["Минуле", "Теперішнє", "Майбутнє"], ru: ["Прошлое", "Настоящее", "Будущее"] }, grid: `"pos1 pos2 pos3"` },
-                "cross": { cards: 4, ua: "Хрест", ru: "Крест", positions: { ua: ["Суть", "Перешкода", "Порада", "Результат"], ru: ["Суть", "Препятствие", "Совет", "Результат"] }, grid: `". pos3 ." "pos2 pos1 pos4"` },
+                "cross": { cards: 4, ua: "Хрест", ru: "Крест", positions: { ua: ["Суть", "Перешкода", "Порада", "Результат"], ru: ["Суть", "Препятствие", "Совет", "Результат"] }, grid: `". pos2 ." "pos3 pos1 pos4"` },
                 "choice": { cards: 5, ua: "Вибір", ru: "Выбор", positions: { ua: ["Суть", "Варіант А", "Результат А", "Варіант Б", "Результат Б"], ru: ["Суть", "Вариант А", "Результат А", "Вариант Б", "Результат Б"] }, grid: `". pos1 ." "pos2 pos3" "pos4 pos5"` },
                 "path": { cards: 7, ua: "Шлях", ru: "Путь", positions: { ua: ["1", "2", "3", "4", "5", "6", "7"], ru: ["1", "2", "3", "4", "5", "6", "7"] }, grid: `"pos1 pos2 pos3 pos4 pos5 pos6 pos7"` }
             },
@@ -172,20 +172,23 @@
                 suits: { ua: { wands: "Жезлів", cups: "Кубків", swords: "Мечів", pentacles: "Пентаклів" }, ru: { wands: "Жезлов", cups: "Кубков", swords: "Мечей", pentacles: "Пентаклей" } }
             }
         },
+
         init() {
             this.addEventListeners();
             this.renderAllDynamicContent();
-            this.handleSelection('mode', 'mystical', false);
-            this.handleSelection('sphere', this.data.spheres[0].key, true);
-            this.handleSelection('target', 'self', false);
-            this.handleSelection('suit', 'major', false);
+            this.handleSelection('mode', this.state.aiMode, false);
+            this.handleSelection('target', this.state.target, false);
+            this.handleSelection('suit', this.state.activeSuit, false);
+            this.handleSelection('sphere', this.state.sphere, true); // First and only auto-trigger
             this.displayMoonPhase();
         },
+
         renderAllDynamicContent() {
             this.applyLanguage();
             this.renderAllSelectors();
             this.updateUI();
         },
+
         renderAllSelectors() {
             const createButtons = (containerId, data, group, nameKey) => {
                 const container = document.getElementById(containerId);
@@ -201,8 +204,13 @@
             const suitData = ['major', 'wands', 'cups', 'swords', 'pentacles'].map(s => ({key: s, name: this.translations[this.state.lang][`suit_${s}`]}));
             document.getElementById('suit-selector').innerHTML = suitData.map(item => `<button class="control-card constructor-btn" data-group="suit" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
         },
+
         addEventListeners() {
             document.getElementById('lang-toggle').addEventListener('click', () => this.toggleLanguage());
+            document.getElementById('reset-btn').addEventListener('click', () => this.resetSpread());
+            document.getElementById('ai-btn').addEventListener('click', () => this.getSpreadInterpretation());
+            document.getElementById('music-toggle').addEventListener('click', () => this.toggleMusic());
+
             ['mode-selector', 'sphere-selector', 'target-selector', 'spread-selector', 'suit-selector'].forEach(id => {
                 document.getElementById(id).addEventListener('click', e => {
                     const button = e.target.closest('button');
@@ -210,6 +218,7 @@
                 });
             });
         },
+
         handleSelection(group, key, doUpdate = true) {
             document.querySelectorAll(`[data-group="${group}"]`).forEach(btn => btn.classList.remove('active'));
             const button = document.querySelector(`[data-group="${group}"][data-key="${key}"]`);
@@ -220,10 +229,10 @@
                 case 'sphere':
                     this.state.sphere = key;
                     const sphereData = this.data.spheres.find(s => s.key === key);
-                    if (sphereData) {
+                    if (sphereData && sphereData.rec) {
                         document.getElementById('recommendation-text').textContent = sphereData.rec_key ? this.translations[this.state.lang][sphereData.rec_key] : '';
-                        this.handleSelection('spread', sphereData.rec, true);
-                        return;
+                        this.handleSelection('spread', sphereData.rec, true); // This triggers the chain reaction
+                        return; // Prevent double update
                     }
                     break;
                 case 'target': this.state.target = key; document.getElementById('other-person-input').classList.toggle('hidden', key === 'self'); if(doUpdate) this.resetSpread(); break;
@@ -232,10 +241,12 @@
             }
             if (doUpdate) this.updateUI();
         },
+
         renderRankSelector() {
             const ranks = this.state.activeSuit === 'major' ? this.data.cards.major : this.data.cards.minor;
             document.getElementById('rank-selector').innerHTML = ranks.map(rank => `<button class="control-card constructor-btn text-xs" onclick="App.addCard('${this.state.activeSuit}', '${rank}')"><span>${rank}</span></button>`).join('');
         },
+
         addCard(suit, rank) {
             const schema = this.data.spreads[this.state.spreadKey];
             if (this.state.activePositionIndex >= schema.cards) return;
@@ -250,15 +261,18 @@
             this.state.activePositionIndex = (nextIndex === -1) ? schema.cards : nextIndex;
             this.updateUI();
         },
+
         resetSpread() {
             this.state.selectedCards = {}; this.state.activePositionIndex = 0;
             document.getElementById('question').value = '';
             this.updateUI();
         },
+
         updateUI() {
             this.renderSchema();
             this.updateHint();
         },
+
         renderSchema() {
             const schema = this.data.spreads[this.state.spreadKey];
             const container = document.getElementById('spread-schema-container');
@@ -282,6 +296,7 @@
                 container.appendChild(slot);
             });
         },
+
         updateHint() {
             const schema = this.data.spreads[this.state.spreadKey];
             const hint = document.getElementById('current-position-hint');
@@ -291,18 +306,21 @@
                 hint.textContent = this.translations[this.state.lang].hint_spread_filled;
             }
         },
+
         toggleLanguage() {
             this.state.lang = this.state.lang === 'ua' ? 'ru' : 'ua';
             document.documentElement.lang = this.state.lang;
             document.getElementById('lang-pill').style.transform = this.state.lang === 'ua' ? 'translateX(0px)' : 'translateX(20px)';
             this.renderAllDynamicContent();
         },
+
         applyLanguage() {
             document.querySelectorAll('[data-translate-key]').forEach(el => {
                 const key = el.dataset.translateKey;
                 if (this.translations[this.state.lang][key]) el.textContent = this.translations[this.state.lang][key];
             });
         },
+
         async getSpreadInterpretation() {
             const schema = this.data.spreads[this.state.spreadKey];
             if (Object.keys(this.state.selectedCards).length < schema.cards) {
@@ -320,6 +338,7 @@
             };
             await this.handleAIRequest(requestData);
         },
+
         async handleAIRequest(requestData) {
             document.getElementById('loading-overlay').classList.add('active');
             try {
@@ -333,6 +352,7 @@
                 document.getElementById('loading-overlay').classList.remove('active');
             }
         },
+
         toggleMusic() {
             const music = document.getElementById('ambient-music');
             const button = document.getElementById('music-toggle');
@@ -345,6 +365,7 @@
                 button.textContent = '🔇';
             }
         },
+
         displayMoonPhase() {
             const phases = {ua: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'], ru: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна']};
             const icons = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
