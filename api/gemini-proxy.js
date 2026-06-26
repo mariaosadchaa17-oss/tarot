@@ -21,10 +21,9 @@ export async function POST(request) {
             });
         }
 
-        // ФИНАЛЬНОЕ ИСПРАВЛЕНИЕ:
-        // 1. Меняем устаревшую версию API 'v1beta' на стабильную 'v1'.
-        // 2. Возвращаем модель 'gemini-1.5-flash', так как с 'v1' она должна быть доступна.
-        const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        // ПОБЕДА! Используем правильное имя модели из списка, который мы получили.
+        const modelName = 'gemini-3.5-flash';
+        const API_URL = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${GEMINI_API_KEY}`;
 
         const payload = {
             contents: [{
