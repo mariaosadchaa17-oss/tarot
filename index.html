@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate-key="page_title">Таро AI Компаньйон v4.9 (Stable)</title>
+    <title data-translate-key="page_title">Таро AI Компаньйон v5.0 (Stable)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -33,7 +33,7 @@
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
 
-        .constructor-btn { white-space: nowrap; padding: 0.5rem 1rem; }
+        .constructor-btn { white-space: nowrap; padding: 0.75rem 1.25rem; }
 
         .schema-container { display: grid; gap: 10px; padding: 10px; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 220px; }
         .schema-slot { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: all 0.2s; min-height: 100px; cursor: pointer; }
@@ -77,13 +77,12 @@
                     <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-color"></p>
                     <div class="space-y-4">
                         <div>
-                            <h3 class="text-sm font-bold text-purple mb-2" data-translate-key="major_arcana_title"></h3>
-                            <div id="major-arcana-selector" class="flex flex-wrap gap-2"></div>
+                            <h3 class="text-sm font-bold text-purple mb-2" data-translate-key="suit_selection_title">1. Оберіть масть</h3>
+                            <div id="suit-selector" class="flex flex-wrap gap-2"></div>
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-purple mb-2" data-translate-key="minor_arcana_title"></h3>
-                            <div id="suit-selector" class="flex flex-wrap gap-2 mb-3"></div>
-                            <div id="rank-selector" class="flex flex-wrap gap-2"></div>
+                            <h3 class="text-sm font-bold text-purple mb-2" data-translate-key="card_selection_title">2. Оберіть карту</h3>
+                            <div id="card-selector" class="flex flex-wrap gap-2"></div>
                         </div>
                     </div>
                 </div>
@@ -107,7 +106,6 @@
 
     <script>
     const App = {
-        // 1. STATE & CONFIG
         state: {
             lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self',
             spreadKey: 'cross', activeSuit: 'major', selectedCards: {}, activePositionIndex: 0,
@@ -122,7 +120,7 @@
                 target_self: "На себе", target_other: "На партнера", target_friend: "На друга", target_rival: "На ворога",
                 placeholder_other_person: "Ім'я або роль (напр., 'Партнер')",
                 label_spread_type: "Тип розкладу",
-                section_title_constructor: "🛠️ 3. Конструктор карт", major_arcana_title: "✨ Головні Аркани (Доленосні події)", minor_arcana_title: "🃏 Допоміжні Аркани (Повсякденні справи)",
+                section_title_constructor: "🛠️ 3. Конструктор карт", suit_selection_title: "1. Оберіть масть", card_selection_title: "2. Оберіть карту",
                 section_title_schema: "🌙 4. Схема розкладу", btn_reset: "Скинути",
                 section_title_interpretation: "✨ 5. Тлумачення від ШІ", btn_get_interpretation: "Отримати тлумачення",
                 placeholder_ai_response: "Оберіть дію...",
@@ -145,7 +143,7 @@
                 target_self: "На себя", target_other: "На партнера", target_friend: "На друга", target_rival: "На врага",
                 placeholder_other_person: "Имя или роль (напр., 'Партнер')",
                 label_spread_type: "Тип расклада",
-                section_title_constructor: "🛠️ 3. Конструктор карт", major_arcana_title: "✨ Главные Арканы (Судьбоносные события)", minor_arcana_title: "🃏 Вспомогательные Арканы (Повседневные дела)",
+                section_title_constructor: "🛠️ 3. Конструктор карт", suit_selection_title: "1. Выберите масть", card_selection_title: "2. Выберите карту",
                 section_title_schema: "🌙 4. Схема расклада", btn_reset: "Сбросить",
                 section_title_interpretation: "✨ 5. Толкование от ИИ", btn_get_interpretation: "Получить толкование",
                 placeholder_ai_response: "Выберите действие...",
@@ -218,7 +216,7 @@
             const suitData = ['major', 'wands', 'cups', 'swords', 'pentacles'].map(s => ({key: s, name: this.translations[this.state.lang][`suit_${s}`]}));
             document.getElementById('suit-selector').innerHTML = suitData.map(item => `<button class="control-card constructor-btn" data-group="suit" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
 
-            document.getElementById('major-arcana-selector').innerHTML = this.data.cards.major[this.state.lang].map(rank => `<button class="control-card constructor-btn neon-glow" onclick="App.addCard('major', '${rank}')"><span>${rank}</span></button>`).join('');
+            this.renderCardSelector();
         },
 
         addEventListeners() {
@@ -253,14 +251,24 @@
                     break;
                 case 'target': this.state.target = key; if(doUpdate) this.resetSpread(); break;
                 case 'spread': this.state.spreadKey = key; if (doUpdate) this.resetSpread(); break;
-                case 'suit': this.state.activeSuit = key; this.renderRankSelector(); break;
+                case 'suit': this.state.activeSuit = key; this.renderCardSelector(); break;
             }
             if (doUpdate) this.updateUI();
         },
 
-        renderRankSelector() {
-            const ranks = this.data.cards.minor[this.state.lang];
-            document.getElementById('rank-selector').innerHTML = ranks.map(rank => `<button class="control-card constructor-btn text-xs" onclick="App.addCard('${this.state.activeSuit}', '${rank}')"><span>${rank}</span></button>`).join('');
+        renderCardSelector() {
+            const isMajor = this.state.activeSuit === 'major';
+            const ranks = isMajor ? this.data.cards.major[this.state.lang] : this.data.cards.minor[this.state.lang];
+            const container = document.getElementById(isMajor ? 'major-arcana-selector' : 'rank-selector');
+            const otherContainer = document.getElementById(isMajor ? 'rank-selector' : 'major-arcana-selector');
+
+            if(isMajor) {
+                document.getElementById('rank-selector').innerHTML = '';
+                document.getElementById('major-arcana-selector').innerHTML = ranks.map(rank => `<button class="control-card constructor-btn neon-glow" onclick="App.addCard('major', '${rank}')"><span>${rank}</span></button>`).join('');
+            } else {
+                document.getElementById('major-arcana-selector').innerHTML = '';
+                document.getElementById('rank-selector').innerHTML = ranks.map(rank => `<button class="control-card constructor-btn text-xs" onclick="App.addCard('${this.state.activeSuit}', '${rank}')"><span>${rank}</span></button>`).join('');
+            }
         },
 
         addCard(suit, rank) {
