@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таро AI Компаньйон v2.0</title>
+    <title>Таро AI Компаньйон v2.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -31,8 +31,9 @@
             padding: 10px;
             border-radius: 16px;
             background: rgba(0,0,0,0.2);
-            border: 1px solid var(--tw-prose-hr, #342956);
+            border: 1px solid #342956;
             min-height: 200px;
+            transition: all 0.3s ease;
         }
         .schema-slot {
             background: #140f24;
@@ -46,9 +47,14 @@
             text-align: center;
             transition: all 0.2s;
             min-height: 110px;
+            cursor: pointer;
+        }
+        .schema-slot:hover {
+            border-color: #4a3f78;
         }
         .schema-slot.active {
             border-color: #f3c66f;
+            transform: scale(1.03);
             box-shadow: 0 0 15px rgba(243, 198, 111, 0.2);
         }
         .schema-slot.filled {
@@ -153,14 +159,11 @@
                 <!-- Блок схеми розкладу -->
                 <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-semibold text-mystic-gold">Поточний розклад</h2>
-                        <button onclick="resetSpread()" class="text-xs text-red-400 hover:text-red-300 transition hover:underline">
-                            🗑 Скинути все
-                        </button>
+                        <h2 class="text-lg font-semibold text-mystic-gold">3. Схема розкладу</h2>
+                        <button onclick="resetSpread()" class="text-xs text-red-400 hover:text-red-300 transition">🗑 Скинути</button>
                     </div>
-
-                    <div id="selected-cards-list" class="space-y-3">
-                    </div>
+                    <!-- ВИПРАВЛЕНО: ID контейнера повернуто до початкового, щоб JS його знайшов -->
+                    <div id="spread-schema-container" class="schema-container"></div>
                 </div>
             </div>
 
@@ -184,44 +187,19 @@
         const DECK_STRUCTURE = {
             major: ["Дурень (0)", "Маг (I)", "Верховна Жриця (II)", "Імператриця (III)", "Імператор (IV)", "Ієрофант (V)", "Закохані (VI)", "Колісниця (VII)", "Сила (VIII)", "Відлюдник (IX)", "Колесо Фортуни (X)", "Справедливість (XI)", "Повішений (XII)", "Смерть (XIII)", "Помірність (XIV)", "Диявол (XV)", "Вежа (XVI)", "Зірка (XVII)", "Місяць (XVIII)", "Сонце (XIX)", "Суд (XX)", "Світ (XXI)"],
             minor_ranks: ["Туз", "Двійка", "Трійка", "Четвірка", "П'ятірка", "Шістка", "Сімка", "Вісімка", "Дев'ятка", "Десятка", "Паж", "Лицар", "Королева", "Король"],
-            suits: {
-                wands: "Жезлів",
-                cups: "Кубків",
-                swords: "Мечів",
-                pentacles: "Пентаклів"
-            }
+            suits: { wands: "Жезлів", cups: "Кубків", swords: "Мечів", pentacles: "Пентаклів" }
         };
 
         const SPREAD_SCHEMAS = {
-            "yes-no": {
-                cards: 1,
-                positions: ["Відповідь"],
-                grid: ` "pos1" `
-            },
-            "three-cards": {
-                cards: 3,
-                positions: ["Минуле", "Теперішнє", "Майбутнє"],
-                grid: ` "pos1 pos2 pos3" `
-            },
-            "cross": {
-                cards: 4,
-                positions: ["Суть", "Перешкода", "Порада", "Результат"],
-                grid: ` ". pos1 ." "pos2 pos3 pos4" ". . ." `
-            },
-            "choice": {
-                cards: 5,
-                positions: ["Суть вибору", "Варіант А", "Результат А", "Варіант Б", "Результат Б"],
-                grid: ` ". pos1 ." "pos2 pos3" "pos4 pos5" `
-            },
-            "path": {
-                cards: 7,
-                positions: ["1", "2", "3", "4", "5", "6", "7"],
-                grid: ` "pos1 pos2 pos3 pos4 pos5 pos6 pos7" `
-            }
+            "yes-no": { cards: 1, positions: ["Відповідь"], grid: `"pos1"` },
+            "three-cards": { cards: 3, positions: ["Минуле", "Теперішнє", "Майбутнє"], grid: `"pos1 pos2 pos3"` },
+            "cross": { cards: 4, positions: ["Суть", "Перешкода", "Порада", "Результат"], grid: `". pos1 ." "pos2 pos3 pos4"` },
+            "choice": { cards: 5, positions: ["Суть вибору", "Варіант А", "Результат А", "Варіант Б", "Результат Б"], grid: `". pos1 ." "pos2 pos3" "pos4 pos5"` },
+            "path": { cards: 7, positions: ["1", "2", "3", "4", "5", "6", "7"], grid: `"pos1 pos2 pos3 pos4 pos5 pos6 pos7"` }
         };
 
         let currentSpreadKey = "yes-no";
-        let selectedCards = {}; // { "Позиція 1": { name: "Маг", isInverted: false }, ... }
+        let selectedCards = {};
         let activePositionIndex = 0;
 
         // --- CORE LOGIC ---
@@ -229,6 +207,8 @@
         function init() {
             changeSpread();
             populateRankSelect();
+            // ВИПРАВЛЕНО: Додано виклик рендеру схеми при ініціалізації
+            renderSpreadSchema();
         }
 
         function changeSpread() {
@@ -260,20 +240,18 @@
 
         function addCardFromConstructor() {
             const schema = SPREAD_SCHEMAS[currentSpreadKey];
-            if (activePositionIndex >= schema.cards) return;
+            if (activePositionIndex >= schema.cards) {
+                alert("Всі позиції вже заповнено!");
+                return;
+            }
 
             const suitKey = document.getElementById('suit-select').value;
             const rank = document.getElementById('rank-select').value;
 
-            let cardName = "";
-            if (suitKey === 'major') {
-                cardName = rank.split(" (")[0]; // "Дурень (0)" -> "Дурень"
-            } else {
-                const suitName = DECK_STRUCTURE.suits[suitKey];
-                cardName = `${rank} ${suitName}`;
-            }
+            let cardName = suitKey === 'major'
+                ? rank.split(" (")[0]
+                : `${rank} ${DECK_STRUCTURE.suits[suitKey]}`;
 
-            // Перевірка, чи карта вже не використана
             if (Object.values(selectedCards).some(c => c.name === cardName)) {
                 alert(`Карта "${cardName}" вже є в розкладі.`);
                 return;
@@ -283,7 +261,7 @@
             selectedCards[activePositionName] = { name: cardName, isInverted: false };
 
             advanceToNextEmpty();
-            renderSpreadSchema();
+            renderSpreadSchema(); // ВИПРАВЛЕНО: Рендер схеми після додавання
             updateHint();
         }
 
@@ -343,11 +321,11 @@
         function renderSpreadSchema() {
             const schema = SPREAD_SCHEMAS[currentSpreadKey];
             const container = document.getElementById('spread-schema-container');
+            if (!container) return; // Захист від помилок
             container.innerHTML = '';
             container.style.gridTemplateAreas = schema.grid;
 
-            // Динамічно налаштовуємо колонки
-            const columns = schema.grid.split('"')[1].trim().split(' ').length;
+            const columns = schema.grid.split('"')[1].trim().split(/\s+/).length;
             container.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
 
             schema.positions.forEach((posName, index) => {
