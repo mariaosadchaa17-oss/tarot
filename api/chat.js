@@ -1,6 +1,5 @@
 // api/chat.js
 
-// Системні інструкції для різних режимів
 const SYSTEM_PROMPTS = {
     mystical: `Ти — професійний таролог, що говорить з позиції класичної езотерики.
 - Твоя мова — виключно українська.
@@ -17,31 +16,29 @@ const SYSTEM_PROMPTS = {
 
 export async function POST(request) {
     try {
-        // 1. Отримуємо дані з фронтенду
         const { mode, theme, spreadType, question, cards, positions } = await request.json();
 
         if (!cards || Object.keys(cards).length === 0) {
             return new Response(JSON.stringify({ error: 'Не обрано жодної карти.' }), { status: 400 });
         }
 
-        // 2. Вибираємо системний промпт залежно від режиму
         const systemPrompt = SYSTEM_PROMPTS[mode] || SYSTEM_PROMPTS.psychological;
 
-        // 3. Формуємо користувацький промпт
-        let userPrompt = `Проведи розбір розкладу Таро.\n\n`;
-        userPrompt += `Тема: ${theme}\n`;
-        userPrompt += `Розклад: ${spreadType}\n`;
-        if (question) userPrompt += `Питання: "${question}"\n`;
-        userPrompt += `\nКарти:\n`;
+        // ВИПРАВЛЕНО: Формуємо єдиний промпт, додаючи системну інструкцію на початок.
+        let fullPrompt = `${systemPrompt}\n\n--- ЗАВДАННЯ ---\n`;
+        fullPrompt += `Проведи розбір розкладу Таро.\n\n`;
+        fullPrompt += `Тема: ${theme}\n`;
+        fullPrompt += `Розклад: ${spreadType}\n`;
+        if (question) fullPrompt += `Питання: "${question}"\n`;
+        fullPrompt += `\nКарти:\n`;
         positions.forEach(pos => {
             const card = cards[pos];
             if (card) {
                 const orientation = card.isInverted ? "Перевернута" : "Пряма";
-                userPrompt += `- ${pos}: ${card.name} (${orientation})\n`;
+                fullPrompt += `- ${pos}: ${card.name} (${orientation})\n`;
             }
         });
 
-        // 4. Надсилаємо запит до Gemini API
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
         if (!GEMINI_API_KEY) {
             return new Response(JSON.stringify({ error: 'API-ключ не налаштовано.' }), { status: 500 });
@@ -49,9 +46,13 @@ export async function POST(request) {
 
         const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
+        // ВИПРАВЛЕНО: Повертаємось до класичної структури payload без system_instruction.
         const payload = {
-            system_instruction: { parts: [{ text: systemPrompt }] },
-            contents: [{ parts: [{ text: userPrompt }] }]
+            contents: [{
+                parts: [{
+                    text: fullPrompt
+                }]
+            }]
         };
 
         const geminiResponse = await fetch(API_URL, {
