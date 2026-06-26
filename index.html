@@ -142,16 +142,8 @@
         </div>
     </div>
 
-    <script type="module">
-        import { GoogleGenAI } from 'https://esm.run/@google/genai';
-
-        // Твой API Ключ
-        const GEMINI_API_KEY = "AQ.Ab8RN6JwqNK1aScH2m_dio3YXCW6ICZ-pW7Prqyd__lTXYH7Wg";
-
-        // Инициализируем клиент ИИ
-        const ai = new GoogleGenAI({ key: GEMINI_API_KEY });
-
-        // Делаем функцию глобальной, чтобы кнопка onclick="sendRequestToGemini()" могла её вызвать
+    <script>
+        // Функция для отправки запроса на наш новый прокси-сервер
         window.sendRequestToGemini = async function() {
             const promptText = buildPromptText();
             if (promptText.startsWith("Выбери")) {
@@ -170,23 +162,29 @@
             aiButton.classList.add('opacity-50', 'cursor-not-allowed');
 
             try {
-                // 2. Отправляем прямой запрос к модели Gemini 2.5 Flash
-                // Используем прокси-урл для обхода CORS ограничений браузера, если Google блокирует прямые запросы с localhost/github pages
-                const response = await ai.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: promptText,
+                // 2. Отправляем запрос на наш прокси-сервер /api/gemini-proxy
+                const response = await fetch('/api/gemini-proxy', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt: promptText }),
                 });
 
+                const data = await response.json();
+
                 // 3. Выводим результат на экран
-                if (response && response.text) {
-                    responseBox.innerText = response.text;
+                if (response.ok) {
+                    responseBox.innerText = data.text;
                 } else {
-                    responseBox.innerText = "Космические каналы пусты. ИИ вернул пустой ответ, попробуйте еще раз.";
+                    // Если прокси вернул ошибку, отображаем ее
+                    console.error("Ошибка от прокси-сервера:", data.error);
+                    responseBox.innerText = `Произошла ошибка: ${data.error}\n\nЭто может быть связано с неверным API-ключом на сервере или проблемой с доступом к API Google.`;
                 }
 
             } catch (error) {
-                console.error("Ошибка запроса к Gemini:", error);
-                responseBox.innerText = `Не удалось связаться с сервером ИИ.\nВозможные причины:\n1. Ключ недействителен или заблокирован.\n2. В твоем регионе требуется VPN для работы с Gemini API.\n\nТехническая ошибка: ${error.message}`;
+                console.error("Ошибка при отправке запроса на прокси:", error);
+                responseBox.innerText = `Не удалось связаться с сервером-посредником.\nУбедитесь, что он запущен и доступен.\n\nТехническая ошибка: ${error.message}`;
             } finally {
                 // 4. Отключаем режим загрузки
                 loadingText.classList.add('hidden');
@@ -194,9 +192,7 @@
                 aiButton.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
-    </script>
 
-    <script>
         const tarotDeck = {
             major: ["Дурак", "Маг", "Верховная Жрица", "Императрица", "Император", "Иерофант", "Влюбленные", "Колесница", "Сила", "Отшельник", "Колесо Фортуны", "Справедливость", "Повешенный", "Смерть", "Умеренность", "Дьявол", "Башня", "Звезда", "Луна", "Солнце", "Суд", "Мир"],
             wands: ["Туз Жезлов", "2 Жезлов", "3 Жезлов", "4 Жезлов", "5 Жезлов", "6 Жезлов", "7 Жезлов", "8 Жезлов", "9 Жезлов", "10 Жезлов", "Паж Жезлов", "Рыцарь Жезлов", "Королева Жезлов", "Король Жезлов"],
