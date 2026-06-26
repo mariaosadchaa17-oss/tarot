@@ -69,15 +69,22 @@
                 </div>
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                     <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_context_spread"></h2>
-                    <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_target"></label><div id="target-selector" class="grid grid-cols-2 gap-2"></div><input type="text" id="other-person-input" class="hidden w-full bg-mystic-900 border border-color rounded-xl p-2 text-sm mt-2" data-translate-key="placeholder_other_person"></div>
+                    <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_target"></label><div id="target-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div><input type="text" id="other-person-input" class="hidden w-full bg-mystic-900 border border-color rounded-xl p-2 text-sm mt-2" data-translate-key="placeholder_other_person"></div>
                     <div><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_spread_type"></label><div id="spread-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div></div>
                 </div>
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                     <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_constructor"></h2>
                     <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-color"></p>
-                    <div class="space-y-3">
-                        <div id="suit-selector" class="flex flex-wrap gap-2"></div>
-                        <div id="rank-selector" class="flex flex-wrap gap-2"></div>
+                    <div class="space-y-4">
+                        <div>
+                            <h3 class="text-sm font-bold text-purple mb-2" data-translate-key="major_arcana_title"></h3>
+                            <div id="major-arcana-selector" class="flex flex-wrap gap-2"></div>
+                        </div>
+                        <div>
+                            <h3 class="text-sm font-bold text-purple mb-2" data-translate-key="minor_arcana_title"></h3>
+                            <div id="suit-selector" class="flex flex-wrap gap-2 mb-3"></div>
+                            <div id="rank-selector" class="flex flex-wrap gap-2"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -111,10 +118,10 @@
                 mode_mystical: "Містичний", mode_psychologist: "Психологічний",
                 label_sphere: "Сфера життя",
                 section_title_context_spread: "🃏 2. Контекст та Розклад", label_target: "На кого ворожимо?",
-                target_self: "На себе", target_other: "На іншого",
+                target_self: "На себе", target_other: "На партнера", target_friend: "На друга/подругу", target_rival: "На ворога/конкурента",
                 placeholder_other_person: "Ім'я або роль (напр., 'Партнер')",
                 label_spread_type: "Тип розкладу",
-                section_title_constructor: "🛠️ 3. Конструктор карт",
+                section_title_constructor: "🛠️ 3. Конструктор карт", major_arcana_title: "✨ Головні Аркани (Доленосні події)", minor_arcana_title: "🃏 Допоміжні Аркани (Повсякденні справи)",
                 section_title_schema: "🌙 4. Схема розкладу", btn_reset: "Скинути",
                 section_title_interpretation: "✨ 5. Тлумачення від ШІ", btn_get_interpretation: "Отримати тлумачення",
                 placeholder_ai_response: "Оберіть дію...",
@@ -134,10 +141,10 @@
                 mode_mystical: "Мистический", mode_psychologist: "Психологический",
                 label_sphere: "Сфера жизни",
                 section_title_context_spread: "🃏 2. Контекст и Расклад", label_target: "На кого гадаем?",
-                target_self: "На себя", target_other: "На другого",
+                target_self: "На себя", target_other: "На партнера", target_friend: "На друга/подругу", target_rival: "На врага/конкурента",
                 placeholder_other_person: "Имя или роль (напр., 'Партнер')",
                 label_spread_type: "Тип расклада",
-                section_title_constructor: "🛠️ 3. Конструктор карт",
+                section_title_constructor: "🛠️ 3. Конструктор карт", major_arcana_title: "✨ Главные Арканы (Судьбоносные события)", minor_arcana_title: "🃏 Вспомогательные Арканы (Повседневные дела)",
                 section_title_schema: "🌙 4. Схема расклада", btn_reset: "Сбросить",
                 section_title_interpretation: "✨ 5. Толкование от ИИ", btn_get_interpretation: "Получить толкование",
                 placeholder_ai_response: "Выберите действие...",
@@ -160,6 +167,10 @@
                 { key: 'health', icon: '🌿', ua: 'Здоров\'я', ru: 'Здоровье', rec: 'yes-no', rec_key: 'recommendation_health' },
                 { key: 'destiny', icon: '🌌', ua: 'Призначення', ru: 'Предназначение', rec: 'path', rec_key: 'recommendation_destiny' },
                 { key: 'general', icon: '🪐', ua: 'Загальний аналіз', ru: 'Общий анализ', rec: 'three-cards', rec_key: null },
+            ],
+            targets: [
+                { key: 'self', ua: 'На себе', ru: 'На себя' }, { key: 'partner', ua: 'На партнера', ru: 'На партнера' },
+                { key: 'friend', ua: 'На друга', ru: 'На друга' }, { key: 'rival', ua: 'На ворога', ru: 'На врага' }
             ],
             spreads: {
                 "yes-no": { cards: 1, ua: "Так/Ні", ru: "Да/Нет", positions: { ua: ["Відповідь"], ru: ["Ответ"] }, grid: `"pos1"` },
@@ -198,13 +209,15 @@
             };
             createButtons('mode-selector', [{key: 'mystical', icon: '🔮', ua: this.translations.ua.mode_mystical, ru: this.translations.ru.mode_mystical}, {key: 'psychologist', icon: '🧠', ua: this.translations.ua.mode_psychologist, ru: this.translations.ru.mode_psychologist}], 'mode', this.state.lang);
             createButtons('sphere-selector', this.data.spheres, 'sphere', this.state.lang);
-            createButtons('target-selector', [{key: 'self', ua: this.translations.ua.target_self, ru: this.translations.ru.target_self}, {key: 'other', ua: this.translations.ua.target_other, ru: this.translations.ru.target_other}], 'target', this.state.lang);
+            createButtons('target-selector', this.data.targets, 'target', this.state.lang);
 
             const spreadData = Object.keys(this.data.spreads).map(key => ({ key, name: `${this.data.spreads[key][this.state.lang]} (${this.data.spreads[key].cards})` }));
             document.getElementById('spread-selector').innerHTML = spreadData.map(item => `<button class="control-card" data-group="spread" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
 
             const suitData = ['major', 'wands', 'cups', 'swords', 'pentacles'].map(s => ({key: s, name: this.translations[this.state.lang][`suit_${s}`]}));
             document.getElementById('suit-selector').innerHTML = suitData.map(item => `<button class="control-card constructor-btn" data-group="suit" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
+
+            document.getElementById('major-arcana-selector').innerHTML = this.data.cards.major[this.state.lang].map(rank => `<button class="control-card constructor-btn neon-glow" onclick="App.addCard('major', '${rank}')"><span>${rank}</span></button>`).join('');
         },
 
         addEventListeners() {
@@ -245,7 +258,7 @@
         },
 
         renderRankSelector() {
-            const ranks = this.data.cards[this.state.activeSuit][this.state.lang];
+            const ranks = this.data.cards.minor[this.state.lang];
             document.getElementById('rank-selector').innerHTML = ranks.map(rank => `<button class="control-card constructor-btn text-xs" onclick="App.addCard('${this.state.activeSuit}', '${rank}')"><span>${rank}</span></button>`).join('');
         },
 
@@ -343,6 +356,7 @@
 
         async handleAIRequest(requestData) {
             document.getElementById('loading-overlay').classList.add('active');
+            console.log("Данные для отправки:", JSON.stringify(requestData));
             try {
                 const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestData) });
                 const data = await response.json();
