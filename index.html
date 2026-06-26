@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate-key="page_title">Таро AI Компаньйон v4.3</title>
+    <title data-translate-key="page_title">Таро AI Компаньйон v4.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -15,8 +15,13 @@
             --primary-glow-color: rgba(20, 184, 166, 0.4); --secondary-glow-color: rgba(20, 184, 166, 0.2);
             --text-gold: #6ee7b7; --text-purple: #2dd4bf;
         }
-        html, body { background-color: #06020c; }
-        body { color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
+        /* ВИПРАВЛЕНО: Додано градієнт на фон */
+        html, body { height: 100%; }
+        body {
+            background-color: var(--bg-main);
+            background-image: radial-gradient(ellipse at top, var(--bg-surface), var(--bg-main) 70%);
+            color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif;
+        }
 
         @keyframes animateStars { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
         #stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; overflow: hidden; }
@@ -35,6 +40,10 @@
         .control-card span { font-size: 0.8rem; line-height: 1.2; word-break: break-word; }
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
+
+        /* ВИПРАВЛЕНО: Збільшено кнопки конструктора */
+        #suit-selector .control-card, #rank-selector .control-card { min-height: 40px; padding: 0.25rem; }
+        #suit-selector .control-card span, #rank-selector .control-card span { font-size: 0.85rem; }
 
         .schema-container { display: grid; gap: 10px; padding: 10px; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 200px; }
         .schema-slot { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: all 0.2s; min-height: 100px; cursor: pointer; }
@@ -77,9 +86,9 @@
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                     <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_constructor"></h2>
                     <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-color"></p>
-                    <div class="grid grid-cols-2 gap-4 mb-2">
-                        <div id="suit-selector" class="grid grid-cols-2 sm:grid-cols-5 gap-1"></div>
-                        <div id="rank-selector" class="grid grid-cols-4 sm:grid-cols-7 gap-1"></div>
+                    <div class="grid grid-cols-12 gap-4 mb-2">
+                        <div id="suit-selector" class="col-span-4 grid grid-cols-1 gap-1"></div>
+                        <div id="rank-selector" class="col-span-8 grid grid-cols-4 sm:grid-cols-5 gap-1"></div>
                     </div>
                 </div>
             </div>
@@ -97,7 +106,7 @@
         </div>
         <footer class="text-center py-8 mt-8 border-t border-color"><p class="text-sm text-gold" style="filter: drop-shadow(0 0 5px var(--primary-glow-color));">Made with 💜 by Mary • Support Engineer & Tarot Master</p></footer>
     </div>
-    <audio id="ambient-music" loop><source src="https://assets.mixkit.co/music/preview/mixkit-a-quiet-thought-2710.mp3" type="audio/mpeg"></audio>
+    <audio id="ambient-music" loop><source src="https://pixabay.com/music/download/music_main_the_cradle_of_your_soul_109421.mp3" type="audio/mpeg"></audio>
     <div id="loading-overlay"><div class="loader-spinner"></div></div>
 
     <script>
@@ -158,11 +167,11 @@
                 { key: 'friends', icon: '👥', ua: 'Друзі/Колеги', ru: 'Друзья/Коллеги', rec: ['three-cards'] },
             ],
             spreads: {
-                "yes-no": { cards: 1, positions: { ua: ["Відповідь"], ru: ["Ответ"] }, grid: `"pos1"` },
-                "three-cards": { cards: 3, positions: { ua: ["Минуле", "Теперішнє", "Майбутнє"], ru: ["Прошлое", "Настоящее", "Будущее"] }, grid: `"pos1 pos2 pos3"` },
-                "cross": { cards: 4, positions: { ua: ["Суть", "Перешкода", "Порада", "Результат"], ru: ["Суть", "Препятствие", "Совет", "Результат"] }, grid: `". pos1 ." "pos2 pos3 pos4"` },
-                "choice": { cards: 5, positions: { ua: ["Суть вибору", "Варіант А", "Результат А", "Варіант Б", "Результат Б"], ru: ["Суть выбора", "Вариант А", "Результат А", "Вариант Б", "Результат Б"] }, grid: `". pos1 ." "pos2 pos3" "pos4 pos5"` },
-                "path": { cards: 7, positions: { ua: ["1", "2", "3", "4", "5", "6", "7"], ru: ["1", "2", "3", "4", "5", "6", "7"] }, grid: `"pos1 pos2 pos3 pos4 pos5 pos6 pos7"` }
+                "yes-no": { cards: 1, ua: "Так/Ні", ru: "Да/Нет", positions: { ua: ["Відповідь"], ru: ["Ответ"] }, grid: `"pos1"` },
+                "three-cards": { cards: 3, ua: "Три Карти", ru: "Три Карты", positions: { ua: ["Минуле", "Теперішнє", "Майбутнє"], ru: ["Прошлое", "Настоящее", "Будущее"] }, grid: `"pos1 pos2 pos3"` },
+                "cross": { cards: 4, ua: "Хрест", ru: "Крест", positions: { ua: ["Суть", "Перешкода", "Порада", "Результат"], ru: ["Суть", "Препятствие", "Совет", "Результат"] }, grid: `". pos1 ." "pos2 pos3 pos4"` },
+                "choice": { cards: 5, ua: "Вибір", ru: "Выбор", positions: { ua: ["Суть вибору", "Варіант А", "Результат А", "Варіант Б", "Результат Б"], ru: ["Суть выбора", "Вариант А", "Результат А", "Вариант Б", "Результат Б"] }, grid: `". pos1 ." "pos2 pos3" "pos4 pos5"` },
+                "path": { cards: 7, ua: "Шлях", ru: "Путь", positions: { ua: ["1", "2", "3", "4", "5", "6", "7"], ru: ["1", "2", "3", "4", "5", "6", "7"] }, grid: `"pos1 pos2 pos3 pos4 pos5 pos6 pos7"` }
             },
             cards: {
                 major: ["Дурень", "Маг", "Жриця", "Імператриця", "Імператор", "Ієрофант", "Закохані", "Колісниця", "Сила", "Відлюдник", "Фортуна", "Справедливість", "Повішений", "Смерть", "Помірність", "Диявол", "Вежа", "Зірка", "Місяць", "Сонце", "Суд", "Світ"],
@@ -194,7 +203,7 @@
             createButtons('sphere-selector', this.data.spheres, 'sphere', this.state.lang);
             createButtons('target-selector', [{key: 'self', ua: this.translations.ua.target_self, ru: this.translations.ru.target_self}, {key: 'other', ua: this.translations.ua.target_other, ru: this.translations.ru.target_other}], 'target', this.state.lang);
 
-            const spreadData = Object.keys(this.data.spreads).map(key => ({ key, name: `${this.data.spreads[key].positions[this.state.lang][0]} (${this.data.spreads[key].cards})` }));
+            const spreadData = Object.keys(this.data.spreads).map(key => ({ key, name: `${this.data.spreads[key][this.state.lang]} (${this.data.spreads[key].cards})` }));
             document.getElementById('spread-selector').innerHTML = spreadData.map(item => `<button class="control-card" data-group="spread" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
 
             const suitData = ['major', 'wands', 'cups', 'swords', 'pentacles'].map(s => ({key: s, name: this.translations[this.state.lang][`suit_${s}`]}));
@@ -302,7 +311,7 @@
             const requestData = {
                 lang: this.state.lang, type: 'spread', mode: this.state.aiMode,
                 theme: this.data.spheres.find(s => s.key === this.state.sphere)[this.state.lang],
-                spreadType: this.data.spreads[this.state.spreadKey].positions[this.state.lang].join(', '),
+                spreadType: this.data.spreads[this.state.spreadKey][this.state.lang],
                 question: document.getElementById('question').value.trim(),
                 cards: this.state.selectedCards,
                 positions: this.data.spreads[this.state.spreadKey].positions[this.state.lang],
@@ -327,7 +336,7 @@
             const music = document.getElementById('ambient-music');
             const button = document.getElementById('music-toggle');
             if (music.paused) {
-                music.volume = 0.3;
+                music.volume = 0.2;
                 music.play().catch(e => console.error("Audio play failed:", e));
                 button.textContent = '🔊';
             } else {
