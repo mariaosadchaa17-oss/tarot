@@ -8,6 +8,15 @@ const SYSTEM_PROMPTS = {
 
 const FULL_DECK = ["Дурень", "Маг", "Верховна Жриця", "Імператриця", "Імператор", "Ієрофант", "Закохані", "Колісниця", "Сила", "Відлюдник", "Колесо Фортуни", "Справедливість", "Повішений", "Смерть", "Помірність", "Диявол", "Вежа", "Зірка", "Місяць", "Сонце", "Суд", "Світ", "Туз Жезлів", "Двійка Жезлів", "Трійка Жезлів", "Четвірка Жезлів", "П'ятірка Жезлів", "Шістка Жезлів", "Сімка Жезлів", "Вісімка Жезлів", "Дев'ятка Жезлів", "Десятка Жезлів", "Паж Жезлів", "Лицар Жезлів", "Королева Жезлів", "Король Жезлів", "Туз Кубків", "Двійка Кубків", "Трійка Кубків", "Четвірка Кубків", "П'ятірка Кубків", "Шістка Кубків", "Сімка Кубків", "Вісімка Кубків", "Дев'ятка Кубків", "Десятка Кубків", "Паж Кубків", "Лицар Кубків", "Королева Кубків", "Король Кубків", "Туз Мечів", "Двійка Мечів", "Трійка Мечів", "Четвірка Мечів", "П'ятірка Мечів", "Шістка Мечів", "Сімка Мечів", "Вісімка Мечів", "Дев'ятка Мечів", "Десятка Мечів", "Паж Мечів", "Лицар Мечів", "Королева Мечів", "Король Мечів", "Туз Пентаклів", "Двійка Пентаклів", "Трійка Пентаклів", "Четвірка Пентаклів", "П'ятірка Пентаклів", "Шістка Пентаклів", "Сімка Пентаклів", "Вісімка Пентаклів", "Дев'ятка Пентаклів", "Десятка Пентаклів", "Паж Пентаклів", "Лицар Пентаклів", "Королева Пентаклів", "Король Пентаклів"];
 
+async function fetchFromGemini(payload, modelName, apiKey) {
+    const API_URL = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${apiKey}`;
+    return await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    });
+}
+
 export async function POST(request) {
     try {
         const requestData = await request.json();
@@ -19,39 +28,36 @@ export async function POST(request) {
             userPrompt = `Карта дня: [${randomCard}]. Дай містичну мікро-пораду.`;
         } else if (requestData.type === 'spread') {
             const { mode, theme, spreadType, question, cards, positions } = requestData;
-            if (!cards || Object.keys(cards).length === 0) {
-                return new Response(JSON.stringify({ error: 'Не обрано жодної карти.' }), { status: 400 });
-            }
+            if (!cards || Object.keys(cards).length === 0) return new Response(JSON.stringify({ error: 'Не обрано жодної карти.' }), { status: 400 });
             systemPrompt = SYSTEM_PROMPTS[mode] || SYSTEM_PROMPTS.psychological;
             userPrompt = `Проведи розбір розкладу Таро.\nТема: ${theme}\nРозклад: ${spreadType}\n`;
             if (question) userPrompt += `Питання: "${question}"\n`;
             userPrompt += `\nКарти:\n`;
             positions.forEach(pos => {
                 const card = cards[pos];
-                if (card) {
-                    const orientation = card.isInverted ? "Перевернута" : "Пряма";
-                    userPrompt += `- ${pos}: ${card.name} (${orientation})\n`;
-                }
+                if (card) userPrompt += `- ${pos}: ${card.name} (${card.isInverted ? "Перевернута" : "Пряма"})\n`;
             });
         } else {
             return new Response(JSON.stringify({ error: 'Невірний тип запиту.' }), { status: 400 });
         }
 
-        let fullPrompt = `${systemPrompt}\n\n--- ЗАВДАННЯ ---\n${userPrompt}`;
-
-        const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        if (!GEMINI_API_KEY) {
-            return new Response(JSON.stringify({ error: 'API-ключ не налаштовано.' }), { status: 500 });
-        }
-
-        const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        const fullPrompt = `${systemPrompt}\n\n--- ЗАВДАННЯ ---\n${userPrompt}`;
         const payload = { contents: [{ parts: [{ text: fullPrompt }] }] };
 
-        const geminiResponse = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-        });
+        const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+        if (!GEMINI_API_KEY) return new Response(JSON.stringify({ error: 'API-ключ не налаштовано.' }), { status: 500 });
+
+        // ВИПРАВЛЕНО: Логіка з автоматичним переключенням на запасну модель
+        const primaryModel = 'gemini-3.5-flash';
+        const fallbackModel = 'gemini-2.5-flash';
+
+        let geminiResponse = await fetchFromGemini(payload, primaryModel, GEMINI_API_KEY);
+
+        // Якщо основна модель перевантажена (помилка 503), пробуємо запасну
+        if (geminiResponse.status === 503) {
+            console.warn(`Model ${primaryModel} is unavailable, trying fallback ${fallbackModel}...`);
+            geminiResponse = await fetchFromGemini(payload, fallbackModel, GEMINI_API_KEY);
+        }
 
         if (!geminiResponse.ok) {
             const errorBody = await geminiResponse.text();
