@@ -35,6 +35,7 @@
 
         .constructor-btn { white-space: nowrap; padding: 0.75rem 1.25rem; font-size: 0.9rem; }
 
+        .bg-mystic-900 { background-color: rgba(16, 10, 31, 0.8); }
         .schema-container { display: grid; gap: 10px; padding: 10px; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 220px; }
         .schema-slot { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: all 0.2s; min-height: 100px; cursor: pointer; }
         .schema-slot.active { border-color: var(--text-gold); transform: scale(1.03); box-shadow: 0 0 15px var(--primary-glow-color); }
@@ -70,6 +71,8 @@
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                     <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_context_spread"></h2>
                     <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_target"></label><div id="target-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div></div>
+                    <div id="other-person-container" class="mb-4 hidden"><input type="text" id="other-person-input" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" placeholder="Ім'я або роль"></div>
+                    <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_question"></label><textarea id="question" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" rows="2" placeholder="Ваше питання (необов'язково)"></textarea></div>
                     <div><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_spread_type"></label><div id="spread-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div></div>
                 </div>
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
@@ -119,6 +122,7 @@
                 section_title_context_spread: "🃏 2. Контекст та Розклад", label_target: "На кого ворожимо?",
                 target_self: "На себе", target_other: "На партнера", target_friend: "На друга", target_rival: "На ворога",
                 placeholder_other_person: "Ім'я або роль (напр., 'Партнер')",
+                label_question: "Ваше питання",
                 label_spread_type: "Тип розкладу",
                 section_title_constructor: "🛠️ 3. Конструктор карт", suit_selection_title: "1. Оберіть масть", card_selection_title: "2. Оберіть карту",
                 section_title_schema: "🌙 4. Схема розкладу", btn_reset: "Скинути",
@@ -142,6 +146,7 @@
                 section_title_context_spread: "🃏 2. Контекст и Расклад", label_target: "На кого гадаем?",
                 target_self: "На себя", target_other: "На партнера", target_friend: "На друга", target_rival: "На врага",
                 placeholder_other_person: "Имя или роль (напр., 'Партнер')",
+                label_question: "Ваш вопрос",
                 label_spread_type: "Тип расклада",
                 section_title_constructor: "🛠️ 3. Конструктор карт", suit_selection_title: "1. Выберите масть", card_selection_title: "2. Выберите карту",
                 section_title_schema: "🌙 4. Схема расклада", btn_reset: "Сбросить",
