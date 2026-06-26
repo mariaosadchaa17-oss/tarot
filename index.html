@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate-key="page_title">Таро AI Компаньйон v4.1</title>
+    <title data-translate-key="page_title">Таро AI Компаньйон v4.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -18,7 +18,7 @@
         body { background-color: var(--bg-main); color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; transition: background-color 0.5s; }
         @keyframes animateStars { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
         #stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; overflow: hidden; }
-        .stars { position: absolute; top: 0; left: 0; width: 100%; height: 2000px; }
+        .stars { position: absolute; top: 0; left: 0; width: 100%; height: 2000px; background: transparent; }
         .stars:after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(1px 1px at 50px 100px, white, white), radial-gradient(1px 1px at 150px 250px, white, white), radial-gradient(2px 2px at 250px 400px, white, white), radial-gradient(1px 1px at 350px 550px, white, white), radial-gradient(2px 2px at 450px 700px, white, white), radial-gradient(1px 1px at 550px 850px, white, white); }
         #stars1 { animation: animateStars 150s linear infinite; }
         #stars2 { animation: animateStars 100s linear infinite; transform: translateY(-2000px); }
@@ -27,7 +27,7 @@
         .text-purple { color: var(--text-purple); transition: color 0.5s; }
         .border-color { border-color: var(--border-color); transition: border-color 0.5s; }
         .bg-surface { background-color: var(--bg-surface); transition: background-color 0.5s; }
-        .control-card { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.75rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .control-card { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px; }
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
         .schema-container { display: grid; gap: 10px; padding: 10px; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 200px; }
@@ -75,7 +75,6 @@
                         <div id="suit-selector" class="grid grid-cols-2 sm:grid-cols-5 gap-1"></div>
                         <div id="rank-selector" class="grid grid-cols-4 sm:grid-cols-7 gap-1"></div>
                     </div>
-                    <div class="mt-4"><h3 class="text-sm font-semibold text-gold mb-2 text-center" data-translate-key="label_card_back">Сорочка карт</h3><div id="theme-selector" class="flex justify-center gap-3"></div></div>
                 </div>
             </div>
             <div class="lg:col-span-5 space-y-6">
@@ -103,69 +102,51 @@
             sphere: 'general',
             target: 'self',
             spreadKey: 'three-cards',
-            cardTheme: 'neon',
             activeSuit: 'major',
             selectedCards: {},
             activePositionIndex: 0,
-            lastAIResponse: '',
         },
 
         translations: {
             ua: {
-                page_title: "Таро AI Компаньйон v4.1",
-                main_title: "🔮 Таро AI Компаньйон",
-                section_title_mode_sphere: "✨ 1. Режим та Сфера",
-                label_ai_mode: "Режим ШІ",
-                mode_mystical: "Містичний",
-                mode_psychologist: "Психологічний",
+                page_title: "Таро AI Компаньйон", main_title: "🔮 Таро AI Компаньйон",
+                section_title_mode_sphere: "✨ 1. Режим та Сфера", label_ai_mode: "Режим ШІ",
+                mode_mystical: "Містичний", mode_psychologist: "Психологічний",
                 label_sphere: "Сфера життя",
-                section_title_context_spread: "🃏 2. Контекст та Розклад",
-                label_target: "На кого ворожимо?",
-                target_self: "На себе",
-                target_other: "На іншого",
+                section_title_context_spread: "🃏 2. Контекст та Розклад", label_target: "На кого ворожимо?",
+                target_self: "На себе", target_other: "На іншого",
                 placeholder_other_person: "Ім'я або роль (напр., 'Партнер')",
                 label_spread_type: "Тип розкладу",
                 section_title_constructor: "🛠️ 3. Конструктор карт",
                 label_card_back: "Сорочка карт",
-                section_title_schema: "🌙 4. Схема розкладу",
-                btn_reset: "Скинути",
-                section_title_interpretation: "✨ 5. Тлумачення від ШІ",
-                btn_get_interpretation: "Отримати тлумачення",
+                section_title_schema: "🌙 4. Схема розкладу", btn_reset: "Скинути",
+                section_title_interpretation: "✨ 5. Тлумачення від ШІ", btn_get_interpretation: "Отримати тлумачення",
                 placeholder_ai_response: "Оберіть дію...",
-                placeholder_journal_notes: "Додайте свої думки...",
-                btn_save_to_journal: "Зберегти в щоденник",
-                hint_select_card_for: "👉 Оберіть карту для позиції:",
-                hint_spread_filled: "✅ Розклад повністю заповнено!",
+                hint_select_card_for: "👉 Оберіть карту для позиції:", hint_spread_filled: "✅ Розклад повністю заповнено!",
                 alert_spread_not_filled: "Будь ласка, заповніть усі позиції в розкладі.",
                 alert_card_already_in: (card) => `Карта "${card}" вже є в розкладі.`,
+                recommendation: "💡 Рекомендація:",
+                suit_major: "Ст. Аркани", suit_wands: "Жезли", suit_cups: "Кубки", suit_swords: "Мечі", suit_pentacles: "Пентаклі",
             },
             ru: {
-                page_title: "Таро AI Компаньон v4.1",
-                main_title: "🔮 Таро AI Компаньон",
-                section_title_mode_sphere: "✨ 1. Режим и Сфера",
-                label_ai_mode: "Режим ИИ",
-                mode_mystical: "Мистический",
-                mode_psychologist: "Психологический",
+                page_title: "Таро AI Компаньон", main_title: "🔮 Таро AI Компаньон",
+                section_title_mode_sphere: "✨ 1. Режим и Сфера", label_ai_mode: "Режим ИИ",
+                mode_mystical: "Мистический", mode_psychologist: "Психологический",
                 label_sphere: "Сфера жизни",
-                section_title_context_spread: "🃏 2. Контекст и Расклад",
-                label_target: "На кого гадаем?",
-                target_self: "На себя",
-                target_other: "На другого",
+                section_title_context_spread: "🃏 2. Контекст и Расклад", label_target: "На кого гадаем?",
+                target_self: "На себя", target_other: "На другого",
                 placeholder_other_person: "Имя или роль (напр., 'Партнер')",
                 label_spread_type: "Тип расклада",
                 section_title_constructor: "🛠️ 3. Конструктор карт",
                 label_card_back: "Рубашка карт",
-                section_title_schema: "🌙 4. Схема расклада",
-                btn_reset: "Сбросить",
-                section_title_interpretation: "✨ 5. Толкование от ИИ",
-                btn_get_interpretation: "Получить толкование",
+                section_title_schema: "🌙 4. Схема расклада", btn_reset: "Сбросить",
+                section_title_interpretation: "✨ 5. Толкование от ИИ", btn_get_interpretation: "Получить толкование",
                 placeholder_ai_response: "Выберите действие...",
-                placeholder_journal_notes: "Добавьте свои мысли...",
-                btn_save_to_journal: "Сохранить в дневник",
-                hint_select_card_for: "👉 Выберите карту для позиции:",
-                hint_spread_filled: "✅ Расклад полностью заполнен!",
+                hint_select_card_for: "👉 Выберите карту для позиции:", hint_spread_filled: "✅ Расклад полностью заполнен!",
                 alert_spread_not_filled: "Пожалуйста, заполните все позиции в раскладе.",
                 alert_card_already_in: (card) => `Карта "${card}" уже есть в раскладе.`,
+                recommendation: "💡 Рекомендация:",
+                suit_major: "Ст. Арканы", suit_wands: "Жезлы", suit_cups: "Кубки", suit_swords: "Мечи", suit_pentacles: "Пентакли",
             }
         },
 
@@ -191,87 +172,54 @@
                 major: ["Дурень", "Маг", "Жриця", "Імператриця", "Імператор", "Ієрофант", "Закохані", "Колісниця", "Сила", "Відлюдник", "Фортуна", "Справедливість", "Повішений", "Смерть", "Помірність", "Диявол", "Вежа", "Зірка", "Місяць", "Сонце", "Суд", "Світ"],
                 minor: ["Туз", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Паж", "Лицар", "Королева", "Король"],
                 suits: { ua: { wands: "Жезлів", cups: "Кубків", swords: "Мечів", pentacles: "Пентаклів" }, ru: { wands: "Жезлов", cups: "Кубков", swords: "Мечей", pentacles: "Пентаклей" } }
-            },
-            themes: [
-                { key: 'neon', ua: 'Неонова', ru: 'Неоновая', style: 'bg-purple-600' },
-                { key: 'gothic', ua: 'Готична', ru: 'Готическая', style: 'bg-gray-700' },
-                { key: 'cosmic', ua: 'Космічна', ru: 'Космическая', style: 'bg-blue-800' }
-            ]
+            }
         },
 
         init() {
-            this.renderSelectors();
+            this.renderAllSelectors();
             this.addEventListeners();
-            this.handleSelection('mode-selector', this.state.aiMode, false);
-            this.handleSelection('sphere-selector', this.state.sphere, false);
-            this.handleSelection('target-selector', this.state.target, false);
-            this.handleSelection('spread-selector', this.state.spreadKey, false);
-            this.handleSelection('theme-selector', this.state.cardTheme, false);
-            this.handleSelection('suit-selector', this.state.activeSuit, false);
+            this.handleSelection('mode', 'mystical', false);
+            this.handleSelection('sphere', 'general', false);
+            this.handleSelection('target', 'self', false);
+            this.handleSelection('spread', 'three-cards', false);
+            this.handleSelection('suit', 'major', false);
             this.displayMoonPhase();
             this.applyLanguage();
         },
 
-        renderSelectors() {
-            const createButtons = (data, keyField, nameField, containerId) => {
+        renderAllSelectors() {
+            const createButtons = (containerId, data, keyField, nameField, group) => {
                 const container = document.getElementById(containerId);
-                container.innerHTML = data.map(item => `<button class="control-card" data-${keyField}="${item.key}">${item[nameField]}</button>`).join('');
+                container.innerHTML = data.map(item => `<button class="control-card" data-group="${group}" data-key="${item[keyField]}">${item[nameField]}</button>`).join('');
             };
-            createButtons(this.data.spheres, 'sphere', this.state.lang, 'sphere-selector');
-            createButtons(Object.keys(this.data.spreads).map(key => ({ key, name: `${this.translations[this.state.lang][`spread_${key}`] || key} (${this.data.spreads[key].cards})` })), 'spread', 'name', 'spread-selector');
-            createButtons([{key: 'mystical', name: this.translations[this.state.lang].mode_mystical}, {key: 'psychologist', name: this.translations[this.state.lang].mode_psychologist}], 'mode', 'name', 'mode-selector');
-            createButtons([{key: 'self', name: this.translations[this.state.lang].target_self}, {key: 'other', name: this.translations[this.state.lang].target_other}], 'target', 'name', 'target-selector');
-            createButtons(this.data.themes, 'theme', this.state.lang, 'theme-selector');
-
-            const suitContainer = document.getElementById('suit-selector');
-            suitContainer.innerHTML = ['major', 'wands', 'cups', 'swords', 'pentacles'].map(s => `<button class="control-card" data-suit="${s}">${this.translations[this.state.lang][`suit_${s}`] || s}</button>`).join('');
+            createButtons('mode-selector', [{key: 'mystical', name: '🔮'}, {key: 'psychologist', name: '🧠'}], 'key', 'name', 'mode');
+            createButtons('sphere-selector', this.data.spheres, 'key', this.state.lang, 'sphere');
+            createButtons('target-selector', [{key: 'self', name: this.translations[this.state.lang].target_self}, {key: 'other', name: this.translations[this.state.lang].target_other}], 'key', 'name', 'target');
+            createButtons('spread-selector', Object.keys(this.data.spreads).map(key => ({ key, name: `${this.data.spreads[key].positions[this.state.lang][0]} (${this.data.spreads[key].cards})` })), 'key', 'name', 'spread');
+            createButtons('suit-selector', Object.keys(this.data.cards.suits[this.state.lang]).map(s => ({key: s, name: this.translations[this.state.lang][`suit_${s}`]})), 'key', 'name', 'suit');
         },
 
         addEventListeners() {
             document.getElementById('lang-toggle').addEventListener('click', () => this.toggleLanguage());
-            ['mode-selector', 'sphere-selector', 'target-selector', 'spread-selector', 'theme-selector', 'suit-selector'].forEach(id => {
+            ['mode-selector', 'sphere-selector', 'target-selector', 'spread-selector', 'suit-selector'].forEach(id => {
                 document.getElementById(id).addEventListener('click', e => {
                     const button = e.target.closest('button');
-                    if (button) {
-                        const key = Object.keys(button.dataset)[0];
-                        this.handleSelection(id, button.dataset[key]);
-                    }
+                    if (button) this.handleSelection(button.dataset.group, button.dataset.key);
                 });
             });
         },
 
-        handleSelection(selectorId, key, doUpdate = true) {
-            const container = document.getElementById(selectorId);
-            [...container.children].forEach(child => child.classList.remove('active'));
-            const button = container.querySelector(`[data-${selectorId.split('-')[0]}="${key}"]`);
+        handleSelection(group, key, doUpdate = true) {
+            document.querySelectorAll(`[data-group="${group}"]`).forEach(btn => btn.classList.remove('active'));
+            const button = document.querySelector(`[data-group="${group}"][data-key="${key}"]`);
             if (button) button.classList.add('active');
 
-            switch (selectorId) {
-                case 'mode-selector':
-                    this.state.aiMode = key;
-                    document.body.classList.toggle('theme-psychologist', key === 'psychologist');
-                    break;
-                case 'sphere-selector':
-                    this.state.sphere = key;
-                    const sphereData = this.data.spheres.find(s => s.key === key);
-                    const recText = this.translations[this.state.lang].recommendation_for + (sphereData.rec.map(r => this.data.spreads[r].positions[this.state.lang][0]).join(' / '));
-                    document.getElementById('recommendation-text').textContent = recText;
-                    break;
-                case 'target-selector':
-                    this.state.target = key;
-                    document.getElementById('other-person-input').classList.toggle('hidden', key === 'self');
-                    break;
-                case 'spread-selector':
-                    this.state.spreadKey = key;
-                    if (doUpdate) this.resetSpread(); else this.renderSchema();
-                    break;
-                case 'theme-selector':
-                    this.state.cardTheme = key;
-                    break;
-                case 'suit-selector':
-                    this.state.activeSuit = key;
-                    this.renderRankSelector();
-                    break;
+            switch (group) {
+                case 'mode': this.state.aiMode = key; document.body.classList.toggle('theme-psychologist', key === 'psychologist'); break;
+                case 'sphere': this.state.sphere = key; break;
+                case 'target': this.state.target = key; document.getElementById('other-person-input').classList.toggle('hidden', key === 'self'); break;
+                case 'spread': this.state.spreadKey = key; if (doUpdate) this.resetSpread(); break;
+                case 'suit': this.state.activeSuit = key; this.renderRankSelector(); break;
             }
             if (doUpdate) this.updateUI();
         },
@@ -285,26 +233,20 @@
         addCard(suit, rank) {
             const schema = this.data.spreads[this.state.spreadKey];
             if (this.state.activePositionIndex >= schema.cards) return;
-
             let cardName = suit === 'major' ? rank : `${rank} ${this.data.cards.suits[this.state.lang][suit]}`;
             if (Object.values(this.state.selectedCards).some(c => c.name === cardName)) {
                 alert(this.translations[this.state.lang].alert_card_already_in(cardName));
                 return;
             }
-
             const posName = schema.positions[this.state.lang][this.state.activePositionIndex];
             this.state.selectedCards[posName] = { name: cardName, isInverted: false };
-
             const nextIndex = schema.positions[this.state.lang].findIndex((_, i) => !this.state.selectedCards[schema.positions[this.state.lang][i]]);
             this.state.activePositionIndex = (nextIndex === -1) ? schema.cards : nextIndex;
-
             this.updateUI();
         },
 
         resetSpread() {
-            this.state.selectedCards = {};
-            this.state.activePositionIndex = 0;
-            this.state.lastAIResponse = '';
+            this.state.selectedCards = {}; this.state.activePositionIndex = 0;
             document.getElementById('question').value = '';
             this.updateUI();
         },
@@ -321,14 +263,12 @@
             container.style.gridTemplateAreas = schema.grid;
             const columns = schema.grid.match(/"(.*?)"/)[1].trim().split(/\s+/).length;
             container.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-
             schema.positions[this.state.lang].forEach((posName, index) => {
                 const slot = document.createElement('div');
                 slot.className = 'schema-slot';
                 slot.style.gridArea = `pos${index + 1}`;
                 slot.onclick = () => { this.state.activePositionIndex = index; this.updateUI(); };
                 if (index === this.state.activePositionIndex) slot.classList.add('active');
-
                 const cardData = this.state.selectedCards[posName];
                 if (cardData) {
                     slot.classList.add('filled');
@@ -355,16 +295,14 @@
             document.documentElement.lang = this.state.lang;
             document.getElementById('lang-pill').style.transform = this.state.lang === 'ua' ? 'translateX(0px)' : 'translateX(20px)';
             this.applyLanguage();
-            this.renderSelectors(); // Re-render selectors with new language
-            this.updateUI(); // Update schema and hints
+            this.renderAllSelectors();
+            this.updateUI();
         },
 
         applyLanguage() {
             document.querySelectorAll('[data-translate-key]').forEach(el => {
                 const key = el.dataset.translateKey;
-                if (this.translations[this.state.lang][key]) {
-                    el.textContent = this.translations[this.state.lang][key];
-                }
+                if (this.translations[this.state.lang][key]) el.textContent = this.translations[this.state.lang][key];
             });
         },
 
@@ -375,9 +313,7 @@
                 return;
             }
             const requestData = {
-                lang: this.state.lang,
-                type: 'spread',
-                mode: this.state.aiMode,
+                lang: this.state.lang, type: 'spread', mode: this.state.aiMode,
                 theme: this.data.spheres.find(s => s.key === this.state.sphere)[this.state.lang],
                 spreadType: this.data.spreads[this.state.spreadKey].positions[this.state.lang].join(', '),
                 question: document.getElementById('question').value.trim(),
@@ -391,19 +327,15 @@
         async handleAIRequest(requestData) {
             const loadingOverlay = document.getElementById('loading-overlay');
             loadingOverlay.classList.add('active');
-
             try {
                 const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestData) });
                 const data = await response.json();
-
                 const responseBox = document.getElementById('ai-response-box');
                 if (!response.ok) {
                     responseBox.innerHTML = `<span id="ai-placeholder" class="text-red-400">Помилка: ${data.error}</span>`;
-                    return;
+                } else {
+                    responseBox.innerHTML = `<span id="ai-placeholder">${data.text.replace(/\n/g, '<br>')}</span>`;
                 }
-                this.state.lastAIResponse = data.text;
-                responseBox.innerHTML = `<span id="ai-placeholder">${data.text.replace(/\n/g, '<br>')}</span>`;
-
             } catch (error) {
                 document.getElementById('ai-response-box').innerHTML = `<span id="ai-placeholder" class="text-red-400">Критична помилка: ${error.message}</span>`;
             } finally {
@@ -416,7 +348,7 @@
             const button = document.getElementById('music-toggle');
             if (music.paused) {
                 music.volume = 0.3;
-                music.play();
+                music.play().catch(e => console.error("Audio play failed:", e));
                 button.textContent = '🔊';
             } else {
                 music.pause();
@@ -425,11 +357,11 @@
         },
 
         displayMoonPhase() {
-            const phases = ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'];
+            const phases = {ua: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'], ru: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна']};
             const icons = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
             const day = new Date().getDate();
             const index = Math.floor((day % 30) / 3.75);
-            document.getElementById('moon-widget').innerHTML = `<div class="text-2xl">${icons[index]}</div><div>${this.translations[this.state.lang][`moon_${index}`] || phases[index]}</div>`;
+            document.getElementById('moon-widget').innerHTML = `<div class="text-2xl">${icons[index]}</div><div>${phases[this.state.lang][index]}</div>`;
         }
     };
 
