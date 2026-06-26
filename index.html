@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate-key="page_title">Таро AI Компаньйон v4.5</title>
+    <title data-translate-key="page_title">Таро AI Компаньйон v4.6</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -17,8 +17,9 @@
         }
         html, body { height: 100%; }
         body {
-            background-color: var(--bg-main);
-            background-image: radial-gradient(ellipse at top, var(--bg-surface), var(--bg-main) 70%);
+            /* ВИПРАВЛЕНО: Встановлено статичний градієнт */
+            background-color: #06020c;
+            background-image: radial-gradient(ellipse at top, #100a1f, #06020c 70%);
             color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif;
         }
 
@@ -130,7 +131,10 @@
                 hint_select_card_for: "👉 Оберіть карту для позиції:", hint_spread_filled: "✅ Розклад повністю заповнено!",
                 alert_spread_not_filled: "Будь ласка, заповніть усі позиції в розкладі.",
                 alert_card_already_in: (card) => `Карта "${card}" вже є в розкладі.`,
-                recommendation: "💡 Рекомендація:",
+                recommendation_love: "💡 Для стосунків найкраще підходить розклад 'Хрест'.",
+                recommendation_work: "💡 Аналізуємо перспективи та варіанти розвитку.",
+                recommendation_health: "💡 Для швидкої оцінки стану достатньо однієї карти.",
+                recommendation_destiny: "💡 Глибокий розклад 'Шлях' покаже ваш вектор.",
                 suit_major: "Ст. Аркани", suit_wands: "Жезли", suit_cups: "Кубки", suit_swords: "Мечі", suit_pentacles: "Пентаклі",
             },
             ru: {
@@ -149,26 +153,27 @@
                 hint_select_card_for: "👉 Выберите карту для позиции:", hint_spread_filled: "✅ Расклад полностью заполнен!",
                 alert_spread_not_filled: "Пожалуйста, заполните все позиции в раскладе.",
                 alert_card_already_in: (card) => `Карта "${card}" уже есть в раскладе.`,
-                recommendation: "💡 Рекомендация:",
+                recommendation_love: "💡 Для отношений лучше всего подходит расклад 'Крест'.",
+                recommendation_work: "💡 Анализируем перспективы и варианты развития.",
+                recommendation_health: "💡 Для быстрой оценки состояния достаточно одной карты.",
+                recommendation_destiny: "💡 Глубокий расклад 'Путь' покажет ваш вектор.",
                 suit_major: "Ст. Арканы", suit_wands: "Жезлы", suit_cups: "Кубки", suit_swords: "Мечи", suit_pentacles: "Пентакли",
             }
         },
         data: {
             spheres: [
-                { key: 'general', icon: '🪐', ua: 'Загальний аналіз', ru: 'Общий анализ', rec: ['three-cards', 'cross'] },
-                { key: 'love', icon: '❤️', ua: 'Стосунки', ru: 'Отношения', rec: ['cross', 'choice'] },
-                { key: 'career', icon: '💼', ua: 'Кар\'єра', ru: 'Карьера', rec: ['path', 'three-cards'] },
-                { key: 'finance', icon: '💰', ua: 'Фінанси', ru: 'Финансы', rec: ['three-cards'] },
-                { key: 'health', icon: '🌿', ua: 'Здоров\'я', ru: 'Здоровье', rec: ['three-cards'] },
-                { key: 'choice', icon: '🔀', ua: 'Складний вибір', ru: 'Сложный выбор', rec: ['choice'] },
-                { key: 'destiny', icon: '🌌', ua: 'Призначення', ru: 'Предназначение', rec: ['path'] },
-                { key: 'friends', icon: '👥', ua: 'Друзі/Колеги', ru: 'Друзья/Коллеги', rec: ['three-cards'] },
+                { key: 'love', icon: '❤️', ua: 'Кохання', ru: 'Любовь', rec: 'cross', rec_key: 'recommendation_love' },
+                { key: 'career', icon: '💼', ua: 'Кар\'єра', ru: 'Карьера', rec: 'three-cards', rec_key: 'recommendation_work' },
+                { key: 'finance', icon: '💰', ua: 'Фінанси', ru: 'Финансы', rec: 'three-cards', rec_key: 'recommendation_work' },
+                { key: 'health', icon: '🌿', ua: 'Здоров\'я', ru: 'Здоровье', rec: 'yes-no', rec_key: 'recommendation_health' },
+                { key: 'destiny', icon: '🌌', ua: 'Призначення', ru: 'Предназначение', rec: 'path', rec_key: 'recommendation_destiny' },
+                { key: 'general', icon: '🪐', ua: 'Загальний аналіз', ru: 'Общий анализ', rec: 'three-cards', rec_key: null },
             ],
             spreads: {
                 "yes-no": { cards: 1, ua: "Так/Ні", ru: "Да/Нет", positions: { ua: ["Відповідь"], ru: ["Ответ"] }, grid: `"pos1"` },
                 "three-cards": { cards: 3, ua: "Три Карти", ru: "Три Карты", positions: { ua: ["Минуле", "Теперішнє", "Майбутнє"], ru: ["Прошлое", "Настоящее", "Будущее"] }, grid: `"pos1 pos2 pos3"` },
                 "cross": { cards: 4, ua: "Хрест", ru: "Крест", positions: { ua: ["Суть", "Перешкода", "Порада", "Результат"], ru: ["Суть", "Препятствие", "Совет", "Результат"] }, grid: `". pos3 ." "pos2 pos1 pos4"` },
-                "choice": { cards: 5, ua: "Вибір", ru: "Выбор", positions: { ua: ["Суть вибору", "Варіант А", "Результат А", "Варіант Б", "Результат Б"], ru: ["Суть выбора", "Вариант А", "Результат А", "Вариант Б", "Результат Б"] }, grid: `". pos1 ." "pos2 pos3" "pos4 pos5"` },
+                "choice": { cards: 5, ua: "Вибір", ru: "Выбор", positions: { ua: ["Суть", "Варіант А", "Результат А", "Варіант Б", "Результат Б"], ru: ["Суть", "Вариант А", "Результат А", "Вариант Б", "Результат Б"] }, grid: `". pos1 ." "pos2 pos3" "pos4 pos5"` },
                 "path": { cards: 7, ua: "Шлях", ru: "Путь", positions: { ua: ["1", "2", "3", "4", "5", "6", "7"], ru: ["1", "2", "3", "4", "5", "6", "7"] }, grid: `"pos1 pos2 pos3 pos4 pos5 pos6 pos7"` }
             },
             cards: {
@@ -179,13 +184,12 @@
         },
         init() {
             this.addEventListeners();
+            this.renderAllDynamicContent();
             this.handleSelection('mode', 'mystical', false);
-            this.handleSelection('sphere', 'general', false);
+            this.handleSelection('sphere', this.data.spheres[0].key, true);
             this.handleSelection('target', 'self', false);
-            this.handleSelection('spread', 'three-cards', false);
             this.handleSelection('suit', 'major', false);
             this.displayMoonPhase();
-            this.renderAllDynamicContent();
         },
         renderAllDynamicContent() {
             this.applyLanguage();
@@ -220,9 +224,18 @@
             document.querySelectorAll(`[data-group="${group}"]`).forEach(btn => btn.classList.remove('active'));
             const button = document.querySelector(`[data-group="${group}"][data-key="${key}"]`);
             if (button) button.classList.add('active');
+
             switch (group) {
                 case 'mode': this.state.aiMode = key; document.body.classList.toggle('theme-psychologist', key === 'psychologist'); break;
-                case 'sphere': this.state.sphere = key; break;
+                case 'sphere':
+                    this.state.sphere = key;
+                    const sphereData = this.data.spheres.find(s => s.key === key);
+                    if (sphereData) {
+                        document.getElementById('recommendation-text').textContent = sphereData.rec_key ? this.translations[this.state.lang][sphereData.rec_key] : '';
+                        this.handleSelection('spread', sphereData.rec, true);
+                        return;
+                    }
+                    break;
                 case 'target': this.state.target = key; document.getElementById('other-person-input').classList.toggle('hidden', key === 'self'); break;
                 case 'spread': this.state.spreadKey = key; if (doUpdate) this.resetSpread(); break;
                 case 'suit': this.state.activeSuit = key; this.renderRankSelector(); break;
