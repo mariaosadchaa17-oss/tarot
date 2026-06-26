@@ -15,8 +15,8 @@
             --primary-glow-color: rgba(20, 184, 166, 0.4); --secondary-glow-color: rgba(20, 184, 166, 0.2);
             --text-gold: #6ee7b7; --text-purple: #2dd4bf;
         }
-        /* ВИПРАВЛЕНО: Жорстко задаємо темний фон */
-        body { background-color: #06020c; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
+        html, body { background-color: #06020c; }
+        body { color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
 
         @keyframes animateStars { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
         #stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; overflow: hidden; }
@@ -31,9 +31,8 @@
         .border-color { border-color: var(--border-color); transition: border-color 0.5s; }
         .bg-surface { background-color: var(--bg-surface); transition: background-color 0.5s; }
 
-        /* ВИПРАВЛЕНО: Стилі для кнопок, щоб текст вміщувався */
-        .control-card { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 55px; }
-        .control-card span { font-size: 0.75rem; line-height: 1.1; }
+        .control-card { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem 0.25rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px; }
+        .control-card span { font-size: 0.8rem; line-height: 1.2; word-break: break-word; }
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
 
@@ -149,10 +148,14 @@
         },
         data: {
             spheres: [
-                { key: 'general', icon: '🪐', rec: ['three-cards', 'cross'] }, { key: 'love', icon: '❤️', rec: ['cross', 'choice'] },
-                { key: 'career', icon: '💼', rec: ['path', 'three-cards'] }, { key: 'finance', icon: '💰', rec: ['three-cards'] },
-                { key: 'health', icon: '🌿', rec: ['three-cards'] }, { key: 'choice', icon: '🔀', rec: ['choice'] },
-                { key: 'destiny', icon: '🌌', rec: ['path'] }, { key: 'friends', icon: '👥', rec: ['three-cards'] },
+                { key: 'general', icon: '🪐', ua: 'Загальний аналіз', ru: 'Общий анализ', rec: ['three-cards', 'cross'] },
+                { key: 'love', icon: '❤️', ua: 'Стосунки', ru: 'Отношения', rec: ['cross', 'choice'] },
+                { key: 'career', icon: '💼', ua: 'Кар\'єра', ru: 'Карьера', rec: ['path', 'three-cards'] },
+                { key: 'finance', icon: '💰', ua: 'Фінанси', ru: 'Финансы', rec: ['three-cards'] },
+                { key: 'health', icon: '🌿', ua: 'Здоров\'я', ru: 'Здоровье', rec: ['three-cards'] },
+                { key: 'choice', icon: '🔀', ua: 'Складний вибір', ru: 'Сложный выбор', rec: ['choice'] },
+                { key: 'destiny', icon: '🌌', ua: 'Призначення', ru: 'Предназначение', rec: ['path'] },
+                { key: 'friends', icon: '👥', ua: 'Друзі/Колеги', ru: 'Друзья/Коллеги', rec: ['three-cards'] },
             ],
             spreads: {
                 "yes-no": { cards: 1, positions: { ua: ["Відповідь"], ru: ["Ответ"] }, grid: `"pos1"` },
@@ -168,7 +171,6 @@
             }
         },
         init() {
-            this.renderAllSelectors();
             this.addEventListeners();
             this.handleSelection('mode', 'mystical', false);
             this.handleSelection('sphere', 'general', false);
@@ -176,21 +178,27 @@
             this.handleSelection('spread', 'three-cards', false);
             this.handleSelection('suit', 'major', false);
             this.displayMoonPhase();
+            this.renderAllDynamicContent();
+        },
+        renderAllDynamicContent() {
             this.applyLanguage();
+            this.renderAllSelectors();
             this.updateUI();
         },
         renderAllSelectors() {
-            const createButtons = (containerId, data, group) => {
+            const createButtons = (containerId, data, group, nameKey) => {
                 const container = document.getElementById(containerId);
-                container.innerHTML = data.map(item => `<button class="control-card" data-group="${group}" data-key="${item.key}">${item.icon || ''} <span data-translate-key="${item.key}">${this.translations[this.state.lang][item.key] || item.key}</span></button>`).join('');
+                container.innerHTML = data.map(item => `<button class="control-card" data-group="${group}" data-key="${item.key}">${item.icon || ''} <span>${item[nameKey]}</span></button>`).join('');
             };
-            createButtons('mode-selector', [{key: 'mystical', icon: '🔮'}, {key: 'psychologist', icon: '🧠'}], 'mode');
-            createButtons('sphere-selector', this.data.spheres, 'sphere');
-            createButtons('target-selector', [{key: 'self'}, {key: 'other'}], 'target');
-            createButtons('spread-selector', Object.keys(this.data.spreads).map(key => ({ key, name: `${this.data.spreads[key].positions[this.state.lang][0]} (${this.data.spreads[key].cards})` })), 'spread');
+            createButtons('mode-selector', [{key: 'mystical', icon: '🔮', ua: this.translations.ua.mode_mystical, ru: this.translations.ru.mode_mystical}, {key: 'psychologist', icon: '🧠', ua: this.translations.ua.mode_psychologist, ru: this.translations.ru.mode_psychologist}], 'mode', this.state.lang);
+            createButtons('sphere-selector', this.data.spheres, 'sphere', this.state.lang);
+            createButtons('target-selector', [{key: 'self', ua: this.translations.ua.target_self, ru: this.translations.ru.target_self}, {key: 'other', ua: this.translations.ua.target_other, ru: this.translations.ru.target_other}], 'target', this.state.lang);
 
-            const suitContainer = document.getElementById('suit-selector');
-            suitContainer.innerHTML = ['major', 'wands', 'cups', 'swords', 'pentacles'].map(s => `<button class="control-card" data-group="suit" data-key="${s}"><span data-translate-key="suit_${s}"></span></button>`).join('');
+            const spreadData = Object.keys(this.data.spreads).map(key => ({ key, name: `${this.data.spreads[key].positions[this.state.lang][0]} (${this.data.spreads[key].cards})` }));
+            document.getElementById('spread-selector').innerHTML = spreadData.map(item => `<button class="control-card" data-group="spread" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
+
+            const suitData = ['major', 'wands', 'cups', 'swords', 'pentacles'].map(s => ({key: s, name: this.translations[this.state.lang][`suit_${s}`]}));
+            document.getElementById('suit-selector').innerHTML = suitData.map(item => `<button class="control-card" data-group="suit" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
         },
         addEventListeners() {
             document.getElementById('lang-toggle').addEventListener('click', () => this.toggleLanguage());
@@ -216,7 +224,7 @@
         },
         renderRankSelector() {
             const ranks = this.state.activeSuit === 'major' ? this.data.cards.major : this.data.cards.minor;
-            document.getElementById('rank-selector').innerHTML = ranks.map(rank => `<button class="control-card text-xs" onclick="App.addCard('${this.state.activeSuit}', '${rank}')">${rank}</button>`).join('');
+            document.getElementById('rank-selector').innerHTML = ranks.map(rank => `<button class="control-card text-xs" onclick="App.addCard('${this.state.activeSuit}', '${rank}')"><span>${rank}</span></button>`).join('');
         },
         addCard(suit, rank) {
             const schema = this.data.spreads[this.state.spreadKey];
@@ -277,31 +285,12 @@
             this.state.lang = this.state.lang === 'ua' ? 'ru' : 'ua';
             document.documentElement.lang = this.state.lang;
             document.getElementById('lang-pill').style.transform = this.state.lang === 'ua' ? 'translateX(0px)' : 'translateX(20px)';
-            this.applyLanguage();
-            this.renderAllSelectors();
-            this.updateUI();
+            this.renderAllDynamicContent();
         },
         applyLanguage() {
             document.querySelectorAll('[data-translate-key]').forEach(el => {
                 const key = el.dataset.translateKey;
-                const translation = this.translations[this.state.lang][key];
-                if (translation) {
-                    if (typeof translation === 'function') {
-                        // This part is for dynamic keys if needed in future
-                    } else {
-                        el.textContent = translation;
-                    }
-                }
-            });
-             // Manually update dynamic buttons
-            this.data.spheres.forEach(item => {
-                const btn = document.querySelector(`[data-group="sphere"][data-key="${item.key}"]`);
-                if(btn) btn.querySelector('span').textContent = item[this.state.lang];
-            });
-             Object.keys(this.data.spreads).forEach(key => {
-                const spread = this.data.spreads[key];
-                const btn = document.querySelector(`[data-group="spread"][data-key="${key}"]`);
-                if(btn) btn.querySelector('span').textContent = `${spread.positions[this.state.lang][0]} (${spread.cards})`;
+                if (this.translations[this.state.lang][key]) el.textContent = this.translations[this.state.lang][key];
             });
         },
         async getSpreadInterpretation() {
