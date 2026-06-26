@@ -7,15 +7,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --bg-main: #06020c; --bg-surface: #100a1f; --border-color: #342956;
-            --primary-glow-color: rgba(157, 78, 223, 0.4); --secondary-glow-color: rgba(157, 78, 223, 0.2);
-            --text-gold: #f3c66f; --text-purple: #9d4edf;
+            --bg-main: #0b192f; /* Deep blue */
+            --bg-surface: #172a45; /* Lighter slate blue */
+            --border-color: #3a506b; /* Bluish border */
+            --primary-glow-color: rgba(100, 181, 246, 0.4); /* Blue glow */
+            --secondary-glow-color: rgba(100, 181, 246, 0.2); /* Blue glow */
+            --text-gold: #f3c66f;
+            --text-purple: #87CEEB; /* Sky Blue */
         }
         body.theme-psychologist {
             --primary-glow-color: rgba(20, 184, 166, 0.4); --secondary-glow-color: rgba(20, 184, 166, 0.2);
             --text-gold: #6ee7b7; --text-purple: #2dd4bf;
         }
-        /* ВИПРАВЛЕНО: Додано градієнт на фон */
         html, body { height: 100%; }
         body {
             background-color: var(--bg-main);
@@ -41,14 +44,13 @@
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
 
-        /* ВИПРАВЛЕНО: Збільшено кнопки конструктора */
         #suit-selector .control-card, #rank-selector .control-card { min-height: 40px; padding: 0.25rem; }
         #suit-selector .control-card span, #rank-selector .control-card span { font-size: 0.85rem; }
 
         .schema-container { display: grid; gap: 10px; padding: 10px; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 200px; }
         .schema-slot { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: all 0.2s; min-height: 100px; cursor: pointer; }
         .schema-slot.active { border-color: var(--text-gold); transform: scale(1.03); box-shadow: 0 0 15px var(--primary-glow-color); }
-        .schema-slot.filled { background-color: rgba(157, 78, 223, 0.1); border-color: var(--text-purple); }
+        .schema-slot.filled { background-color: rgba(135, 206, 235, 0.1); border-color: var(--text-purple); }
         .slot-number { font-size: 1.5rem; font-weight: 700; color: rgba(255,255,255,0.1); }
         .slot-position-name { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-purple); }
         .slot-card-name { font-size: 0.9rem; font-weight: 600; margin-top: 4px; }
@@ -65,7 +67,7 @@
             <div class="flex justify-between items-center w-full mb-4">
                 <div id="moon-widget" class="text-left text-xs"></div>
                 <div class="flex items-center gap-4">
-                    <div id="lang-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">RU</span><div class="w-10 h-5 bg-mystic-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="lang-pill" class="w-4 h-4 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">UA</span></div>
+                    <div id="lang-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">RU</span><div class="w-10 h-5 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="lang-pill" class="w-4 h-4 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">UA</span></div>
                     <button id="music-toggle" class="text-2xl">🔇</button>
                 </div>
             </div>
@@ -80,27 +82,28 @@
                 </div>
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                     <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_context_spread"></h2>
-                    <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_target"></label><div id="target-selector" class="grid grid-cols-2 gap-2"></div><input type="text" id="other-person-input" class="hidden w-full bg-mystic-900 border border-color rounded-xl p-2 text-sm mt-2" data-translate-key="placeholder_other_person"></div>
+                    <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_target"></label><div id="target-selector" class="grid grid-cols-2 gap-2"></div><input type="text" id="other-person-input" class="hidden w-full bg-gray-800 border border-color rounded-xl p-2 text-sm mt-2" data-translate-key="placeholder_other_person"></div>
                     <div><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_spread_type"></label><div id="spread-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div></div>
                 </div>
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                     <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_constructor"></h2>
-                    <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-color"></p>
+                    <p id="current-position-hint" class="text-sm text-center mb-4 bg-gray-800/80 p-2 rounded-lg border border-color"></p>
                     <div class="grid grid-cols-12 gap-4 mb-2">
                         <div id="suit-selector" class="col-span-4 grid grid-cols-1 gap-1"></div>
                         <div id="rank-selector" class="col-span-8 grid grid-cols-4 sm:grid-cols-5 gap-1"></div>
                     </div>
                 </div>
             </div>
-            <div class="lg:col-span-5 space-y-6">
+            <div id="interactive-right-column" class="lg:col-span-5 space-y-6 hidden">
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                     <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold text-gold" data-translate-key="section_title_schema"></h2><button onclick="App.resetSpread()" class="text-xs text-red-400 hover:text-red-300 transition">🗑 <span data-translate-key="btn_reset"></span></button></div>
                     <div id="spread-schema-container" class="schema-container"></div>
                 </div>
                 <div id="ai-response-container" class="bg-surface p-5 rounded-2xl border border-purple-500/30 shadow-2xl neon-glow">
                     <h2 class="text-lg font-semibold text-gold mb-3" data-translate-key="section_title_interpretation"></h2>
-                    <button onclick="App.getSpreadInterpretation()" id="ai-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:brightness-110 transition uppercase tracking-wider text-sm mb-3" data-translate-key="btn_get_interpretation"></button>
-                    <div id="ai-response-box" class="text-base bg-mystic-900 p-4 rounded-xl border border-color min-h-[200px] max-h-[60vh] overflow-y-auto flex justify-center items-center"><span id="ai-placeholder" data-translate-key="placeholder_ai_response"></span></div>
+                    <textarea id="question" class="w-full bg-gray-800 border border-color rounded-xl p-3 text-sm mb-3" rows="3" data-translate-key="placeholder_question"></textarea>
+                    <button onclick="App.getSpreadInterpretation()" id="ai-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-xl hover:brightness-110 transition uppercase tracking-wider text-sm mb-3" data-translate-key="btn_get_interpretation"></button>
+                    <div id="ai-response-box" class="text-base bg-gray-800 p-4 rounded-xl border border-color min-h-[200px] max-h-[60vh] overflow-y-auto flex justify-center items-center"><span id="ai-placeholder" data-translate-key="placeholder_ai_response"></span></div>
                 </div>
             </div>
         </div>
@@ -113,7 +116,7 @@
     const App = {
         state: {
             lang: 'ua', aiMode: 'mystical', sphere: 'general', target: 'self',
-            spreadKey: 'three-cards', activeSuit: 'major', selectedCards: {}, activePositionIndex: 0,
+            spreadKey: null, activeSuit: 'major', selectedCards: {}, activePositionIndex: 0,
         },
         translations: {
             ua: {
@@ -129,6 +132,7 @@
                 section_title_schema: "🌙 4. Схема розкладу", btn_reset: "Скинути",
                 section_title_interpretation: "✨ 5. Тлумачення від ШІ", btn_get_interpretation: "Отримати тлумачення",
                 placeholder_ai_response: "Оберіть дію...",
+                placeholder_question: "Ваше питання до карт...",
                 hint_select_card_for: "👉 Оберіть карту для позиції:", hint_spread_filled: "✅ Розклад повністю заповнено!",
                 alert_spread_not_filled: "Будь ласка, заповніть усі позиції в розкладі.",
                 alert_card_already_in: (card) => `Карта "${card}" вже є в розкладі.`,
@@ -148,6 +152,7 @@
                 section_title_schema: "🌙 4. Схема расклада", btn_reset: "Сбросить",
                 section_title_interpretation: "✨ 5. Толкование от ИИ", btn_get_interpretation: "Получить толкование",
                 placeholder_ai_response: "Выберите действие...",
+                placeholder_question: "Ваш вопрос картам...",
                 hint_select_card_for: "👉 Выберите карту для позиции:", hint_spread_filled: "✅ Расклад полностью заполнен!",
                 alert_spread_not_filled: "Пожалуйста, заполните все позиции в раскладе.",
                 alert_card_already_in: (card) => `Карта "${card}" уже есть в раскладе.`,
@@ -184,8 +189,9 @@
             this.handleSelection('mode', 'mystical', false);
             this.handleSelection('sphere', 'general', false);
             this.handleSelection('target', 'self', false);
-            this.handleSelection('spread', 'three-cards', false);
             this.handleSelection('suit', 'major', false);
+            // A spread is not selected by default anymore
+            // this.handleSelection('spread', 'three-cards', false);
             this.displayMoonPhase();
             this.renderAllDynamicContent();
         },
@@ -211,6 +217,7 @@
         },
         addEventListeners() {
             document.getElementById('lang-toggle').addEventListener('click', () => this.toggleLanguage());
+            document.getElementById('music-toggle').addEventListener('click', () => this.toggleMusic());
             ['mode-selector', 'sphere-selector', 'target-selector', 'spread-selector', 'suit-selector'].forEach(id => {
                 document.getElementById(id).addEventListener('click', e => {
                     const button = e.target.closest('button');
@@ -222,14 +229,24 @@
             document.querySelectorAll(`[data-group="${group}"]`).forEach(btn => btn.classList.remove('active'));
             const button = document.querySelector(`[data-group="${group}"][data-key="${key}"]`);
             if (button) button.classList.add('active');
+
             switch (group) {
                 case 'mode': this.state.aiMode = key; document.body.classList.toggle('theme-psychologist', key === 'psychologist'); break;
                 case 'sphere': this.state.sphere = key; break;
                 case 'target': this.state.target = key; document.getElementById('other-person-input').classList.toggle('hidden', key === 'self'); break;
-                case 'spread': this.state.spreadKey = key; if (doUpdate) this.resetSpread(); break;
-                case 'suit': this.state.activeSuit = key; this.renderRankSelector(); break;
+                case 'spread':
+                    this.state.spreadKey = key;
+                    if (doUpdate) {
+                        this.resetSpread();
+                        document.getElementById('interactive-right-column').classList.remove('hidden');
+                    }
+                    break;
+                case 'suit':
+                    this.state.activeSuit = key;
+                    if (this.state.spreadKey) this.renderRankSelector();
+                    break;
             }
-            if (doUpdate) this.updateUI();
+            if (doUpdate && this.state.spreadKey) this.updateUI();
         },
         renderRankSelector() {
             const ranks = this.state.activeSuit === 'major' ? this.data.cards.major : this.data.cards.minor;
@@ -237,7 +254,7 @@
         },
         addCard(suit, rank) {
             const schema = this.data.spreads[this.state.spreadKey];
-            if (this.state.activePositionIndex >= schema.cards) return;
+            if (!schema || this.state.activePositionIndex >= schema.cards) return;
             let cardName = suit === 'major' ? rank : `${rank} ${this.data.cards.suits[this.state.lang][suit]}`;
             if (Object.values(this.state.selectedCards).some(c => c.name === cardName)) {
                 alert(this.translations[this.state.lang].alert_card_already_in(cardName));
@@ -251,16 +268,20 @@
         },
         resetSpread() {
             this.state.selectedCards = {}; this.state.activePositionIndex = 0;
-            document.getElementById('question').value = '';
+            const questionInput = document.getElementById('question');
+            if(questionInput) questionInput.value = '';
             this.updateUI();
         },
         updateUI() {
+            if (!this.state.spreadKey) return;
             this.renderSchema();
             this.updateHint();
+            this.applyLanguageToPlaceholders();
         },
         renderSchema() {
             const schema = this.data.spreads[this.state.spreadKey];
             const container = document.getElementById('spread-schema-container');
+            if (!container || !schema) return;
             container.innerHTML = '';
             container.style.gridTemplateAreas = schema.grid;
             const columns = schema.grid.match(/"(.*?)"/)[1].trim().split(/\s+/).length;
@@ -284,6 +305,7 @@
         updateHint() {
             const schema = this.data.spreads[this.state.spreadKey];
             const hint = document.getElementById('current-position-hint');
+            if (!schema) return;
             if (this.state.activePositionIndex < schema.cards) {
                 hint.innerHTML = `${this.translations[this.state.lang].hint_select_card_for} <strong class="text-gold">"${schema.positions[this.state.lang][this.state.activePositionIndex]}"</strong>`;
             } else {
@@ -295,16 +317,31 @@
             document.documentElement.lang = this.state.lang;
             document.getElementById('lang-pill').style.transform = this.state.lang === 'ua' ? 'translateX(0px)' : 'translateX(20px)';
             this.renderAllDynamicContent();
+            this.displayMoonPhase();
         },
         applyLanguage() {
             document.querySelectorAll('[data-translate-key]').forEach(el => {
                 const key = el.dataset.translateKey;
-                if (this.translations[this.state.lang][key]) el.textContent = this.translations[this.state.lang][key];
+                const translation = this.translations[this.state.lang][key];
+                if (translation && el.tagName !== 'TEXTAREA' && el.tagName !== 'INPUT') {
+                    el.textContent = translation;
+                }
             });
+            this.applyLanguageToPlaceholders();
+        },
+        applyLanguageToPlaceholders() {
+             const questionInput = document.getElementById('question');
+             if (questionInput) {
+                questionInput.placeholder = this.translations[this.state.lang].placeholder_question;
+             }
+             const otherPersonInput = document.getElementById('other-person-input');
+             if (otherPersonInput) {
+                otherPersonInput.placeholder = this.translations[this.state.lang].placeholder_other_person;
+             }
         },
         async getSpreadInterpretation() {
             const schema = this.data.spreads[this.state.spreadKey];
-            if (Object.keys(this.state.selectedCards).length < schema.cards) {
+            if (!schema || Object.keys(this.state.selectedCards).length < schema.cards) {
                 alert(this.translations[this.state.lang].alert_spread_not_filled);
                 return;
             }
@@ -349,7 +386,8 @@
             const icons = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
             const day = new Date().getDate();
             const index = Math.floor((day % 30) / 3.75);
-            document.getElementById('moon-widget').innerHTML = `<div class="text-2xl">${icons[index]}</div><div>${phases[this.state.lang][index]}</div>`;
+            const lang = this.state.lang || 'ua';
+            document.getElementById('moon-widget').innerHTML = `<div class="text-2xl">${icons[index]}</div><div>${phases[lang][index]}</div>`;
         }
     };
     document.addEventListener('DOMContentLoaded', () => App.init());
