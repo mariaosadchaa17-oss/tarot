@@ -18,7 +18,18 @@ async function fetchFromGemini(payload, modelName, apiKey) {
     return await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
 }
 
-export async function POST(request) {
+export default async function handler(request, response) {
+    if (request.method !== 'POST') {
+        return response.status(405).json({ error: 'Method not allowed' });
+    }
+
+    const req = { json: async () => request.body };
+    const res = await POST(req);
+    const data = await res.json();
+    return response.status(res.status).json(data);
+}
+
+async function POST(request) {
     try {
         const requestData = await request.json();
         const lang = requestData.lang === 'ru' ? 'ru' : 'ua';
@@ -30,7 +41,7 @@ export async function POST(request) {
             userPrompt = `Карта дня: [${randomCard}]. Дай містичну мікро-пораду.`;
         } else if (requestData.type === 'spread') {
             const { mode, theme, spreadType, question, cards, positions, targetPerson } = requestData;
-            if (!cards || Object.keys(cards).length === 0) return new Response(JSON.stringify({ error: 'Не обрано жодної карти.' }), { status: 400 });
+            if (!cards || Object.keys(cards).length === 0) return { json: async () => ({ error: 'Не обрано жодної карти.' }), status: 400, ok: false };
 
             systemPrompt = SYSTEM_PROMPTS[lang][mode] || SYSTEM_PROMPTS[lang].psychologist;
             if (positions.length > 1) {
@@ -46,14 +57,14 @@ export async function POST(request) {
                 if (card) userPrompt += `- ${pos}: ${card.name} (${card.isInverted ? "Перевернута" : "Пряма"})\n`;
             });
         } else {
-            return new Response(JSON.stringify({ error: 'Невірний тип запиту.' }), { status: 400 });
+            return { json: async () => ({ error: 'Невірний тип запиту.' }), status: 400, ok: false };
         }
 
         const fullPrompt = `${systemPrompt}\n\n--- ЗАВДАННЯ ---\n${userPrompt}`;
         const payload = { contents: [{ parts: [{ text: fullPrompt }] }] };
 
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-        if (!GEMINI_API_KEY) return new Response(JSON.stringify({ error: 'API-ключ не налаштовано.' }), { status: 500 });
+        if (!GEMINI_API_KEY) return { json: async () => ({ error: 'API-ключ не налаштовано.' }), status: 500, ok: false };
 
         const primaryModel = 'gemini-3.5-flash';
         const fallbackModel = 'gemini-2.5-flash';
@@ -65,18 +76,18 @@ export async function POST(request) {
 
         if (!geminiResponse.ok) {
             const errorBody = await geminiResponse.text();
-            return new Response(JSON.stringify({ error: `Помилка від API Google: ${errorBody}` }), { status: geminiResponse.status });
+            return { json: async () => ({ error: `Помилка від API Google: ${errorBody}` }), status: geminiResponse.status, ok: false };
         }
 
         const geminiData = await geminiResponse.json();
         if (!geminiData.candidates?.[0]?.content?.parts?.[0]?.text) {
-             return new Response(JSON.stringify({ error: 'ШІ повернув порожню відповідь.' }), { status: 500 });
+             return { json: async () => ({ error: 'ШІ повернув порожню відповідь.' }), status: 500, ok: false };
         }
 
         const responseText = geminiData.candidates[0].content.parts[0].text;
-        return new Response(JSON.stringify({ text: responseText }), { status: 200 });
+        return { json: async () => ({ text: responseText }), status: 200, ok: true };
 
     } catch (error) {
-        return new Response(JSON.stringify({ error: 'Внутрішня помилка сервера: ' + error.message }), { status: 500 });
+        return { json: async () => ({ error: 'Внутрішня помилка сервера: ' + error.message }), status: 500, ok: false };
     }
 }
