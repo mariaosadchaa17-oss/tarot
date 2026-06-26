@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate-key="page_title">Таро AI Компаньйон v4.6</title>
+    <title data-translate-key="page_title">Таро AI Компаньйон v4.7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -17,18 +17,10 @@
         }
         html, body { height: 100%; }
         body {
-            /* ВИПРАВЛЕНО: Встановлено статичний градієнт */
             background-color: #06020c;
             background-image: radial-gradient(ellipse at top, #100a1f, #06020c 70%);
             color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif;
         }
-
-        @keyframes animateStars { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
-        #stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; overflow: hidden; }
-        .stars { position: absolute; top: 0; left: 0; width: 100%; height: 2000px; background: transparent; }
-        .stars:after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(1px 1px at 50px 100px, white, white), radial-gradient(1px 1px at 150px 250px, white, white), radial-gradient(2px 2px at 250px 400px, white, white), radial-gradient(1px 1px at 350px 550px, white, white), radial-gradient(2px 2px at 450px 700px, white, white), radial-gradient(1px 1px at 550px 850px, white, white); }
-        #stars1 { animation: animateStars 150s linear infinite; }
-        #stars2 { animation: animateStars 100s linear infinite; transform: translateY(-2000px); }
 
         .neon-glow { box-shadow: 0 0 8px var(--primary-glow-color), 0 0 20px var(--secondary-glow-color); transition: box-shadow 0.5s; }
         .text-gold { color: var(--text-gold); transition: color 0.5s; }
@@ -41,8 +33,7 @@
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
 
-        #suit-selector .control-card, #rank-selector .control-card { min-height: 48px; padding: 0.5rem; }
-        #suit-selector .control-card span, #rank-selector .control-card span { font-size: 0.9rem; }
+        .constructor-btn { white-space: nowrap; padding: 0.5rem 1rem; }
 
         .schema-container { display: grid; gap: 10px; padding: 10px; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 220px; }
         .schema-slot { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: all 0.2s; min-height: 100px; cursor: pointer; }
@@ -58,7 +49,6 @@
     </style>
 </head>
 <body class="p-3 md:p-8 min-h-screen">
-    <div id="stars-container"><div id="stars1" class="stars"></div><div id="stars2" class="stars"></div></div>
     <div class="max-w-7xl mx-auto">
         <header class="text-center mb-8 border-b pb-5 border-color">
             <div class="flex justify-between items-center w-full mb-4">
@@ -85,9 +75,9 @@
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                     <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_constructor"></h2>
                     <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-color"></p>
-                    <div class="grid grid-cols-12 gap-4 mb-2">
-                        <div id="suit-selector" class="col-span-4 grid grid-cols-1 gap-2"></div>
-                        <div id="rank-selector" class="col-span-8 grid grid-cols-4 sm:grid-cols-5 gap-2"></div>
+                    <div class="space-y-3">
+                        <div id="suit-selector" class="flex flex-wrap gap-2"></div>
+                        <div id="rank-selector" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
             </div>
@@ -209,7 +199,7 @@
             document.getElementById('spread-selector').innerHTML = spreadData.map(item => `<button class="control-card" data-group="spread" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
 
             const suitData = ['major', 'wands', 'cups', 'swords', 'pentacles'].map(s => ({key: s, name: this.translations[this.state.lang][`suit_${s}`]}));
-            document.getElementById('suit-selector').innerHTML = suitData.map(item => `<button class="control-card" data-group="suit" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
+            document.getElementById('suit-selector').innerHTML = suitData.map(item => `<button class="control-card constructor-btn" data-group="suit" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
         },
         addEventListeners() {
             document.getElementById('lang-toggle').addEventListener('click', () => this.toggleLanguage());
@@ -236,7 +226,7 @@
                         return;
                     }
                     break;
-                case 'target': this.state.target = key; document.getElementById('other-person-input').classList.toggle('hidden', key === 'self'); break;
+                case 'target': this.state.target = key; document.getElementById('other-person-input').classList.toggle('hidden', key === 'self'); if(doUpdate) this.resetSpread(); break;
                 case 'spread': this.state.spreadKey = key; if (doUpdate) this.resetSpread(); break;
                 case 'suit': this.state.activeSuit = key; this.renderRankSelector(); break;
             }
@@ -244,7 +234,7 @@
         },
         renderRankSelector() {
             const ranks = this.state.activeSuit === 'major' ? this.data.cards.major : this.data.cards.minor;
-            document.getElementById('rank-selector').innerHTML = ranks.map(rank => `<button class="control-card text-xs" onclick="App.addCard('${this.state.activeSuit}', '${rank}')"><span>${rank}</span></button>`).join('');
+            document.getElementById('rank-selector').innerHTML = ranks.map(rank => `<button class="control-card constructor-btn text-xs" onclick="App.addCard('${this.state.activeSuit}', '${rank}')"><span>${rank}</span></button>`).join('');
         },
         addCard(suit, rank) {
             const schema = this.data.spreads[this.state.spreadKey];
