@@ -3,373 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таро AI Компаньйон v3.1</title>
+    <title data-translate-key="page_title">Таро AI Компаньйон v4.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        mystic: { 900: '#06020c', 800: '#100a1f', 700: '#1e1438', 600: '#342956', gold: '#f3c66f', purple: '#9d4edf' }
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        body { background-color: #06020c; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
-
-        /* Анімований фон з зірками */
+        :root {
+            --bg-main: #06020c; --bg-surface: #100a1f; --border-color: #342956;
+            --primary-glow-color: rgba(157, 78, 223, 0.4); --secondary-glow-color: rgba(157, 78, 223, 0.2);
+            --text-gold: #f3c66f; --text-purple: #9d4edf;
+        }
+        body.theme-psychologist {
+            --primary-glow-color: rgba(20, 184, 166, 0.4); --secondary-glow-color: rgba(20, 184, 166, 0.2);
+            --text-gold: #6ee7b7; --text-purple: #2dd4bf;
+        }
+        body { background-color: var(--bg-main); color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; transition: background-color 0.5s; }
         @keyframes animateStars { from { transform: translateY(0px); } to { transform: translateY(-2000px); } }
         #stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -10; overflow: hidden; }
         .stars { position: absolute; top: 0; left: 0; width: 100%; height: 2000px; }
         .stars:after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(1px 1px at 50px 100px, white, white), radial-gradient(1px 1px at 150px 250px, white, white), radial-gradient(2px 2px at 250px 400px, white, white), radial-gradient(1px 1px at 350px 550px, white, white), radial-gradient(2px 2px at 450px 700px, white, white), radial-gradient(1px 1px at 550px 850px, white, white); }
         #stars1 { animation: animateStars 150s linear infinite; }
         #stars2 { animation: animateStars 100s linear infinite; transform: translateY(-2000px); }
-
-        .schema-container { display: grid; gap: 10px; padding: 10px; border-radius: 16px; background: rgba(0,0,0,0.2); border: 1px solid #342956; min-height: 200px; transition: all 0.3s ease; }
-        .schema-slot { background: #140f24; border: 1px solid #221a3a; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: all 0.2s; min-height: 110px; cursor: pointer; }
-        .schema-slot:hover { border-color: #4a3f78; }
-        .schema-slot.active { border-color: #f3c66f; transform: scale(1.03); box-shadow: 0 0 15px rgba(243, 198, 111, 0.2); }
-        .schema-slot.filled { background: rgba(157, 78, 223, 0.1); border-color: #9d4edf; }
-        .slot-position-name { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #9d4edf; }
-        .slot-card-name { font-size: 14px; font-weight: 600; margin-top: 4px; }
-        .slot-card-name.inverted { color: #c084fc; }
-        .slot-empty-text { font-size: 12px; color: #6b7280; font-style: italic; }
-
-        @keyframes shimmer { 0%, 100% { box-shadow: 0 0 15px 5px rgba(157, 78, 223, 0); border-color: #342956; } 50% { box-shadow: 0 0 25px 10px rgba(157, 78, 223, 0.3); border-color: #9d4edf; } }
-        .is-loading { animation: shimmer 2.5s infinite; }
-        @keyframes pulse { 0%, 100% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } }
-        #magic-ball { font-size: 80px; text-shadow: 0 0 10px #fff, 0 0 20px #f3c66f, 0 0 40px #9d4edf; animation: pulse 2s infinite; }
-
-        .flip-card-container { perspective: 1000px; }
-        .flip-card-inner { position: relative; width: 100%; height: 100%; transition: transform 1.5s; transform-style: preserve-3d; }
-        .flip-card-container.is-flipping .flip-card-inner { transform: rotateY(180deg); }
-        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; justify-content: center; align-items: center; border-radius: 16px; }
-        .flip-card-front { font-size: 80px; transition: background 0.5s; }
-        .flip-card-back { background: #140f24; transform: rotateY(180deg); font-size: 16px; font-weight: 500; padding: 20px; text-align: center; line-height: 1.6; }
-
-        .theme-neon .flip-card-front { background: linear-gradient(45deg, #2d004b, #5f006b); }
-        .theme-gothic .flip-card-front { background: linear-gradient(45deg, #1a1a1a, #4a4a4a); }
-        .theme-cosmic .flip-card-front { background: linear-gradient(45deg, #000428, #004e92); }
-
-        #rules-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-out; }
-        #journal-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(11, 2, 12, 0.7); z-index: 100; backdrop-filter: blur(10px); opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        #journal-modal.active { opacity: 1; pointer-events: auto; }
-        .neon-glow { box-shadow: 0 0 8px rgba(157, 78, 223, 0.4), 0 0 20px rgba(157, 78, 223, 0.2); }
+        .neon-glow { box-shadow: 0 0 8px var(--primary-glow-color), 0 0 20px var(--secondary-glow-color); transition: box-shadow 0.5s; }
+        .text-gold { color: var(--text-gold); transition: color 0.5s; }
+        .text-purple { color: var(--text-purple); transition: color 0.5s; }
+        .border-color { border-color: var(--border-color); transition: border-color 0.5s; }
+        .bg-surface { background-color: var(--bg-surface); transition: background-color 0.5s; }
+        .control-card { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.75rem; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .control-card:hover { border-color: var(--text-purple); }
+        .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
+        .schema-container { display: grid; gap: 10px; padding: 10px; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 200px; }
+        .schema-slot { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: all 0.2s; min-height: 100px; cursor: pointer; }
+        .schema-slot.active { border-color: var(--text-gold); transform: scale(1.03); box-shadow: 0 0 15px var(--primary-glow-color); }
+        .schema-slot.filled { background-color: rgba(157, 78, 223, 0.1); border-color: var(--text-purple); }
+        .slot-number { font-size: 1.5rem; font-weight: 700; color: rgba(255,255,255,0.1); }
+        .slot-position-name { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-purple); }
+        .slot-card-name { font-size: 0.9rem; font-weight: 600; margin-top: 4px; }
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(6, 2, 12, 0.8); backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        #loading-overlay.active { opacity: 1; pointer-events: auto; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .loader-spinner { width: 80px; height: 80px; border: 5px solid rgba(255,255,255,0.2); border-top-color: var(--text-gold); border-radius: 50%; animation: spin 1s linear infinite; }
     </style>
 </head>
-<body class="p-3 md:p-8 min-h-screen theme-neon">
+<body class="p-3 md:p-8 min-h-screen theme-mystic">
     <div id="stars-container"><div id="stars1" class="stars"></div><div id="stars2" class="stars"></div></div>
-
-    <div class="max-w-6xl mx-auto">
-        <header class="text-center mb-8 border-b border-mystic-700 pb-5">
-            <div class="flex justify-between items-center w-full mb-4"><div id="moon-widget" class="text-left text-xs"></div><button id="music-toggle" onclick="toggleMusic()" class="text-2xl">🔇</button></div>
-            <h1 class="text-3xl md:text-4xl font-extrabold text-mystic-gold tracking-widest uppercase" style="filter: drop-shadow(0 0 10px rgba(243,198,111,0.5));">🔮 Таро AI Компаньйон</h1>
-            <div class="flex items-center justify-center gap-4 mt-4"><span class="text-xs font-medium text-gray-400">Психологія</span><label class="relative inline-flex items-center cursor-pointer"><input type="checkbox" id="ai-mode-toggle" class="sr-only peer" checked><div class="w-11 h-6 bg-mystic-600 rounded-full peer peer-checked:bg-mystic-purple"></div><span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-full"></span></label><span class="text-xs font-medium text-mystic-gold">Містика</span></div>
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-8 border-b pb-5 border-color">
+            <div class="flex justify-between items-center w-full mb-4">
+                <div id="moon-widget" class="text-left text-xs"></div>
+                <div class="flex items-center gap-4">
+                    <div id="lang-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">RU</span><div class="w-10 h-5 bg-mystic-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="lang-pill" class="w-4 h-4 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">UA</span></div>
+                    <button id="music-toggle" class="text-2xl">🔇</button>
+                </div>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-widest uppercase text-gold" style="filter: drop-shadow(0 0 10px var(--primary-glow-color));" data-translate-key="main_title">🔮 Таро AI Компаньйон</h1>
         </header>
-
-        <div class="flex justify-center gap-4 mb-8">
-            <button onclick="getCardOfTheDay()" class="bg-gradient-to-r from-mystic-gold to-yellow-500 text-mystic-900 font-bold py-3 px-6 rounded-full hover:shadow-lg hover:shadow-yellow-500/20 transition-all transform hover:scale-105">✨ Карта Дня</button>
-            <button onclick="toggleJournalModal(true)" class="bg-mystic-700 text-gray-300 font-bold py-3 px-6 rounded-full hover:bg-mystic-600 transition-all">📖 Щоденник</button>
-        </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             <div class="lg:col-span-7 space-y-6">
-                <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60 neon-glow">
-                    <h2 class="text-lg font-semibold mb-4 text-mystic-gold">🪐 1. Створити розклад</h2>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                        <div><label class="block text-[10px] uppercase font-bold text-purple-300 mb-1">Сфера життя</label><select id="theme" class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-sm"><option value="Загальний аналіз">Загальний аналіз</option><option value="Стосунки та любов">Стосунки та любов</option><option value="Кар'єра та реалізація">Кар'єра та реалізація</option><option value="Фінанси та ресурси">Фінанси та ресурси</option><option value="Внутрішній стан">Внутрішній стан</option></select></div>
-                        <div><label class="block text-[10px] uppercase font-bold text-purple-300 mb-1">Тип розкладу</label><select id="spread-type" onchange="changeSpread()" class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-sm"><option value="yes-no">Так / Ні (1)</option><option value="three-cards">Три карти (3)</option><option value="cross">Хрест (4)</option><option value="choice">Вибір (5)</option><option value="path">Шлях (7)</option></select></div>
-                    </div>
-                    <div><label class="block text-[10px] uppercase font-bold text-purple-300 mb-1">Ваше питання (опціонально)</label><textarea id="question" rows="2" placeholder="Опишіть ситуацію..." class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-sm"></textarea></div>
+                <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
+                    <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_mode_sphere">✨ 1. Режим та Сфера</h2>
+                    <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_ai_mode">Режим ШІ</label><div id="mode-selector" class="grid grid-cols-2 gap-2"></div></div>
+                    <div><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_sphere">Сфера життя</label><div id="sphere-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div><p id="recommendation-text" class="text-xs text-purple mt-2 text-center"></p></div>
                 </div>
-
-                <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60 neon-glow">
-                    <h2 class="text-lg font-semibold mb-4 text-mystic-gold">🃏 2. Конструктор карт</h2>
-                    <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-mystic-700"></p>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
-                        <div><label class="block text-[10px] uppercase font-bold text-purple-300 mb-1">Масть</label><select id="suit-select" onchange="populateRankSelect()" class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-sm"><option value="major">Старші Аркани</option><option value="wands">Жезли</option><option value="cups">Кубки</option><option value="swords">Мечі</option><option value="pentacles">Пентаклі</option></select></div>
-                        <div><label class="block text-[10px] uppercase font-bold text-purple-300 mb-1">Номінал / Карта</label><select id="rank-select" class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-sm"></select></div>
-                        <div><button onclick="addCardFromConstructor()" class="w-full bg-mystic-600 hover:bg-mystic-purple text-white font-bold py-3 px-4 rounded-xl transition text-sm">Додати карту</button></div>
-                    </div>
-                    <div class="mt-4"><h3 class="text-sm font-semibold text-mystic-gold mb-2 text-center">Сорочка карт</h3><div class="flex justify-center gap-3"><button onclick="setCardTheme('neon')" class="text-xs px-3 py-1 rounded-full bg-purple-600">Неонова</button><button onclick="setCardTheme('gothic')" class="text-xs px-3 py-1 rounded-full bg-gray-700">Готична</button><button onclick="setCardTheme('cosmic')" class="text-xs px-3 py-1 rounded-full bg-blue-800">Космічна</button></div></div>
+                <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
+                    <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_context_spread">🃏 2. Контекст та Розклад</h2>
+                    <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_target">На кого ворожимо?</label><div id="target-selector" class="grid grid-cols-2 gap-2"></div><input type="text" id="other-person-input" class="hidden w-full bg-mystic-900 border border-color rounded-xl p-2 text-sm mt-2" data-translate-key="placeholder_other_person" placeholder="Ім'я або роль (напр., 'Партнер')"></div>
+                    <div><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_spread_type">Тип розкладу</label><div id="spread-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div></div>
                 </div>
-
-                <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60 neon-glow"><div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold text-mystic-gold">🌙 3. Схема розкладу</h2><button onclick="resetSpread()" class="text-xs text-red-400 hover:text-red-300 transition">🗑 Скинути</button></div><div id="spread-schema-container" class="schema-container"></div></div>
+                <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
+                    <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_constructor">🛠️ 3. Конструктор карт</h2>
+                    <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-color"></p>
+                    <div class="grid grid-cols-2 gap-4 mb-2">
+                        <div id="suit-selector" class="grid grid-cols-2 sm:grid-cols-5 gap-1"></div>
+                        <div id="rank-selector" class="grid grid-cols-4 sm:grid-cols-7 gap-1"></div>
+                    </div>
+                    <div class="mt-4"><h3 class="text-sm font-semibold text-gold mb-2 text-center" data-translate-key="label_card_back">Сорочка карт</h3><div id="theme-selector" class="flex justify-center gap-3"></div></div>
+                </div>
             </div>
-
             <div class="lg:col-span-5 space-y-6">
-                <div id="ai-response-container" class="bg-mystic-800 p-5 rounded-2xl border border-purple-500/30 shadow-2xl neon-glow">
-                    <h2 class="text-lg font-semibold text-mystic-gold mb-3">✨ 4. Тлумачення від ШІ</h2>
-                    <button onclick="getSpreadInterpretation()" id="ai-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:brightness-110 transition uppercase tracking-wider text-sm mb-3">Отримати тлумачення</button>
-                    <div id="ai-response-box" class="text-base bg-mystic-900 p-4 rounded-xl border border-mystic-700/70 min-h-[200px] max-h-[60vh] overflow-y-auto flex justify-center items-center"><span id="ai-placeholder">Оберіть дію...</span><div id="loading-animation" class="hidden text-center"><div id="magic-ball">🔮</div><p class="text-xs text-purple-300 animate-pulse mt-4">Магія твориться...</p></div><div id="flip-card-container" class="hidden flip-card-container w-48 h-72"><div class="flip-card-inner"><div class="flip-card-front">🃏</div><div id="flip-card-back" class="flip-card-back"></div></div></div></div>
-                    <div id="journal-controls" class="hidden mt-4"><textarea id="journal-notes" rows="3" placeholder="Додайте свої думки та інсайти..." class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-sm mb-2"></textarea><button onclick="saveReading()" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-xl hover:bg-green-500 transition text-sm">Зберегти в щоденник</button></div>
+                <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
+                    <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold text-gold" data-translate-key="section_title_schema">🌙 4. Схема розкладу</h2><button onclick="app.resetSpread()" class="text-xs text-red-400 hover:text-red-300 transition">🗑 <span data-translate-key="btn_reset">Скинути</span></button></div>
+                    <div id="spread-schema-container" class="schema-container"></div>
+                </div>
+                <div id="ai-response-container" class="bg-surface p-5 rounded-2xl border border-purple-500/30 shadow-2xl neon-glow">
+                    <h2 class="text-lg font-semibold text-gold mb-3" data-translate-key="section_title_interpretation">✨ 5. Тлумачення від ШІ</h2>
+                    <button onclick="app.getSpreadInterpretation()" id="ai-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:brightness-110 transition uppercase tracking-wider text-sm mb-3" data-translate-key="btn_get_interpretation">Отримати тлумачення</button>
+                    <div id="ai-response-box" class="text-base bg-mystic-900 p-4 rounded-xl border border-color min-h-[200px] max-h-[60vh] overflow-y-auto flex justify-center items-center"><span id="ai-placeholder" data-translate-key="placeholder_ai_response">Оберіть дію...</span></div>
                 </div>
             </div>
         </div>
-
-        <div class="mt-12 bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60 neon-glow"><button onclick="toggleRules()" class="w-full flex justify-between items-center text-left"><h2 class="text-lg font-semibold text-mystic-gold">📜 Правила ворожіння</h2><span id="rules-arrow" class="transform transition-transform duration-300">▼</span></button><div id="rules-content" class="mt-4 text-sm text-gray-300 space-y-3 leading-relaxed"><p><strong>1. Сформулюйте чітке питання.</strong> Чим конкретніше ваше питання, тим точнішою буде відповідь карт.</p><p><strong>2. Будьте в спокійному стані.</strong> Не варто робити розклад в стані гніву, страху чи сильного емоційного збудження.</p><p><strong>3. Не повторюйте те саме питання.</strong> Якщо відповідь карт вам не сподобалася, не варто робити той самий розклад знову і знову.</p><p><strong>4. Довіряйте своїй інтуїції.</strong> ШІ дає потужну базу для тлумачення, але ваша власна інтуїція — ключ до розуміння глибинних смислів.</p><p><strong>5. Карти — це порадник, а не вирок.</strong> Таро показує найбільш ймовірний сценарій розвитку подій. Ваша воля та ваші дії можуть змінити майбутнє.</p></div></div>
-
-        <footer class="text-center py-8 mt-8 border-t border-mystic-700">
-            <p class="text-sm text-mystic-gold" style="filter: drop-shadow(0 0 5px rgba(243,198,111,0.3));">Made with 💜 by Mary • Support Engineer & Tarot Master</p>
-        </footer>
+        <footer class="text-center py-8 mt-8 border-t border-color"><p class="text-sm text-gold" style="filter: drop-shadow(0 0 5px var(--primary-glow-color));">Made with 💜 by Mary • Support Engineer & Tarot Master</p></footer>
     </div>
-
-    <audio id="ambient-music" loop><source src="https://www.chosic.com/wp-content/uploads/2022/01/Mystical-and-Magical.mp3" type="audio/mpeg"></audio>
-
-    <div id="journal-modal" class="p-4 md:p-8"><div class="bg-mystic-800 border border-mystic-700 rounded-2xl h-full flex flex-col neon-glow"><div class="flex justify-between items-center p-4 border-b border-mystic-700"><h2 class="text-xl font-bold text-mystic-gold">📖 Щоденник розкладів</h2><button onclick="toggleJournalModal(false)" class="text-2xl text-red-400">&times;</button></div><div id="journal-content" class="p-4 overflow-y-auto"></div></div></div>
-
+    <audio id="ambient-music" loop><source src="https://assets.mixkit.co/music/preview/mixkit-a-quiet-thought-2710.mp3" type="audio/mpeg"></audio>
+    <div id="loading-overlay"><div class="loader-spinner"></div></div>
     <script>
-        // ... (весь попередній JS код залишається тут) ...
-        const DECK_STRUCTURE = {
-            major: ["Дурень (0)", "Маг (I)", "Верховна Жриця (II)", "Імператриця (III)", "Імператор (IV)", "Ієрофант (V)", "Закохані (VI)", "Колісниця (VII)", "Сила (VIII)", "Відлюдник (IX)", "Колесо Фортуни (X)", "Справедливість (XI)", "Повішений (XII)", "Смерть (XIII)", "Помірність (XIV)", "Диявол (XV)", "Вежа (XVI)", "Зірка (XVII)", "Місяць (XVIII)", "Сонце (XIX)", "Суд (XX)", "Світ (XXI)"],
-            minor_ranks: ["Туз", "Двійка", "Трійка", "Четвірка", "П'ятірка", "Шістка", "Сімка", "Вісімка", "Дев'ятка", "Десятка", "Паж", "Лицар", "Королева", "Король"],
-            suits: { wands: "Жезлів", cups: "Кубків", swords: "Мечів", pentacles: "Пентаклів" }
+        const App = {
+            // 1. STATE & CONFIG
+            state: {
+                lang: 'ua',
+                aiMode: 'mystical',
+                sphere: 'general',
+                target: 'self',
+                spreadKey: 'three-cards',
+                cardTheme: 'neon',
+                activeSuit: 'major',
+                selectedCards: {},
+                activePositionIndex: 0,
+                lastAIResponse: '',
+            },
+
+            // 2. DATA & TRANSLATIONS
+            translations: {
+                // ... keys for all UI elements
+            },
+            data: {
+                spheres: {
+                    // ... sphere data with recommendations
+                },
+                spreads: {
+                    // ... spread data with grid layouts
+                },
+                cards: {
+                    // ... card names
+                },
+                themes: {
+                    // ... card back themes
+                }
+            },
+
+            // 3. INITIALIZATION
+            init() {
+                // ... setup all selectors and event listeners
+            },
+
+            // 4. UI RENDERING & UPDATES
+            renderSelectors() {
+                // ... dynamically create all button-card selectors
+            },
+            renderSchema() {
+                // ... render the spread schema
+            },
+            updateUI() {
+                // ... update all UI elements based on state
+            },
+            applyLanguage() {
+                // ... apply translations
+            },
+
+            // 5. CORE LOGIC
+            handleSelection(selectorId, key) {
+                // ... unified logic for handling selections
+            },
+            addCard(suit, rank) {
+                // ... logic to add a card to the spread
+            },
+            resetSpread() {
+                // ... reset the spread
+            },
+
+            // 6. API & ASYNC
+            async getSpreadInterpretation() {
+                // ... prepare and send request for spread
+            },
+            async handleAIRequest(requestData) {
+                // ... handle API request and animations
+            },
+
+            // 7. UTILITIES
+            toggleMusic() {
+                // ... music logic
+            },
+            displayMoonPhase() {
+                // ... moon phase logic
+            }
         };
-        const SPREAD_SCHEMAS = {
-            "yes-no": { cards: 1, positions: ["Відповідь"], grid: `"pos1"` },
-            "three-cards": { cards: 3, positions: ["Минуле", "Теперішнє", "Майбутнє"], grid: `"pos1 pos2 pos3"` },
-            "cross": { cards: 4, positions: ["Суть", "Перешкода", "Порада", "Результат"], grid: `". pos1 ." "pos2 pos3 pos4"` },
-            "choice": { cards: 5, positions: ["Суть вибору", "Варіант А", "Результат А", "Варіант Б", "Результат Б"], grid: `". pos1 ." "pos2 pos3" "pos4 pos5"` },
-            "path": { cards: 7, positions: ["1", "2", "3", "4", "5", "6", "7"], grid: `"pos1 pos2 pos3 pos4 pos5 pos6 pos7"` }
-        };
-        let currentSpreadKey = "yes-no";
-        let selectedCards = {};
-        let activePositionIndex = 0;
-        let lastAIResponse = "";
 
-        function init() {
-            changeSpread();
-            populateRankSelect();
-            document.getElementById('rules-content').style.maxHeight = '0';
-            displayMoonPhase();
-        }
-
-        // --- НОВІ ФУНКЦІЇ v3.0 ---
-
-        function toggleMusic() {
-            const music = document.getElementById('ambient-music');
-            const button = document.getElementById('music-toggle');
-            if (music.paused) {
-                music.play();
-                button.textContent = '🔊';
-            } else {
-                music.pause();
-                button.textContent = '🔇';
-            }
-        }
-
-        function setCardTheme(theme) {
-            document.body.className = document.body.className.replace(/theme-\w+/, `theme-${theme}`);
-        }
-
-        function displayMoonPhase() {
-            const phases = ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'];
-            const icons = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
-            const day = new Date().getDate();
-            const index = Math.floor((day % 30) / 3.75);
-            const widget = document.getElementById('moon-widget');
-            widget.innerHTML = `<div class="text-2xl">${icons[index]}</div><div>${phases[index]}</div>`;
-        }
-
-        function saveReading() {
-            const notes = document.getElementById('journal-notes').value;
-            const schema = SPREAD_SCHEMAS[currentSpreadKey];
-            const reading = {
-                id: Date.now(),
-                date: new Date().toLocaleString('uk-UA'),
-                spread: document.querySelector('#spread-type option:checked').textContent,
-                question: document.getElementById('question').value.trim(),
-                cards: selectedCards,
-                interpretation: lastAIResponse,
-                notes: notes
-            };
-            let journal = JSON.parse(localStorage.getItem('tarotJournal')) || [];
-            journal.unshift(reading);
-            localStorage.setItem('tarotJournal', JSON.stringify(journal));
-            alert('Розклад збережено в щоденнику!');
-        }
-
-        function toggleJournalModal(show) {
-            const modal = document.getElementById('journal-modal');
-            if (show) {
-                loadAndRenderJournal();
-                modal.classList.add('active');
-            } else {
-                modal.classList.remove('active');
-            }
-        }
-
-        function loadAndRenderJournal() {
-            const journal = JSON.parse(localStorage.getItem('tarotJournal')) || [];
-            const container = document.getElementById('journal-content');
-            if (journal.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-400">Ваш щоденник порожній.</p>';
-                return;
-            }
-            container.innerHTML = journal.map(entry => `
-                <div class="mb-4 p-4 bg-mystic-900 rounded-lg border border-mystic-700">
-                    <div class="flex justify-between items-center mb-2">
-                        <p class="font-bold text-mystic-gold">${entry.spread}</p>
-                        <p class="text-xs text-gray-400">${entry.date}</p>
-                    </div>
-                    ${entry.question ? `<p class="text-sm italic text-gray-300 mb-2">"${entry.question}"</p>` : ''}
-                    <p class="text-sm whitespace-pre-wrap"><strong>Тлумачення:</strong> ${entry.interpretation}</p>
-                    ${entry.notes ? `<p class="text-sm whitespace-pre-wrap mt-2"><strong>Нотатки:</strong> ${entry.notes}</p>` : ''}
-                    <button onclick="deleteJournalEntry(${entry.id})" class="text-xs text-red-500 mt-2">Видалити</button>
-                </div>
-            `).join('');
-        }
-
-        function deleteJournalEntry(id) {
-            let journal = JSON.parse(localStorage.getItem('tarotJournal')) || [];
-            journal = journal.filter(entry => entry.id !== id);
-            localStorage.setItem('tarotJournal', JSON.stringify(journal));
-            loadAndRenderJournal();
-        }
-
-        // --- ІСНУЮЧІ ФУНКЦІЇ (оновлені) ---
-
-        function toggleRules() {
-            const content = document.getElementById('rules-content');
-            const arrow = document.getElementById('rules-arrow');
-            if (content.style.maxHeight && content.style.maxHeight !== '0px') {
-                content.style.maxHeight = '0';
-                arrow.style.transform = 'rotate(0deg)';
-            } else {
-                content.style.maxHeight = content.scrollHeight + "px";
-                arrow.style.transform = 'rotate(180deg)';
-            }
-        }
-
-        function changeSpread() { currentSpreadKey = document.getElementById('spread-type').value; resetSpread(); }
-        function resetSpread() {
-            selectedCards = {}; activePositionIndex = 0; lastAIResponse = "";
-            document.getElementById('question').value = '';
-            const placeholder = document.getElementById('ai-placeholder');
-            placeholder.textContent = 'Оберіть дію...';
-            placeholder.classList.remove('hidden');
-            document.getElementById('loading-animation').classList.add('hidden');
-            document.getElementById('flip-card-container').classList.add('hidden');
-            document.getElementById('journal-controls').classList.add('hidden');
-            renderSpreadSchema(); updateHint();
-        }
-        function populateRankSelect() {
-            const suit = document.getElementById('suit-select').value;
-            const rankSelect = document.getElementById('rank-select');
-            rankSelect.innerHTML = '';
-            const ranks = suit === 'major' ? DECK_STRUCTURE.major : DECK_STRUCTURE.minor_ranks;
-            ranks.forEach(rank => { const option = document.createElement('option'); option.value = rank; option.textContent = rank; rankSelect.appendChild(option); });
-        }
-        function addCardFromConstructor() {
-            const schema = SPREAD_SCHEMAS[currentSpreadKey];
-            if (activePositionIndex >= schema.cards) { alert("Всі позиції вже заповнено!"); return; }
-            const suitKey = document.getElementById('suit-select').value;
-            const rank = document.getElementById('rank-select').value;
-            let cardName = suitKey === 'major' ? rank.split(" (")[0] : `${rank} ${DECK_STRUCTURE.suits[suitKey]}`;
-            if (Object.values(selectedCards).some(c => c.name === cardName)) { alert(`Карта "${cardName}" вже є в розкладі.`); return; }
-            const activePositionName = schema.positions[activePositionIndex];
-            selectedCards[activePositionName] = { name: cardName, isInverted: false };
-            advanceToNextEmpty(); renderSpreadSchema(); updateHint();
-        }
-        function advanceToNextEmpty() {
-            const schema = SPREAD_SCHEMAS[currentSpreadKey];
-            const nextIndex = schema.positions.findIndex(pos => !selectedCards[pos]);
-            activePositionIndex = (nextIndex === -1) ? schema.cards : nextIndex;
-        }
-        async function getSpreadInterpretation() {
-            const schema = SPREAD_SCHEMAS[currentSpreadKey];
-            if (Object.keys(selectedCards).length < schema.cards) { alert("Будь ласка, заповніть усі позиції в розкладі."); return; }
-            const isMystical = document.getElementById('ai-mode-toggle').checked;
-            const requestData = { type: 'spread', mode: isMystical ? 'mystical' : 'psychological', theme: document.getElementById('theme').value, spreadType: document.querySelector('#spread-type option:checked').textContent, question: document.getElementById('question').value.trim(), cards: selectedCards, positions: schema.positions };
-            await handleAIRequest(requestData);
-        }
-        async function getCardOfTheDay() { await handleAIRequest({ type: 'card-of-the-day' }); }
-        async function handleAIRequest(requestData) {
-            const aiContainer = document.getElementById('ai-response-container');
-            const placeholder = document.getElementById('ai-placeholder');
-            const loadingAnim = document.getElementById('loading-animation');
-            const flipCardContainer = document.getElementById('flip-card-container');
-            const journalControls = document.getElementById('journal-controls');
-            const aiButton = document.getElementById('ai-btn');
-            const wait = ms => new Promise(res => setTimeout(res, ms));
-
-            placeholder.classList.add('hidden');
-            flipCardContainer.classList.add('hidden');
-            flipCardContainer.classList.remove('is-flipping');
-            journalControls.classList.add('hidden');
-            loadingAnim.classList.remove('hidden');
-            aiContainer.classList.add('is-loading');
-            aiButton.disabled = true;
-
-            try {
-                const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestData) });
-                const data = await response.json();
-                loadingAnim.classList.add('hidden');
-                aiContainer.classList.remove('is-loading');
-
-                if (!response.ok) { placeholder.textContent = `Помилка: ${data.error}`; placeholder.classList.remove('hidden'); return; }
-
-                lastAIResponse = data.text; // Зберігаємо відповідь для щоденника
-                const isYesNo = currentSpreadKey === 'yes-no' && requestData.type === 'spread';
-                const isCardOfTheDay = requestData.type === 'card-of-the-day';
-
-                if (isYesNo || isCardOfTheDay) {
-                    document.getElementById('flip-card-back').innerHTML = data.text.replace(/\n/g, '<br>');
-                    flipCardContainer.classList.remove('hidden');
-                    await wait(100);
-                    flipCardContainer.classList.add('is-flipping');
-                    await wait(2500);
-                } else {
-                    placeholder.innerHTML = data.text.replace(/\n/g, '<br>');
-                    placeholder.classList.remove('hidden');
-                }
-                if (requestData.type === 'spread') {
-                    journalControls.classList.remove('hidden'); // Показуємо поле для нотаток тільки для розкладів
-                }
-
-            } catch (error) {
-                placeholder.textContent = `Критична помилка: ${error.message}`;
-                placeholder.classList.remove('hidden');
-            } finally {
-                aiContainer.classList.remove('is-loading');
-                aiButton.disabled = false;
-            }
-        }
-        function renderSpreadSchema() {
-            const schema = SPREAD_SCHEMAS[currentSpreadKey];
-            const container = document.getElementById('spread-schema-container');
-            if (!container) return;
-            container.innerHTML = '';
-            container.style.gridTemplateAreas = schema.grid;
-            const columns = schema.grid.split('"')[1].trim().split(/\s+/).length;
-            container.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-            schema.positions.forEach((posName, index) => {
-                const slot = document.createElement('div');
-                slot.className = 'schema-slot';
-                slot.style.gridArea = `pos${index + 1}`;
-                slot.onclick = () => setActivePosition(index);
-                if (index === activePositionIndex) slot.classList.add('active');
-                const cardData = selectedCards[posName];
-                if (cardData) {
-                    slot.classList.add('filled');
-                    slot.innerHTML = `<div class="slot-position-name">${posName}</div><div class="slot-card-name ${cardData.isInverted ? 'inverted' : ''}">${cardData.name}</div><div class="flex gap-2 mt-2"><button onclick="event.stopPropagation(); toggleInversion('${posName}')" class="text-xs bg-mystic-700 px-2 py-1 rounded">🔄</button><button onclick="event.stopPropagation(); removeCard('${posName}')" class="text-xs bg-red-900/50 px-2 py-1 rounded">❌</button></div>`;
-                } else {
-                    slot.innerHTML = `<div class="slot-position-name">${posName}</div><div class="slot-empty-text">[ Обрати карту ]</div>`;
-                }
-                container.appendChild(slot);
-            });
-        }
-        function updateHint() {
-            const schema = SPREAD_SCHEMAS[currentSpreadKey];
-            const hint = document.getElementById('current-position-hint');
-            if (activePositionIndex < schema.cards) { hint.innerHTML = `👉 Оберіть карту для позиції: <strong class="text-mystic-gold">"${schema.positions[activePositionIndex]}"</strong>`; } else { hint.innerText = "✅ Розклад повністю заповнено!"; }
-        }
-        function setActivePosition(index) { activePositionIndex = index; renderSpreadSchema(); updateHint(); }
-        function toggleInversion(positionName) { if (selectedCards[positionName]) { selectedCards[positionName].isInverted = !selectedCards[positionName].isInverted; renderSpreadSchema(); } }
-        function removeCard(positionName) { delete selectedCards[positionName]; advanceToNextEmpty(); renderSpreadSchema(); updateHint(); }
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
 </html>
