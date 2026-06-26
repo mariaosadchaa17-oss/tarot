@@ -1,12 +1,8 @@
 // api/gemini-proxy.js
 
-// Это бессерверная функция, которая работает как прокси для Gemini API.
-// Она ожидает POST-запрос с JSON-телом вида { "prompt": "Текст вашего промпта" }
-export default async function handler(request) {
-    // Разрешаем только POST-запросы
-    if (request.method !== 'POST') {
-        return new Response('Метод не разрешен', { status: 405 });
-    }
+// ИЗМЕНЕНО: Экспортируем именованную функцию POST, чтобы использовать Web API стандарт в Vercel.
+export async function POST(request) {
+    // Проверка на POST-метод больше не нужна, Vercel сделает это за нас.
 
     try {
         const body = await request.json();
@@ -20,10 +16,10 @@ export default async function handler(request) {
         }
 
         // ВАЖНО: Получаем API-ключ из переменных окружения на стороне сервера
+        // Убедись, что ты добавила GEMINI_API_KEY в настройках проекта на Vercel!
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
         if (!GEMINI_API_KEY) {
-            // Эта ошибка будет показана пользователю, если ключ не установлен на сервере
             return new Response(JSON.stringify({ error: 'API-ключ не настроен на сервере. Обратитесь к администратору.' }), {
                 status: 500,
                 headers: { 'Content-Type': 'application/json' },
@@ -32,7 +28,6 @@ export default async function handler(request) {
 
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
 
-        // Формируем тело запроса для Gemini API
         const payload = {
             contents: [{
                 parts: [{
@@ -41,7 +36,6 @@ export default async function handler(request) {
             }]
         };
 
-        // Перенаправляем запрос в Gemini API
         const geminiResponse = await fetch(API_URL, {
             method: 'POST',
             headers: {
@@ -50,7 +44,6 @@ export default async function handler(request) {
             body: JSON.stringify(payload),
         });
 
-        // Обрабатываем ошибки от Gemini API
         if (!geminiResponse.ok) {
             const errorBody = await geminiResponse.text();
             console.error("Ошибка Gemini API:", errorBody);
@@ -61,12 +54,8 @@ export default async function handler(request) {
         }
 
         const geminiData = await geminiResponse.json();
-
-        // Извлекаем сгенерированный текст из ответа
-        // Структура: { candidates: [ { content: { parts: [ { text: '...' } ] } } ] }
         const responseText = geminiData.candidates[0].content.parts[0].text;
 
-        // Отправляем успешный ответ обратно клиенту
         return new Response(JSON.stringify({ text: responseText }), {
             status: 200,
             headers: { 'Content-Type': 'application/json' },
@@ -74,7 +63,7 @@ export default async function handler(request) {
 
     } catch (error) {
         console.error("Внутренняя ошибка прокси:", error);
-        return new Response(JSON.stringify({ error: 'Произошла внутренняя ошибка.' }), {
+        return new Response(JSON.stringify({ error: 'Произошла внутренняя ошибка: ' + error.message }), {
             status: 500,
             headers: { 'Content-Type': 'application/json' },
         });
