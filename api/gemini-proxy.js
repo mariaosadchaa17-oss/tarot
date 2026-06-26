@@ -1,9 +1,6 @@
 // api/gemini-proxy.js
 
-// ИЗМЕНЕНО: Экспортируем именованную функцию POST, чтобы использовать Web API стандарт в Vercel.
 export async function POST(request) {
-    // Проверка на POST-метод больше не нужна, Vercel сделает это за нас.
-
     try {
         const body = await request.json();
         const promptText = body.prompt;
@@ -15,8 +12,6 @@ export async function POST(request) {
             });
         }
 
-        // ВАЖНО: Получаем API-ключ из переменных окружения на стороне сервера
-        // Убедись, что ты добавила GEMINI_API_KEY в настройках проекта на Vercel!
         const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
         if (!GEMINI_API_KEY) {
@@ -26,8 +21,8 @@ export async function POST(request) {
             });
         }
 
-        // ИСПРАВЛЕНО: Указываем точное имя модели 'gemini-1.5-flash' вместо '...-latest'
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        // ДИАГНОСТИКА: Временно переключаемся на самую стандартную модель 'gemini-pro' для проверки.
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
 
         const payload = {
             contents: [{
@@ -48,13 +43,23 @@ export async function POST(request) {
         if (!geminiResponse.ok) {
             const errorBody = await geminiResponse.text();
             console.error("Ошибка Gemini API:", errorBody);
-            return new Response(JSON.stringify({ error: `Ошибка при запросе к Gemini API. Статус: ${geminiResponse.status}` }), {
+            // Возвращаем текст ошибки от Google, чтобы было понятнее
+            return new Response(JSON.stringify({ error: `Ошибка от API Google: ${errorBody}` }), {
                 status: geminiResponse.status,
                 headers: { 'Content-Type': 'application/json' },
             });
         }
 
         const geminiData = await geminiResponse.json();
+
+        // Добавим проверку на случай, если ответ пустой
+        if (!geminiData.candidates || !geminiData.candidates[0].content || !geminiData.candidates[0].content.parts[0].text) {
+             return new Response(JSON.stringify({ error: 'ИИ вернул пустой или некорректный ответ.' }), {
+                status: 500,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
         const responseText = geminiData.candidates[0].content.parts[0].text;
 
         return new Response(JSON.stringify({ text: responseText }), {
