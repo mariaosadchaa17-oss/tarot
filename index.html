@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate-key="page_title">Таро AI Компаньйон v4.8 (Stable)</title>
+    <title data-translate-key="page_title">Таро AI Компаньйон v4.9 (Stable)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -21,6 +21,7 @@
             background-image: radial-gradient(ellipse at top, var(--bg-surface), var(--bg-main) 70%);
             color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif;
         }
+
         .neon-glow { box-shadow: 0 0 8px var(--primary-glow-color), 0 0 20px var(--secondary-glow-color); transition: box-shadow 0.5s; }
         .text-gold { color: var(--text-gold); transition: color 0.5s; }
         .text-purple { color: var(--text-purple); transition: color 0.5s; }
@@ -99,7 +100,6 @@
 
     <script>
     const App = {
-        // 1. STATE & CONFIG
         state: {
             lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self',
             spreadKey: 'cross', activeSuit: 'major', selectedCards: {}, activePositionIndex: 0,
@@ -126,6 +126,7 @@
                 recommendation_health: "💡 Для швидкої оцінки стану достатньо однієї карти.",
                 recommendation_destiny: "💡 Глибокий розклад 'Шлях' покаже ваш вектор.",
                 suit_major: "Ст. Аркани", suit_wands: "Жезли", suit_cups: "Кубки", suit_swords: "Мечі", suit_pentacles: "Пентаклі",
+                moon_phases: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'],
             },
             ru: {
                 page_title: "Таро AI Компаньон", main_title: "🔮 Таро AI Компаньон",
@@ -148,6 +149,7 @@
                 recommendation_health: "💡 Для быстрой оценки состояния достаточно одной карты.",
                 recommendation_destiny: "💡 Глубокий расклад 'Путь' покажет ваш вектор.",
                 suit_major: "Ст. Арканы", suit_wands: "Жезлы", suit_cups: "Кубки", suit_swords: "Мечи", suit_pentacles: "Пентакли",
+                moon_phases: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна'],
             }
         },
         data: {
@@ -167,8 +169,8 @@
                 "path": { cards: 7, ua: "Шлях", ru: "Путь", positions: { ua: ["1", "2", "3", "4", "5", "6", "7"], ru: ["1", "2", "3", "4", "5", "6", "7"] }, grid: `"pos1 pos2 pos3 pos4 pos5 pos6 pos7"` }
             },
             cards: {
-                major: ["Дурень", "Маг", "Жриця", "Імператриця", "Імператор", "Ієрофант", "Закохані", "Колісниця", "Сила", "Відлюдник", "Фортуна", "Справедливість", "Повішений", "Смерть", "Помірність", "Диявол", "Вежа", "Зірка", "Місяць", "Сонце", "Суд", "Світ"],
-                minor: ["Туз", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Паж", "Лицар", "Королева", "Король"],
+                major: { ua: ["Дурень", "Маг", "Верховна Жриця", "Імператриця", "Імператор", "Ієрофант", "Закохані", "Колісниця", "Сила", "Відшельник", "Колесо Фортуни", "Справедливість", "Повішений", "Смерть", "Помірність", "Диявол", "Вежа", "Зірка", "Місяць", "Сонце", "Суд", "Світ"], ru: ["Шут", "Маг", "Верховная Жрица", "Императрица", "Император", "Иерофант", "Влюбленные", "Колесница", "Сила", "Отшельник", "Колесо Фортуны", "Справедливость", "Повешенный", "Смерть", "Умеренность", "Дьявол", "Башня", "Звезда", "Луна", "Солнце", "Суд", "Мир"] },
+                minor: { ua: ["Туз", "Двійка", "Трійка", "Четвірка", "П'ятірка", "Шістка", "Сімка", "Вісімка", "Дев'ятка", "Десятка", "Паж", "Лицар", "Королева", "Король"], ru: ["Туз", "Двойка", "Тройка", "Четвёрка", "Пятёрка", "Шестёрка", "Семёрка", "Восьмёрка", "Девятка", "Десятка", "Паж", "Рыцарь", "Королева", "Король"] },
                 suits: { ua: { wands: "Жезлів", cups: "Кубків", swords: "Мечів", pentacles: "Пентаклів" }, ru: { wands: "Жезлов", cups: "Кубков", swords: "Мечей", pentacles: "Пентаклей" } }
             }
         },
@@ -179,14 +181,14 @@
             this.handleSelection('mode', this.state.aiMode, false);
             this.handleSelection('target', this.state.target, false);
             this.handleSelection('suit', this.state.activeSuit, false);
-            this.handleSelection('sphere', this.state.sphere, true); // First and only auto-trigger
-            this.displayMoonPhase();
+            this.handleSelection('sphere', this.state.sphere, true);
         },
 
         renderAllDynamicContent() {
             this.applyLanguage();
             this.renderAllSelectors();
             this.updateUI();
+            this.displayMoonPhase();
         },
 
         renderAllSelectors() {
@@ -214,7 +216,7 @@
             ['mode-selector', 'sphere-selector', 'target-selector', 'spread-selector', 'suit-selector'].forEach(id => {
                 document.getElementById(id).addEventListener('click', e => {
                     const button = e.target.closest('button');
-                    if (button) this.handleSelection(button.dataset.group, button.dataset.key);
+                    if (button && button.dataset.group) this.handleSelection(button.dataset.group, button.dataset.key);
                 });
             });
         },
@@ -231,8 +233,8 @@
                     const sphereData = this.data.spheres.find(s => s.key === key);
                     if (sphereData && sphereData.rec) {
                         document.getElementById('recommendation-text').textContent = sphereData.rec_key ? this.translations[this.state.lang][sphereData.rec_key] : '';
-                        this.handleSelection('spread', sphereData.rec, true); // This triggers the chain reaction
-                        return; // Prevent double update
+                        this.handleSelection('spread', sphereData.rec, true);
+                        return;
                     }
                     break;
                 case 'target': this.state.target = key; document.getElementById('other-person-input').classList.toggle('hidden', key === 'self'); if(doUpdate) this.resetSpread(); break;
@@ -243,7 +245,7 @@
         },
 
         renderRankSelector() {
-            const ranks = this.state.activeSuit === 'major' ? this.data.cards.major : this.data.cards.minor;
+            const ranks = this.data.cards[this.state.activeSuit][this.state.lang];
             document.getElementById('rank-selector').innerHTML = ranks.map(rank => `<button class="control-card constructor-btn text-xs" onclick="App.addCard('${this.state.activeSuit}', '${rank}')"><span>${rank}</span></button>`).join('');
         },
 
@@ -367,11 +369,10 @@
         },
 
         displayMoonPhase() {
-            const phases = {ua: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'], ru: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна']};
             const icons = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
             const day = new Date().getDate();
             const index = Math.floor((day % 30) / 3.75);
-            document.getElementById('moon-widget').innerHTML = `<div class="text-2xl">${icons[index]}</div><div>${phases[this.state.lang][index]}</div>`;
+            document.getElementById('moon-widget').innerHTML = `<div class="text-2xl">${icons[index]}</div><div>${this.translations[this.state.lang].moon_phases[index]}</div>`;
         }
     };
     document.addEventListener('DOMContentLoaded', () => App.init());
