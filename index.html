@@ -33,7 +33,7 @@
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
 
-        .constructor-btn { white-space: nowrap; padding: 0.75rem 1.25rem; }
+        .constructor-btn { white-space: nowrap; padding: 0.75rem 1.25rem; font-size: 0.9rem; }
 
         .schema-container { display: grid; gap: 10px; padding: 10px; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 220px; }
         .schema-slot { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: all 0.2s; min-height: 100px; cursor: pointer; }
@@ -69,7 +69,7 @@
                 </div>
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                     <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_context_spread"></h2>
-                    <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_target"></label><div id="target-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div><input type="text" id="other-person-input" class="hidden w-full bg-mystic-900 border border-color rounded-xl p-2 text-sm mt-2" data-translate-key="placeholder_other_person"></div>
+                    <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_target"></label><div id="target-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div></div>
                     <div><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_spread_type"></label><div id="spread-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div></div>
                 </div>
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
@@ -77,12 +77,12 @@
                     <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-color"></p>
                     <div class="space-y-4">
                         <div>
-                            <h3 class="text-sm font-bold text-purple mb-2" data-translate-key="suit_selection_title">1. Оберіть масть</h3>
+                            <h3 class="text-sm font-bold text-purple mb-2" data-translate-key="suit_selection_title"></h3>
                             <div id="suit-selector" class="flex flex-wrap gap-2"></div>
                         </div>
                         <div>
-                            <h3 class="text-sm font-bold text-purple mb-2" data-translate-key="card_selection_title">2. Оберіть карту</h3>
-                            <div id="card-selector" class="flex flex-wrap gap-2"></div>
+                            <h3 class="text-sm font-bold text-purple mb-2" data-translate-key="card_selection_title"></h3>
+                            <div id="card-selector" class="flex flex-wrap gap-3"></div>
                         </div>
                     </div>
                 </div>
@@ -259,16 +259,17 @@
         renderCardSelector() {
             const isMajor = this.state.activeSuit === 'major';
             const ranks = isMajor ? this.data.cards.major[this.state.lang] : this.data.cards.minor[this.state.lang];
-            const container = document.getElementById(isMajor ? 'major-arcana-selector' : 'rank-selector');
-            const otherContainer = document.getElementById(isMajor ? 'rank-selector' : 'major-arcana-selector');
+            const container = document.getElementById('card-selector');
 
-            if(isMajor) {
-                document.getElementById('rank-selector').innerHTML = '';
-                document.getElementById('major-arcana-selector').innerHTML = ranks.map(rank => `<button class="control-card constructor-btn neon-glow" onclick="App.addCard('major', '${rank}')"><span>${rank}</span></button>`).join('');
-            } else {
-                document.getElementById('major-arcana-selector').innerHTML = '';
-                document.getElementById('rank-selector').innerHTML = ranks.map(rank => `<button class="control-card constructor-btn text-xs" onclick="App.addCard('${this.state.activeSuit}', '${rank}')"><span>${rank}</span></button>`).join('');
-            }
+            container.innerHTML = ranks.map(rank => {
+                const cardName = isMajor ? rank : `${rank} ${this.data.cards.suits[this.state.lang][this.state.activeSuit]}`;
+                const isSelected = Object.values(this.state.selectedCards).some(c => c.name === cardName);
+                const glowClass = isMajor ? 'neon-glow' : '';
+                const disabledAttr = isSelected ? 'disabled' : '';
+                const disabledClass = isSelected ? 'opacity-30 cursor-not-allowed' : '';
+
+                return `<button class="control-card constructor-btn ${glowClass} ${disabledClass}" onclick="App.addCard('${this.state.activeSuit}', '${rank}')" ${disabledAttr}><span>${rank}</span></button>`;
+            }).join('');
         },
 
         addCard(suit, rank) {
@@ -295,6 +296,7 @@
         updateUI() {
             this.renderSchema();
             this.updateHint();
+            this.renderCardSelector();
         },
 
         renderSchema() {
