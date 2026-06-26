@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Таро AI Компаньйон</title>
+    <title>Таро AI Компаньйон v2.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -25,79 +25,133 @@
     </script>
     <style>
         body { background-color: #0b0813; color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #140f24; }
-        ::-webkit-scrollbar-thumb { background: #342956; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #f3c66f; }
+        .schema-container {
+            display: grid;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 16px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--tw-prose-hr, #342956);
+            min-height: 200px;
+        }
+        .schema-slot {
+            background: #140f24;
+            border: 1px solid #221a3a;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: all 0.2s;
+            min-height: 110px;
+        }
+        .schema-slot.active {
+            border-color: #f3c66f;
+            box-shadow: 0 0 15px rgba(243, 198, 111, 0.2);
+        }
+        .schema-slot.filled {
+            background: rgba(157, 78, 223, 0.1);
+            border-color: #9d4edf;
+        }
+        .slot-position-name {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #9d4edf;
+        }
+        .slot-card-name {
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .slot-card-name.inverted { color: #c084fc; }
+        .slot-empty-text {
+            font-size: 12px;
+            color: #6b7280;
+            font-style: italic;
+        }
     </style>
 </head>
 <body class="p-3 md:p-8 min-h-screen">
 
     <div class="max-w-6xl mx-auto">
         <header class="text-center mb-8 border-b border-mystic-700 pb-5">
-            <h1 class="text-3xl md:text-4xl font-extrabold text-mystic-gold tracking-widest uppercase filter drop-shadow-[0_0_10px_rgba(243,198,111,0.3)]">🔮 Таро AI Компаньйон</h1>
-            <p class="text-sm text-purple-300/70 mt-2 font-medium">Конструктор розкладів • Лаконічні тлумачення</p>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-mystic-gold tracking-widest uppercase">🔮 Таро AI Компаньйон</h1>
+            <div class="flex items-center justify-center gap-4 mt-4">
+                <span class="text-xs font-medium text-gray-400">Психологія</span>
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="ai-mode-toggle" class="sr-only peer" checked>
+                    <div class="w-11 h-6 bg-mystic-600 rounded-full peer peer-checked:bg-mystic-purple peer-focus:ring-2 peer-focus:ring-purple-500"></div>
+                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform peer-checked:translate-x-full"></span>
+                </label>
+                <span class="text-xs font-medium text-mystic-gold">Містика</span>
+            </div>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
             <div class="lg:col-span-7 space-y-6">
-
-                <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60 shadow-2xl">
-                    <h2 class="text-lg font-semibold mb-4 text-mystic-gold flex items-center gap-2">✨ 1. Контекст та Тема</h2>
-
+                <!-- Блок налаштувань -->
+                <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60">
+                    <h2 class="text-lg font-semibold mb-4 text-mystic-gold">1. Налаштування розкладу</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
-                            <label class="block text-[10px] uppercase tracking-wider text-purple-300 mb-1 font-bold">Сфера життя</label>
-                            <select id="theme" class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-white focus:outline-none focus:border-mystic-gold transition text-sm">
-                                <option value="Загальний аналіз">🪐 Загальний аналіз ситуації</option>
+                            <label class="block text-[10px] uppercase font-bold text-purple-300 mb-1">Сфера життя</label>
+                            <select id="theme" class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-sm">
+                                <option value="Загальний аналіз">🪐 Загальний аналіз</option>
                                 <option value="Стосунки та любов">❤️ Стосунки та любов</option>
                                 <option value="Кар'єра та реалізація">💼 Кар'єра та реалізація</option>
                                 <option value="Фінанси та ресурси">💰 Фінанси та ресурси</option>
-                                <option value="Внутрішній стан">🧠 Внутрішній стан / Психологія</option>
+                                <option value="Внутрішній стан">🧠 Внутрішній стан</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[10px] uppercase tracking-wider text-purple-300 mb-1 font-bold">Тип розкладу</label>
-                            <select id="spread" onchange="updateSpreadPositions()" class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-white focus:outline-none focus:border-mystic-gold transition text-sm">
-                                <option value="Минуле - Теперішнє - Майбутнє">📜 Минуле - Теперішнє - Майбутнє (3)</option>
-                                <option value="Вибір з двох варіантів">🔀 Вибір з двох варіантів (5)</option>
-                                <option value="Хрест: Аналіз ситуації">✝️ Хрест: Аналіз ситуації (4)</option>
-                                <option value="Розвиток процесу">📈 Розвиток процесу (3)</option>
-                                <option value="Вільний розклад">🔮 Вільний розклад (до 7 карт)</option>
+                            <label class="block text-[10px] uppercase font-bold text-purple-300 mb-1">Тип розкладу</label>
+                            <select id="spread-type" onchange="changeSpread()" class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-sm">
+                                <option value="yes-no">Так / Ні (1 карта)</option>
+                                <option value="three-cards">Три карти (3 карти)</option>
+                                <option value="cross">Хрест (4 карти)</option>
+                                <option value="choice">Вибір (5 карт)</option>
+                                <option value="path">Шлях (7 карт)</option>
                             </select>
                         </div>
                     </div>
-
                     <div>
-                        <label class="block text-[10px] uppercase tracking-wider text-purple-300 mb-1 font-bold">Ваше питання або деталі ситуації</label>
-                        <textarea id="question" rows="2" placeholder="Впишіть сюди думки або питання, щоб ШІ дав максимально точну відповідь..." class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-white placeholder-mystic-600 focus:outline-none focus:border-mystic-gold resize-none text-sm transition"></textarea>
+                        <label class="block text-[10px] uppercase font-bold text-purple-300 mb-1">Ваше питання (опціонально)</label>
+                        <textarea id="question" rows="2" placeholder="Опишіть ситуацію для більш точного тлумачення..." class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-sm"></textarea>
                     </div>
                 </div>
 
-                <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60 shadow-2xl">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 border-b border-mystic-700/50 pb-3">
-                        <h2 class="text-lg font-semibold text-mystic-gold">🃏 2. Вибір карт до розкладу</h2>
-                        <span id="current-position-hint" class="text-xs bg-mystic-purple/20 border border-mystic-purple/40 text-purple-200 px-3 py-1 rounded-full font-medium"></span>
-                    </div>
-
-                    <div class="flex gap-1 overflow-x-auto pb-2 mb-3 text-xs border-b border-mystic-700/30">
-                        <button onclick="switchTab('major')" id="tab-major" class="px-3 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-mystic-purple text-white">Старші Аркани</button>
-                        <button onclick="switchTab('wands')" id="tab-wands" class="px-3 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-mystic-900 text-gray-400 hover:text-white">Жезли</button>
-                        <button onclick="switchTab('cups')" id="tab-cups" class="px-3 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-mystic-900 text-gray-400 hover:text-white">Кубки</button>
-                        <button onclick="switchTab('swords')" id="tab-swords" class="px-3 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-mystic-900 text-gray-400 hover:text-white">Мечі</button>
-                        <button onclick="switchTab('pentacles')" id="tab-pentacles" class="px-3 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-mystic-900 text-gray-400 hover:text-white">Пентаклі</button>
-                    </div>
-
-                    <div id="cards-pool" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 max-h-72 overflow-y-auto p-2 border border-mystic-700 rounded-xl bg-mystic-900/50">
+                <!-- Блок вибору карт -->
+                <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60">
+                    <h2 class="text-lg font-semibold mb-4 text-mystic-gold">2. Конструктор карт</h2>
+                     <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-mystic-700"></p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+                        <div class="sm:col-span-1">
+                            <label class="block text-[10px] uppercase font-bold text-purple-300 mb-1">Масть</label>
+                            <select id="suit-select" onchange="populateRankSelect()" class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-sm">
+                                <option value="major">Старші Аркани</option>
+                                <option value="wands">Жезли</option>
+                                <option value="cups">Кубки</option>
+                                <option value="swords">Мечі</option>
+                                <option value="pentacles">Пентаклі</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-1">
+                            <label class="block text-[10px] uppercase font-bold text-purple-300 mb-1">Номінал / Карта</label>
+                            <select id="rank-select" class="w-full bg-mystic-900 border border-mystic-700 rounded-xl p-3 text-sm"></select>
+                        </div>
+                        <div class="sm:col-span-1">
+                            <button onclick="addCardFromConstructor()" class="w-full bg-mystic-600 hover:bg-mystic-purple text-white font-bold py-3 px-4 rounded-xl transition text-sm">Додати карту</button>
+                        </div>
                     </div>
                 </div>
 
-            </div>
-
-            <div class="lg:col-span-5 space-y-6">
-
-                <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60 shadow-2xl flex flex-col">
+                <!-- Блок схеми розкладу -->
+                <div class="bg-mystic-800 p-5 rounded-2xl border border-mystic-700/60">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-semibold text-mystic-gold">Поточний розклад</h2>
                         <button onclick="resetSpread()" class="text-xs text-red-400 hover:text-red-300 transition hover:underline">
@@ -108,59 +162,141 @@
                     <div id="selected-cards-list" class="space-y-3">
                     </div>
                 </div>
-
-                <div class="bg-mystic-800 p-5 rounded-2xl border border-purple-500/30 shadow-2xl bg-gradient-to-b from-mystic-800 to-mystic-900">
-                    <div class="flex items-center justify-between mb-3">
-                        <h2 class="text-base font-semibold text-mystic-gold">🔮 Тлумачення розкладу</h2>
-                        <div id="ai-loading" class="text-xs text-purple-300 animate-pulse hidden">Магія твориться... 🪐</div>
-                    </div>
-
-                    <button onclick="sendRequestToAI()" id="ai-btn" class="w-full bg-gradient-to-r from-purple-600 to-mystic-purple text-white font-bold py-3 px-4 rounded-xl hover:brightness-110 transition shadow-lg uppercase tracking-wider text-xs mb-3 active:scale-[0.99]">
-                        ✨ Отримати тлумачення
-                    </button>
-
-                    <div class="text-sm text-gray-200 bg-mystic-900 p-4 rounded-xl border border-mystic-700/70 min-h-[150px] max-h-96 overflow-y-auto whitespace-pre-wrap leading-relaxed font-sans" id="ai-response">
-                        Оберіть карти до розкладу та натисніть кнопку вище, щоб отримати тлумачення від ШІ-Таролога...
-                    </div>
-                </div>
-
             </div>
 
+            <!-- Права колонка з результатом -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-mystic-800 p-5 rounded-2xl border border-purple-500/30 shadow-2xl">
+                    <h2 class="text-lg font-semibold text-mystic-gold mb-3">4. Тлумачення від ШІ</h2>
+                    <div id="ai-loading" class="text-xs text-purple-300 animate-pulse hidden mb-3">Магія твориться... 🪐</div>
+                    <button onclick="sendRequestToAI()" id="ai-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:brightness-110 transition uppercase tracking-wider text-sm mb-3">
+                        Отримати тлумачення
+                    </button>
+                    <div class="text-base bg-mystic-900 p-4 rounded-xl border border-mystic-700/70 min-h-[200px] max-h-[60vh] overflow-y-auto whitespace-pre-wrap" id="ai-response">
+                        Заповніть розклад та натисніть кнопку...
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        const tarotDeck = {
-            major: ["Дурень", "Маг", "Верховна Жриця", "Імператриця", "Імператор", "Ієрофант", "Закохані", "Колісниця", "Сила", "Відлюдник", "Колесо Фортуни", "Справедливість", "Повішений", "Смерть", "Помірність", "Диявол", "Вежа", "Зірка", "Місяць", "Сонце", "Суд", "Світ"],
-            wands: ["Туз Жезлів", "Двійка Жезлів", "Трійка Жезлів", "Четвірка Жезлів", "П'ятірка Жезлів", "Шістка Жезлів", "Сімка Жезлів", "Вісімка Жезлів", "Дев'ятка Жезлів", "Десятка Жезлів", "Паж Жезлів", "Лицар Жezлів", "Королева Жезлів", "Король Жезлів"],
-            cups: ["Туз Кубків", "Двійка Кубків", "Трійка Кубків", "Четвірка Кубків", "П'ятірка Кубків", "Шістка Кубків", "Сімка Кубків", "Вісімка Кубків", "Дев'ятка Кубків", "Десятка Кубків", "Паж Кубків", "Лицар Кубків", "Королева Кубків", "Король Кубків"],
-            swords: ["Туз Мечів", "Двійка Мечів", "Трійка Мечів", "Четвірка Мечів", "П'ятірка Мечів", "Шістка Мечів", "Сімка Мечів", "Вісімка Мечів", "Дев'ятка Мечів", "Десятка Мечів", "Паж Мечів", "Лицар Мечів", "Королева Мечів", "Король Мечів"],
-            pentacles: ["Туз Пентаклів", "Двійка Пентаклів", "Трійка Пентаклів", "Четвірка Пентаклів", "П'ятірка Пентаклів", "Шістка Пентаклів", "Сімка Пентаклів", "Вісімка Пентаклів", "Дев'ятка Пентаклів", "Десятка Пентаклів", "Паж Пентаклів", "Лицар Пентаклів", "Королева Пентаклів", "Король Пентаклів"]
+        const DECK_STRUCTURE = {
+            major: ["Дурень (0)", "Маг (I)", "Верховна Жриця (II)", "Імператриця (III)", "Імператор (IV)", "Ієрофант (V)", "Закохані (VI)", "Колісниця (VII)", "Сила (VIII)", "Відлюдник (IX)", "Колесо Фортуни (X)", "Справедливість (XI)", "Повішений (XII)", "Смерть (XIII)", "Помірність (XIV)", "Диявол (XV)", "Вежа (XVI)", "Зірка (XVII)", "Місяць (XVIII)", "Сонце (XIX)", "Суд (XX)", "Світ (XXI)"],
+            minor_ranks: ["Туз", "Двійка", "Трійка", "Четвірка", "П'ятірка", "Шістка", "Сімка", "Вісімка", "Дев'ятка", "Десятка", "Паж", "Лицар", "Королева", "Король"],
+            suits: {
+                wands: "Жезлів",
+                cups: "Кубків",
+                swords: "Мечів",
+                pentacles: "Пентаклів"
+            }
         };
 
-        const spreadTemplates = {
-            "Минуле - Теперішнє - Майбутнє": ["Минуле", "Теперішнє", "Майбутнє"],
-            "Вибір з двох варіантів": ["Суть вибору", "Варіант А: Розвиток", "Варіант А: Результат", "Варіант Б: Розвиток", "Варіант Б: Результат"],
-            "Хрест: Аналіз ситуації": ["Суть ситуації", "Що перешкоджає", "Порада карт", "Ймовірний результат"],
-            "Розвиток процесу": ["Найближче майбутнє", "Розвиток ситуації", "Віддалена перспектива"],
-            "Вільний розклад": ["Позиція 1", "Позиція 2", "Позиція 3", "Позиція 4", "Позиція 5", "Позиція 6", "Позиція 7"]
+        const SPREAD_SCHEMAS = {
+            "yes-no": {
+                cards: 1,
+                positions: ["Відповідь"],
+                grid: ` "pos1" `
+            },
+            "three-cards": {
+                cards: 3,
+                positions: ["Минуле", "Теперішнє", "Майбутнє"],
+                grid: ` "pos1 pos2 pos3" `
+            },
+            "cross": {
+                cards: 4,
+                positions: ["Суть", "Перешкода", "Порада", "Результат"],
+                grid: ` ". pos1 ." "pos2 pos3 pos4" ". . ." `
+            },
+            "choice": {
+                cards: 5,
+                positions: ["Суть вибору", "Варіант А", "Результат А", "Варіант Б", "Результат Б"],
+                grid: ` ". pos1 ." "pos2 pos3" "pos4 pos5" `
+            },
+            "path": {
+                cards: 7,
+                positions: ["1", "2", "3", "4", "5", "6", "7"],
+                grid: ` "pos1 pos2 pos3 pos4 pos5 pos6 pos7" `
+            }
         };
 
-        let currentTab = 'major';
-        let currentSpreadPositions = [];
-        let selectedCards = {};
+        let currentSpreadKey = "yes-no";
+        let selectedCards = {}; // { "Позиція 1": { name: "Маг", isInverted: false }, ... }
         let activePositionIndex = 0;
 
-        // --- CORE FUNCTIONS ---
+        // --- CORE LOGIC ---
 
         function init() {
-            updateSpreadPositions();
-            renderCardsPool();
+            changeSpread();
+            populateRankSelect();
         }
 
-        window.sendRequestToAI = async function() {
-            if (Object.keys(selectedCards).length === 0) {
-                alert("Будь ласка, заповніть розклад картами перед відправкою запиту.");
+        function changeSpread() {
+            currentSpreadKey = document.getElementById('spread-type').value;
+            resetSpread();
+        }
+
+        function resetSpread() {
+            selectedCards = {};
+            activePositionIndex = 0;
+            document.getElementById('question').value = '';
+            document.getElementById('ai-response').innerText = 'Заповніть розклад та натисніть кнопку...';
+            renderSpreadSchema();
+            updateHint();
+        }
+
+        function populateRankSelect() {
+            const suit = document.getElementById('suit-select').value;
+            const rankSelect = document.getElementById('rank-select');
+            rankSelect.innerHTML = '';
+            const ranks = suit === 'major' ? DECK_STRUCTURE.major : DECK_STRUCTURE.minor_ranks;
+            ranks.forEach(rank => {
+                const option = document.createElement('option');
+                option.value = rank;
+                option.textContent = rank;
+                rankSelect.appendChild(option);
+            });
+        }
+
+        function addCardFromConstructor() {
+            const schema = SPREAD_SCHEMAS[currentSpreadKey];
+            if (activePositionIndex >= schema.cards) return;
+
+            const suitKey = document.getElementById('suit-select').value;
+            const rank = document.getElementById('rank-select').value;
+
+            let cardName = "";
+            if (suitKey === 'major') {
+                cardName = rank.split(" (")[0]; // "Дурень (0)" -> "Дурень"
+            } else {
+                const suitName = DECK_STRUCTURE.suits[suitKey];
+                cardName = `${rank} ${suitName}`;
+            }
+
+            // Перевірка, чи карта вже не використана
+            if (Object.values(selectedCards).some(c => c.name === cardName)) {
+                alert(`Карта "${cardName}" вже є в розкладі.`);
+                return;
+            }
+
+            const activePositionName = schema.positions[activePositionIndex];
+            selectedCards[activePositionName] = { name: cardName, isInverted: false };
+
+            advanceToNextEmpty();
+            renderSpreadSchema();
+            updateHint();
+        }
+
+        function advanceToNextEmpty() {
+            const schema = SPREAD_SCHEMAS[currentSpreadKey];
+            const nextIndex = schema.positions.findIndex(pos => !selectedCards[pos]);
+            activePositionIndex = (nextIndex === -1) ? schema.cards : nextIndex;
+        }
+
+        async function sendRequestToAI() {
+            const schema = SPREAD_SCHEMAS[currentSpreadKey];
+            if (Object.keys(selectedCards).length < schema.cards) {
+                alert("Будь ласка, заповніть усі позиції в розкладі.");
                 return;
             }
 
@@ -168,18 +304,20 @@
             const loadingText = document.getElementById('ai-loading');
             const aiButton = document.getElementById('ai-btn');
 
-            responseBox.innerText = "ШІ-Таролог налаштовується на вашу енергетику, тасує колоду і вдивляється в таємниці арканів...";
+            responseBox.innerText = "ШІ-Таролог налаштовується на вашу енергетику...";
             loadingText.classList.remove('hidden');
             aiButton.disabled = true;
-            aiButton.classList.add('opacity-50', 'cursor-not-allowed');
+            aiButton.classList.add('opacity-50');
 
             try {
+                const isMystical = document.getElementById('ai-mode-toggle').checked;
                 const requestData = {
+                    mode: isMystical ? 'mystical' : 'psychological',
                     theme: document.getElementById('theme').value,
-                    spreadType: document.getElementById('spread').value,
+                    spreadType: document.querySelector('#spread-type option:checked').textContent,
                     question: document.getElementById('question').value.trim(),
                     cards: selectedCards,
-                    positions: currentSpreadPositions
+                    positions: schema.positions
                 };
 
                 const response = await fetch('/api/chat', {
@@ -189,165 +327,89 @@
                 });
 
                 const data = await response.json();
-
-                if (response.ok) {
-                    responseBox.innerText = data.text;
-                } else {
-                    console.error("Помилка від сервера:", data.error);
-                    responseBox.innerText = `Сталася помилка: ${data.error}\n\nЦе може бути пов'язано з невірним API-ключем на сервері або проблемою з доступом до API Google.`;
-                }
+                responseBox.innerText = response.ok ? data.text : `Помилка: ${data.error}`;
 
             } catch (error) {
-                console.error("Помилка при відправці запиту:", error);
-                responseBox.innerText = `Не вдалося зв'язатися з сервером-посередником.\nПереконайтеся, що він запущений і доступний.\n\nТехнічна помилка: ${error.message}`;
+                responseBox.innerText = `Критична помилка: ${error.message}`;
             } finally {
                 loadingText.classList.add('hidden');
                 aiButton.disabled = false;
-                aiButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                aiButton.classList.remove('opacity-50');
             }
         }
 
-        // --- RENDER FUNCTIONS ---
+        // --- RENDER & UI ---
 
-        function switchTab(tabName) {
-            currentTab = tabName;
-            ['major', 'wands', 'cups', 'swords', 'pentacles'].forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                btn.className = (t === tabName)
-                    ? "px-3 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-mystic-purple text-white"
-                    : "px-3 py-1.5 rounded-lg font-medium transition whitespace-nowrap bg-mystic-900 text-gray-400 hover:text-white";
-            });
-            renderCardsPool();
-        }
+        function renderSpreadSchema() {
+            const schema = SPREAD_SCHEMAS[currentSpreadKey];
+            const container = document.getElementById('spread-schema-container');
+            container.innerHTML = '';
+            container.style.gridTemplateAreas = schema.grid;
 
-        function renderCardsPool() {
-            const pool = document.getElementById('cards-pool');
-            pool.innerHTML = '';
+            // Динамічно налаштовуємо колонки
+            const columns = schema.grid.split('"')[1].trim().split(' ').length;
+            container.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
 
-            tarotDeck[currentTab].forEach(card => {
-                const isSelected = Object.values(selectedCards).some(c => c.name === card);
-                const btn = document.createElement('button');
+            schema.positions.forEach((posName, index) => {
+                const slot = document.createElement('div');
+                slot.className = 'schema-slot';
+                slot.style.gridArea = `pos${index + 1}`;
+                slot.onclick = () => setActivePosition(index);
 
-                btn.className = isSelected
-                    ? "bg-mystic-purple/40 border border-mystic-purple text-purple-200 text-xs p-2.5 rounded-xl text-center transition opacity-60 cursor-not-allowed w-full truncate"
-                    : "bg-mystic-700 hover:bg-mystic-600 hover:border-mystic-gold/40 border border-transparent text-xs p-2.5 rounded-xl text-center transition active:scale-95 w-full truncate";
+                if (index === activePositionIndex) slot.classList.add('active');
 
-                btn.innerText = card;
-                if (!isSelected) {
-                    btn.onclick = () => selectCard(card);
-                }
-                pool.appendChild(btn);
-            });
-        }
-
-        function renderSelectedCards() {
-            const list = document.getElementById('selected-cards-list');
-            list.innerHTML = '';
-
-            currentSpreadPositions.forEach((pos, index) => {
-                const cardData = selectedCards[pos];
-                const cardBox = document.createElement('div');
-                const isActive = index === activePositionIndex;
-
-                const borderClass = isActive
-                    ? 'border-mystic-gold bg-mystic-700/40 ring-1 ring-mystic-gold/30'
-                    : 'border-mystic-700/50 bg-mystic-900/30';
-
-                cardBox.className = `p-3 rounded-xl border ${borderClass} flex items-center justify-between transition text-sm`;
-
+                const cardData = selectedCards[posName];
                 if (cardData) {
-                    cardBox.innerHTML = `
-                        <div class="flex flex-col pr-2">
-                            <span class="text-[10px] text-purple-300 font-mono uppercase tracking-wider">${pos}:</span>
-                            <span class="font-semibold ${cardData.isInverted ? 'text-purple-300' : 'text-white'} mt-0.5">
-                                ${cardData.name} ${cardData.isInverted ? '🙃 (Перевернута)' : '☀️ (Пряма)'}
-                            </span>
-                        </div>
-                        <div class="flex gap-1.5 shrink-0">
-                            <button onclick="toggleInversion('${pos}')" class="text-xs bg-mystic-700 hover:bg-mystic-600 px-2 py-1 rounded-lg transition text-gray-200">🔄</button>
-                            <button onclick="removeCard('${pos}')" class="text-xs bg-mystic-700/50 hover:bg-red-900/40 border border-transparent hover:border-red-500/30 px-2 py-1 rounded-lg transition text-red-400">❌</button>
+                    slot.classList.add('filled');
+                    slot.innerHTML = `
+                        <div class="slot-position-name">${posName}</div>
+                        <div class="slot-card-name ${cardData.isInverted ? 'inverted' : ''}">${cardData.name}</div>
+                        <div class="flex gap-2 mt-2">
+                            <button onclick="event.stopPropagation(); toggleInversion('${posName}')" class="text-xs bg-mystic-700 px-2 py-1 rounded">🔄</button>
+                            <button onclick="event.stopPropagation(); removeCard('${posName}')" class="text-xs bg-red-900/50 px-2 py-1 rounded">❌</button>
                         </div>
                     `;
                 } else {
-                    cardBox.innerHTML = `
-                        <div class="flex flex-col opacity-40 w-full cursor-pointer hover:opacity-70 transition" onclick="setActivePosition(${index})">
-                            <span class="text-[10px] text-gray-500 font-mono uppercase tracking-wider">${pos}:</span>
-                            <span class="italic text-gray-500 text-xs mt-0.5">[ Обрати карту ]</span>
-                        </div>
+                    slot.innerHTML = `
+                        <div class="slot-position-name">${posName}</div>
+                        <div class="slot-empty-text">[ Обрати карту ]</div>
                     `;
                 }
-                list.appendChild(cardBox);
+                container.appendChild(slot);
             });
         }
 
-        // --- STATE MANAGEMENT ---
-
-        function updateSpreadPositions() {
-            const spreadType = document.getElementById('spread').value;
-            currentSpreadPositions = spreadTemplates[spreadType];
-            resetSpread();
-        }
-
         function updateHint() {
+            const schema = SPREAD_SCHEMAS[currentSpreadKey];
             const hint = document.getElementById('current-position-hint');
-            if (activePositionIndex < currentSpreadPositions.length) {
-                hint.innerHTML = `👉 Обираємо для: <span class="text-mystic-gold font-bold">"${currentSpreadPositions[activePositionIndex]}"</span>`;
+            if (activePositionIndex < schema.cards) {
+                hint.innerHTML = `👉 Оберіть карту для позиції: <strong class="text-mystic-gold">"${schema.positions[activePositionIndex]}"</strong>`;
             } else {
-                hint.innerText = "✅ Всі позиції заповнено!";
+                hint.innerText = "✅ Розклад повністю заповнено!";
             }
-        }
-
-        function selectCard(cardName) {
-            if (activePositionIndex >= currentSpreadPositions.length) return;
-
-            const currentPosition = currentSpreadPositions[activePositionIndex];
-            selectedCards[currentPosition] = { name: cardName, isInverted: false };
-
-            advanceToNextEmpty();
-            renderSelectedCards();
-            updateHint();
-            renderCardsPool();
-        }
-
-        function advanceToNextEmpty() {
-            activePositionIndex = currentSpreadPositions.findIndex(pos => !selectedCards[pos]);
-            if (activePositionIndex === -1) {
-                activePositionIndex = currentSpreadPositions.length;
-            }
-        }
-
-        function toggleInversion(position) {
-            if (selectedCards[position]) {
-                selectedCards[position].isInverted = !selectedCards[position].isInverted;
-                renderSelectedCards();
-            }
-        }
-
-        function removeCard(position) {
-            delete selectedCards[position];
-            advanceToNextEmpty();
-            renderSelectedCards();
-            updateHint();
-            renderCardsPool();
         }
 
         function setActivePosition(index) {
             activePositionIndex = index;
+            renderSpreadSchema();
             updateHint();
-            renderSelectedCards();
         }
 
-        function resetSpread() {
-            selectedCards = {};
-            activePositionIndex = 0;
-            document.getElementById('question').value = '';
-            document.getElementById('ai-response').innerText = 'Оберіть карти до розкладу та натисніть кнопку вище, щоб отримати тлумачення від ШІ-Таролога...';
-            renderSelectedCards();
-            updateHint();
-            renderCardsPool();
+        function toggleInversion(positionName) {
+            if (selectedCards[positionName]) {
+                selectedCards[positionName].isInverted = !selectedCards[positionName].isInverted;
+                renderSpreadSchema();
+            }
         }
 
-        init();
+        function removeCard(positionName) {
+            delete selectedCards[positionName];
+            advanceToNextEmpty();
+            renderSpreadSchema();
+            updateHint();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
