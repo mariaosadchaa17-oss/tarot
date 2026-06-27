@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate-key="page_title">Таро AI Компаньйон v9.0 Ultimate</title>
+    <title data-translate-key="page_title">Таро AI Компаньйон v8.0 Ultimate</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -40,69 +40,286 @@
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
 
-        .card-flip-container { perspective: 1000px; cursor: pointer; position: relative; aspect-ratio: 2/3; min-height: 240px; }
+        /* 3D Card Flip - FIXED ASPECT RATIO */
+        .card-flip-container {
+            perspective: 1000px;
+            cursor: pointer;
+            position: relative;
+            aspect-ratio: 2/3;
+            min-height: 240px;
+        }
         .card-flip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
         .card-flip-container.flipped .card-flip-inner { transform: rotateY(180deg); }
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 0.75rem; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem; text-align: center; overflow: hidden; }
-        .card-front { background: radial-gradient(circle, #1a0b2e 0%, #16213e 50%, #0f3460 100%); border: 2px solid var(--border-color); }
-        .card-back { background: linear-gradient(135deg, var(--bg-surface), rgba(157, 78, 223, 0.2)); border: 3px solid var(--text-purple); transform: rotateY(180deg); box-shadow: 0 0 20px var(--primary-glow-color), inset 0 0 20px rgba(157, 78, 223, 0.1); }
-        .tarot-card-img { width: 100%; height: 100%; background-size: cover; border-radius: 0.75rem; display: block; }
+        .card-front { background: var(--bg-surface); border: 2px solid var(--border-color); }
+        .card-back {
+            background: linear-gradient(135deg, var(--bg-surface), rgba(157, 78, 223, 0.2));
+            border: 3px solid var(--text-purple);
+            transform: rotateY(180deg);
+            box-shadow: 0 0 20px var(--primary-glow-color), inset 0 0 20px rgba(157, 78, 223, 0.1);
+        }
+        .card-back-pattern { font-size: 3rem; opacity: 0.3; }
 
-        .reverse-btn { background: rgba(157, 78, 223, 0.3); border: 1px solid var(--text-purple); color: var(--text-gold); padding: 0.2rem 0.5rem; border-radius: 0.5rem; font-size: 0.68rem; cursor: pointer; transition: all 0.3s; white-space: nowrap; }
+        /* Tarot card image - fills the card-back face fully */
+        .tarot-card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            display: block;
+        }
+
+        /* Card back (рубашка) style themes */
+        .card-back-cosmic { background: radial-gradient(circle, #1a0b2e 0%, #16213e 50%, #0f3460 100%) !important; }
+        .card-back-witchy { background: linear-gradient(135deg, #2d1b4e 0%, #1a0033 50%, #0d0221 100%) !important; }
+        .card-back-gold { background: linear-gradient(135deg, #f3c66f 0%, #c89b3c 50%, #8b6914 100%) !important; }
+
+        /* Card info footer - OUTSIDE the flip card */
+        .reverse-btn {
+            background: rgba(157, 78, 223, 0.3);
+            border: 1px solid var(--text-purple);
+            color: var(--text-gold);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.68rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
         .reverse-btn:hover { background: rgba(157, 78, 223, 0.5); transform: scale(1.05); }
 
+        /* Accordion */
         .accordion-wrapper { display: none; margin-top: 0.75rem; }
         .accordion-wrapper.active { display: block; }
 
+        /* Active position pulse */
         @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 15px var(--primary-glow-color); transform: scale(1.03); } 50% { box-shadow: 0 0 25px var(--primary-glow-color), 0 0 35px var(--secondary-glow-color); transform: scale(1.05); } }
         .schema-position-active { animation: pulse-glow 1.5s infinite; border-color: var(--text-gold) !important; }
 
-        .schema-container { display: grid; gap: 1.5rem; padding: 2rem; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 700px; }
-        .schema-container.spread-cross { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 1.5rem; }
-        .cross-pos-1 { grid-row: 2; grid-column: 2; } .cross-pos-2 { grid-row: 1; grid-column: 2; } .cross-pos-3 { grid-row: 2; grid-column: 1; } .cross-pos-4 { grid-row: 2; grid-column: 3; }
+        /* FIXED CROSS GRID 3x3 */
+        .schema-container {
+            display: grid;
+            gap: 1.5rem;
+            padding: 2rem;
+            border-radius: 1rem;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            min-height: 700px;
+        }
+        .schema-container.spread-cross {
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
 
-        @keyframes card-flight { from { opacity: 0; transform: translateY(-80px) scale(0.5) rotateY(180deg); } to { opacity: 1; transform: translateY(0) scale(1) rotateY(0deg); } }
+        /* STRICT GRID POSITIONING FOR CROSS */
+        .cross-pos-1 { grid-row: 2; grid-column: 2; } /* Суть - центр */
+        .cross-pos-2 { grid-row: 1; grid-column: 2; } /* Перешкода - верх центр */
+        .cross-pos-3 { grid-row: 2; grid-column: 1; } /* Порада - лево центр */
+        .cross-pos-4 { grid-row: 2; grid-column: 3; } /* Результат - право центр */
+
+        /* Card flight animation */
+        @keyframes card-flight {
+            from { opacity: 0; transform: translateY(-80px) scale(0.5) rotateY(180deg); }
+            to { opacity: 1; transform: translateY(0) scale(1) rotateY(0deg); }
+        }
         .card-flight-animation { animation: card-flight 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
 
         .slot-number { font-size: 2rem; font-weight: 700; color: rgba(255,255,255,0.15); }
-        .slot-position-name { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text-purple); background: rgba(0, 0, 0, 0.6); padding: 0.25rem 0.5rem; border-radius: 0.25rem; }
+        .slot-position-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-purple);
+            background: rgba(0, 0, 0, 0.6);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
         .slot-card-name { font-size: 0.9rem; font-weight: 600; margin-top: 0.5rem; }
 
+        /* Beautiful Loader */
         #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(6, 2, 12, 0.95); backdrop-filter: blur(15px); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.5s; }
         #loading-overlay.active { opacity: 1; pointer-events: auto; }
 
-        @keyframes crystal-pulse { 0%, 100% { transform: scale(1); opacity: 0.9; filter: drop-shadow(0 0 30px var(--primary-glow-color)); } 50% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 50px var(--primary-glow-color)) drop-shadow(0 0 80px var(--secondary-glow-color)); } }
-        @keyframes moon-orbit { from { transform: rotate(0deg) translateX(70px) rotate(0deg); } to { transform: rotate(360deg) translateX(70px) rotate(-360deg); } }
-        .crystal-ball { width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), var(--text-purple) 60%, #1a0b2e 100%); animation: crystal-pulse 2.5s ease-in-out infinite; position: relative; box-shadow: inset 0 0 50px rgba(255,255,255,0.2), 0 0 80px var(--primary-glow-color); }
-        .moon-phase { position: absolute; width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(circle, var(--text-gold), rgba(243, 198, 111, 0.3)); animation: moon-orbit 4s linear infinite; box-shadow: 0 0 20px var(--text-gold); }
+        @keyframes crystal-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; filter: drop-shadow(0 0 30px var(--primary-glow-color)); }
+            50% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 50px var(--primary-glow-color)) drop-shadow(0 0 80px var(--secondary-glow-color)); }
+        }
+        @keyframes moon-orbit {
+            from { transform: rotate(0deg) translateX(70px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(70px) rotate(-360deg); }
+        }
 
+        .crystal-ball {
+            width: 120px; height: 120px; border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4), var(--text-purple) 60%, #1a0b2e 100%);
+            animation: crystal-pulse 2.5s ease-in-out infinite;
+            position: relative;
+            box-shadow: inset 0 0 50px rgba(255,255,255,0.2), 0 0 80px var(--primary-glow-color);
+        }
+        .moon-phase {
+            position: absolute; width: 24px; height: 24px; border-radius: 50%;
+            background: radial-gradient(circle, var(--text-gold), rgba(243, 198, 111, 0.3));
+            animation: moon-orbit 4s linear infinite;
+            box-shadow: 0 0 20px var(--text-gold);
+        }
+
+        /* Spread categories */
         .spread-category { margin-bottom: 1.5rem; }
-        .spread-category-title { font-size: 0.85rem; font-weight: 700; color: var(--text-gold); margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 0.5rem; }
-        .spread-hint { font-size: 0.65rem; color: rgba(255, 255, 255, 0.5); margin-top: 0.25rem; font-style: italic; }
+        .spread-category-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-gold);
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .spread-hint {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 0.25rem;
+            font-style: italic;
+        }
         .control-card.spread-card { min-height: 80px; }
 
-        .suit-selector-card { background: var(--bg-surface); border: 2px solid var(--border-color); border-radius: 1rem; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.3s; min-height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; }
-        .suit-selector-card:hover { border-color: var(--text-purple); transform: translateY(-5px); box-shadow: 0 10px 30px var(--primary-glow-color); }
-        .suit-selector-card.active { border-color: var(--text-gold); background: rgba(243, 198, 111, 0.1); box-shadow: 0 0 20px var(--primary-glow-color); }
+        /* REDESIGNED CONSTRUCTOR */
+        .suit-selector-card {
+            background: var(--bg-surface);
+            border: 2px solid var(--border-color);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .suit-selector-card:hover {
+            border-color: var(--text-purple);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--primary-glow-color);
+        }
+        .suit-selector-card.active {
+            border-color: var(--text-gold);
+            background: rgba(243, 198, 111, 0.1);
+            box-shadow: 0 0 20px var(--primary-glow-color);
+        }
         .suit-icon { font-size: 2.5rem; }
         .suit-name { font-size: 1rem; font-weight: 600; color: var(--text-gold); }
 
-        .card-select-wrapper { margin-top: 1rem; padding: 1rem; background: rgba(0, 0, 0, 0.3); border-radius: 0.75rem; border: 1px solid var(--border-color); }
-        .card-carousel { display: flex; overflow-x: auto; scroll-behavior: smooth; gap: 0.75rem; padding: 1rem 0.5rem; margin-top: 1rem; }
-        .card-carousel::-webkit-scrollbar { height: 8px; }
-        .card-carousel::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 10px; }
-        .card-carousel::-webkit-scrollbar-thumb { background: var(--text-purple); border-radius: 10px; box-shadow: 0 0 10px var(--primary-glow-color); }
-        .card-carousel::-webkit-scrollbar-thumb:hover { background: var(--text-gold); }
+        .card-select-wrapper {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+        }
 
-        .card-item { min-width: 100px; max-width: 100px; background: var(--bg-surface); border: 2px solid var(--border-color); border-radius: 0.75rem; padding: 0.75rem 0.5rem; text-align: center; cursor: pointer; transition: all 0.3s; flex-shrink: 0; }
-        .card-item:hover { border-color: var(--text-purple); transform: translateY(-5px); box-shadow: 0 5px 15px var(--primary-glow-color); }
-        .card-item.disabled { opacity: 0.3; cursor: not-allowed; border-color: #555; }
-        .card-item-name { font-size: 0.75rem; font-weight: 600; color: white; line-height: 1.2; }
+        /* HORIZONTAL CARD CAROUSEL */
+        .card-carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            gap: 0.75rem;
+            padding: 1rem 0.5rem;
+            margin-top: 1rem;
+        }
 
-        .reversed-toggle, .context-toggle { display: flex; align-items: center; gap: 0.5rem; margin-top: 1rem; padding: 0.75rem; background: rgba(157, 78, 223, 0.1); border-radius: 0.5rem; cursor: pointer; transition: all 0.3s; }
-        .reversed-toggle:hover, .context-toggle:hover { background: rgba(157, 78, 223, 0.2); }
-        .styled-checkbox { width: 20px; height: 20px; cursor: pointer; accent-color: var(--text-purple); }
-        .context-input { background: #06020c; border: 1px solid var(--border-color); border-radius: 0.25rem; padding: 0.25rem 0.5rem; font-size: 0.9rem; color: white; margin-left: 0.5rem; }
+        /* Neon scrollbar */
+        .card-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        .card-carousel::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        .card-carousel::-webkit-scrollbar-thumb {
+            background: var(--text-purple);
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--primary-glow-color);
+        }
+        .card-carousel::-webkit-scrollbar-thumb:hover {
+            background: var(--text-gold);
+        }
+
+        .card-item {
+            min-width: 100px;
+            max-width: 100px;
+            background: var(--bg-surface);
+            border: 2px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.75rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+        .card-item:hover {
+            border-color: var(--text-purple);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px var(--primary-glow-color);
+        }
+        .card-item.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #555;
+        }
+        .card-item-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .reversed-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(157, 78, 223, 0.1);
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .reversed-toggle:hover {
+            background: rgba(157, 78, 223, 0.2);
+        }
+        .reversed-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--text-purple);
+        }
+
+        .add-card-btn {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            margin-top: 1rem;
+            background: linear-gradient(135deg, var(--text-purple), rgba(157, 78, 223, 0.6));
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .add-card-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px var(--primary-glow-color);
+        }
+        .add-card-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
     </style>
 </head>
 <body class="p-3 md:p-8 min-h-screen">
@@ -111,13 +328,30 @@
         <div class="flex justify-between items-center w-full mb-4">
             <div id="moon-widget" class="text-left text-xs"></div>
             <div class="flex items-center gap-4">
-                <div id="theme-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">🔮 Neon</span><div class="w-12 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="theme-pill" class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">🖤 Witchy</span></div>
+                <!-- Theme Switcher -->
+                <div id="theme-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                    <span class="text-gray-400">🔮 Neon</span>
+                    <div class="w-12 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300">
+                        <div id="theme-pill" class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300"></div>
+                    </div>
+                    <span class="text-white">🖤 Witchy</span>
+                </div>
+                <!-- Lang Switcher -->
                 <div id="lang-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">RU</span><div class="w-10 h-5 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="lang-pill" class="w-4 h-4 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">UA</span></div>
                 <button id="music-toggle" class="text-2xl">🔇</button>
             </div>
         </div>
         <h1 class="text-3xl md:text-4xl font-extrabold tracking-widest uppercase text-gold" style="filter: drop-shadow(0 0 10px var(--primary-glow-color));" data-translate-key="main_title"></h1>
-        <div class="mt-6"><button id="rules-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="rules_toggle"></button><div id="rules-wrapper" class="accordion-wrapper"><div class="text-left bg-surface border border-color rounded-xl p-4"><ol class="list-decimal list-inside space-y-2 text-sm" id="rules-list"></ol></div></div></div>
+
+        <!-- Rules Accordion -->
+        <div class="mt-6">
+            <button id="rules-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="rules_toggle">📜 Свод правил таролога</button>
+            <div id="rules-wrapper" class="accordion-wrapper">
+                <div class="text-left bg-surface border border-color rounded-xl p-4">
+                    <ol class="list-decimal list-inside space-y-2 text-sm" id="rules-list"></ol>
+                </div>
+            </div>
+        </div>
     </header>
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div class="lg:col-span-7 space-y-6">
@@ -129,18 +363,53 @@
             <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                 <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_context_spread"></h2>
                 <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_target"></label><div id="target-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div></div>
-                <div class="mb-4"><div class="flex items-center justify-between mb-2"><label class="block text-sm font-bold text-purple" data-translate-key="label_question"></label><button id="refine-question-btn" class="text-xs text-gold hover:brightness-125 transition" title="Сформулювати питання правильно">✨🪄</button></div><textarea id="question" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" rows="2"></textarea></div>
-                <div><label class="block text-sm font-bold text-purple mb-3" data-translate-key="label_spread_type"></label><div id="spread-selector"></div></div>
+
+                <!-- Question field -->
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-sm font-bold text-purple" data-translate-key="label_question">Ваше питання</label>
+                        <button id="refine-question-btn" class="text-xs text-gold hover:brightness-125 transition" title="Сформулювати питання правильно">✨🪄</button>
+                    </div>
+                    <textarea id="question" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" rows="2" data-placeholder-ua="Ваше питання (необов'язково)" data-placeholder-ru="Ваш вопрос (необязательно)"></textarea>
+                </div>
+
+                <!-- Card back style selector -->
+                <div class="mb-4">
+                    <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_card_back">Вибір сорочки карт</label>
+                    <div id="card-back-selector" class="grid grid-cols-3 gap-2"></div>
+                </div>
+
+                <!-- Spread type with categories -->
+                <div>
+                    <label class="block text-sm font-bold text-purple mb-3" data-translate-key="label_spread_type"></label>
+                    <div id="spread-selector"></div>
+                </div>
             </div>
-            <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
-                <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_dynamic_context"></h2>
-                <div id="dynamic-context-container" class="space-y-3"></div>
-            </div>
+
+            <!-- REDESIGNED CONSTRUCTOR -->
             <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                 <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_constructor"></h2>
                 <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-color"></p>
-                <div class="mb-4"><label class="block text-sm font-bold text-purple mb-3" data-translate-key="constructor_step1"></label><div id="suit-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div></div>
-                <div id="card-selection-step" class="card-select-wrapper" style="display: none;"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="constructor_step2"></label><div id="card-carousel" class="card-carousel"></div><div class="reversed-toggle" onclick="App.toggleReversedPreview()"><input type="checkbox" id="reversed-checkbox" class="styled-checkbox"><label for="reversed-checkbox" class="text-sm font-semibold cursor-pointer" data-translate-key="constructor_reversed"></label></div></div>
+
+                <!-- Step 1: Suit Selection -->
+                <div class="mb-4">
+                    <label class="block text-sm font-bold text-purple mb-3" data-translate-key="constructor_step1">Крок 1: Оберіть групу/масть</label>
+                    <div id="suit-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+                </div>
+
+                <!-- Step 2: Card Carousel -->
+                <div id="card-selection-step" class="card-select-wrapper" style="display: none;">
+                    <label class="block text-sm font-bold text-purple mb-2" data-translate-key="constructor_step2">Крок 2: Оберіть карту</label>
+
+                    <!-- Horizontal Card Carousel -->
+                    <div id="card-carousel" class="card-carousel"></div>
+
+                    <!-- Reversed Toggle -->
+                    <div class="reversed-toggle" onclick="App.toggleReversedPreview()">
+                        <input type="checkbox" id="reversed-checkbox" class="reversed-checkbox">
+                        <label for="reversed-checkbox" class="text-sm font-semibold cursor-pointer" data-translate-key="constructor_reversed">🔄 Зробити перевернутою</label>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="lg:col-span-5 space-y-6">
@@ -152,113 +421,287 @@
                 <h2 class="text-lg font-semibold text-gold mb-3" data-translate-key="section_title_interpretation"></h2>
                 <button id="ai-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:brightness-110 transition uppercase tracking-wider text-sm mb-3" data-translate-key="btn_get_interpretation"></button>
                 <div id="ai-response-box" class="text-base bg-mystic-900 p-4 rounded-xl border border-color min-h-[200px] max-h-[60vh] overflow-y-auto flex justify-center items-center"><span id="ai-placeholder" data-translate-key="placeholder_ai_response"></span></div>
-                <div id="art-container" class="mt-4 hidden"><img id="generated-art" class="rounded-lg w-full"></div>
             </div>
         </div>
     </div>
     <footer class="text-center py-8 mt-8 border-t border-color"><p class="text-sm text-gold" style="filter: drop-shadow(0 0 5px var(--primary-glow-color));">Made with 💜 by Mary • Support Engineer & Tarot Master</p></footer>
 </div>
+<!-- Audio Elements -->
 <audio id="ambient-music" loop><source src="https://assets.chosic.com/wp-content/uploads/2021/07/The-Cradle-of-Your-Soul.mp3" type="audio/mpeg"></audio>
 <audio id="card-select-sound"><source src="https://cdn.freesound.org/previews/220/220173_4056037-lq.mp3" type="audio/mpeg"></audio>
 <audio id="mystical-chime"><source src="https://cdn.freesound.org/previews/411/411749_5121236-lq.mp3" type="audio/mpeg"></audio>
-<div id="loading-overlay"><div class="crystal-ball"><div class="moon-phase"></div></div><p class="mt-8 text-xl text-gold font-semibold" id="loading-text" data-translate-key="loading_text"></p></div>
+
+<div id="loading-overlay">
+    <div class="crystal-ball">
+        <div class="moon-phase"></div>
+    </div>
+    <p class="mt-8 text-xl text-gold font-semibold" id="loading-text" data-translate-key="loading_text">Зчитуємо інформацію з простору...</p>
+</div>
 
 <script>
     const App = {
         state: {
             lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self', theme: 'neon',
             spreadKey: 'cross', activeSuit: null, selectedCards: {}, activePositionIndex: 0,
-            previewReversed: false,
-            context: { morningFlow: false, relationshipDynamic: false, partnerName: '', geoEnergy: false, location: '' }
+            cardBackStyle: 'cosmic', previewReversed: false, selectedCardForAdd: null
         },
         translations: {
             ua: {
                 page_title: "Таро AI Компаньйон", main_title: "🔮 Таро AI Компаньйон",
                 rules_toggle: "📜 Свод правил таролога",
-                rules_list: ["Формулюйте запит чітко та екологічно.", "Не дублюйте один і той же запит.", "Підходьте до розкладу у спокійному стані.", "Пам'ятайте: карти показують вектор, але вибір за вами."],
+                rules_list: ["Формулюйте запит чітко та екологічно (без злого умислу).", "Не дублюйте один і той же запит картам декілька разів на день.", "Підходьте до розкладу у спокійному, медитативному стані.", "Пам'ятайте: карти показують найбільш вірогідний вектор, але фінальний вибір завжди за вами."],
                 section_title_mode_sphere: "✨ 1. Режим та Сфера", label_ai_mode: "Режим ШІ",
                 mode_mystical: "Містичний", mode_psychologist: "Психологічний",
                 label_sphere: "Сфера життя",
                 section_title_context_spread: "🃏 2. Контекст та Розклад", label_target: "На кого ворожимо?",
                 target_self: "На себе", target_other: "На партнера", target_friend: "На друга", target_rival: "На ворога",
-                label_question: "Ваше питання",
+                label_question: "Ваше питання", label_card_back: "Вибір сорочки карт",
+                card_back_cosmic: "🌌 Космічна", card_back_witchy: "🔮 Відьминська", card_back_gold: "⚜️ Золото",
                 label_spread_type: "Тип розкладу",
-                section_title_dynamic_context: "🌌 3. Динамічний контекст",
-                context_morning_flow: "🧘‍♀️ Morning Flow",
-                context_relationship_dynamic: "💞 Динаміка зв'язку (введіть ім'я)",
-                context_geo_energy: "🌍 Geo-Energy (введіть місце)",
-                section_title_constructor: "🛠️ 4. Конструктор карт",
-                constructor_step1: "Крок 1: Оберіть масть",
+                spread_category_basic: "⚡ БАЗОВІ ТА ШВИДКІ РОЗКЛАДИ",
+                spread_category_love: "💖 РОЗКЛАДИ ДЛЯ СТОСУНКІВ ТА КОХАННЯ",
+                spread_category_deep: "🌟 СКЛАДНІ ТА КЛАСИЧНІ СХЕМИ",
+                section_title_constructor: "🛠️ 3. Конструктор карт",
+                constructor_step1: "Крок 1: Оберіть групу/масть",
                 constructor_step2: "Крок 2: Оберіть карту",
                 constructor_reversed: "🔄 Зробити перевернутою",
-                section_title_schema: "🌙 5. Схема розкладу", btn_reset: "Скинути",
-                section_title_interpretation: "✨ 6. Тлумачення від ШІ", btn_get_interpretation: "Отримати тлумачення",
+                constructor_add_btn: "➕ Додати карту в розклад",
+                section_title_schema: "🌙 4. Схема розкладу", btn_reset: "Скинути",
+                section_title_interpretation: "✨ 5. Тлумачення від ШІ", btn_get_interpretation: "Отримати тлумачення",
                 placeholder_ai_response: "Оберіть дію...",
                 hint_select_card_for: "👉 Оберіть карту для позиції:", hint_spread_filled: "✅ Розклад повністю заповнено!",
                 alert_spread_not_filled: "Будь ласка, заповніть усі позиції в розкладі.",
                 alert_card_already_in: (card) => `Карта "${card}" вже є в розкладі.`,
+                alert_no_card_selected: "Будь ласка, оберіть карту зі списку.",
+                recommendation_love: "💡 Для стосунків найкраще підходить розклад 'Хрест'.",
+                recommendation_work: "💡 Аналізуємо перспективи та варіанти розвитку.",
+                recommendation_health: "💡 Для швидкої оцінки стану достатньо однієї карти.",
+                recommendation_destiny: "💡 Глибокий розклад 'Шлях' покаже ваш вектор.",
                 suit_major: "✨ Старші Аркани", suit_wands: "🔥 Жезли", suit_cups: "💧 Кубки", suit_swords: "🌪 Мечі", suit_pentacles: "⛰ Пентаклі",
                 moon_phases: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'],
                 loading_text: "Зчитуємо інформацію з простору...",
                 btn_reverse: "⤾ Перевернути",
+                position_names: {
+                    cross: ["Суть", "Перешкода", "Порада", "Результат"]
+                }
             },
             ru: {
                 page_title: "Таро AI Компаньон", main_title: "🔮 Таро AI Компаньон",
                 rules_toggle: "📜 Свод правил таролога",
-                rules_list: ["Формулируйте запрос четко и экологично.", "Не дублируйте один и тот же запрос.", "Подходите к раскладу в спокойном состоянии.", "Помните: карты показывают вектор, но выбор за вами."],
+                rules_list: ["Формулируйте запрос четко и экологично (без злого умысла).", "Не дублируйте один и тот же запрос картам несколько раз в день.", "Подходите к раскладу в спокойном, медитативном состоянии.", "Помните: карты показывают наиболее вероятный вектор, но финальный выбор всегда за вами."],
                 section_title_mode_sphere: "✨ 1. Режим и Сфера", label_ai_mode: "Режим ИИ",
                 mode_mystical: "Мистический", mode_psychologist: "Психологический",
                 label_sphere: "Сфера жизни",
                 section_title_context_spread: "🃏 2. Контекст и Расклад", label_target: "На кого гадаем?",
                 target_self: "На себя", target_other: "На партнера", target_friend: "На друга", target_rival: "На врага",
-                label_question: "Ваш вопрос",
+                label_question: "Ваш вопрос", label_card_back: "Выбор рубашки карт",
+                card_back_cosmic: "🌌 Космическая", card_back_witchy: "🔮 Ведьминская", card_back_gold: "⚜️ Золото",
                 label_spread_type: "Тип расклада",
-                section_title_dynamic_context: "🌌 3. Динамический контекст",
-                context_morning_flow: "🧘‍♀️ Morning Flow",
-                context_relationship_dynamic: "💞 Динамика связи (введите имя)",
-                context_geo_energy: "🌍 Geo-Energy (введите место)",
-                section_title_constructor: "🛠️ 4. Конструктор карт",
-                constructor_step1: "Шаг 1: Выберите масть",
+                spread_category_basic: "⚡ БАЗОВЫЕ И БЫСТРЫЕ РАСКЛАДЫ",
+                spread_category_love: "💖 РАСКЛАДЫ ДЛЯ ОТНОШЕНИЙ И ЛЮБВИ",
+                spread_category_deep: "🌟 СЛОЖНЫЕ И КЛАССИЧЕСКИЕ СХЕМЫ",
+                section_title_constructor: "🛠️ 3. Конструктор карт",
+                constructor_step1: "Шаг 1: Выберите группу/масть",
                 constructor_step2: "Шаг 2: Выберите карту",
                 constructor_reversed: "🔄 Сделать перевернутой",
-                section_title_schema: "🌙 5. Схема расклада", btn_reset: "Сбросить",
-                section_title_interpretation: "✨ 6. Толкование от ИИ", btn_get_interpretation: "Получить толкование",
+                constructor_add_btn: "➕ Добавить карту в расклад",
+                section_title_schema: "🌙 4. Схема расклада", btn_reset: "Сбросить",
+                section_title_interpretation: "✨ 5. Толкование от ИИ", btn_get_interpretation: "Получить толкование",
                 placeholder_ai_response: "Выберите действие...",
                 hint_select_card_for: "👉 Выберите карту для позиции:", hint_spread_filled: "✅ Расклад полностью заполнен!",
                 alert_spread_not_filled: "Пожалуйста, заполните все позиции в раскладе.",
                 alert_card_already_in: (card) => `Карта "${card}" уже есть в раскладе.`,
+                alert_no_card_selected: "Пожалуйста, выберите карту из списка.",
+                recommendation_love: "💡 Для отношений лучше всего подходит расклад 'Крест'.",
+                recommendation_work: "💡 Анализируем перспективы и варианты развития.",
+                recommendation_health: "💡 Для быстрой оценки состояния достаточно одной карты.",
+                recommendation_destiny: "💡 Глубокий расклад 'Путь' покажет ваш вектор.",
                 suit_major: "✨ Старшие Арканы", suit_wands: "🔥 Жезлы", suit_cups: "💧 Кубки", suit_swords: "🌪 Мечи", suit_pentacles: "⛰ Пентакли",
                 moon_phases: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна'],
                 loading_text: "Считываем информацию из пространства...",
                 btn_reverse: "⤾ Перевернуть",
+                position_names: {
+                    cross: ["Суть", "Препятствие", "Совет", "Результат"]
+                }
             }
         },
         data: {
-            spheres: [ { key: 'love', icon: '❤️', ua: 'Кохання', ru: 'Любовь' }, { key: 'career', icon: '💼', ua: 'Кар\'єра', ru: 'Карьера' }, { key: 'finance', icon: '💰', ua: 'Фінанси', ru: 'Финансы' }, { key: 'health', icon: '🌿', ua: 'Здоров\'я', ru: 'Здоровье' }, { key: 'destiny', icon: '🌌', ua: 'Призначення', ru: 'Предназначение' }, { key: 'general', icon: '🪐', ua: 'Загальний аналіз', ru: 'Общий анализ' } ],
-            targets: [ { key: 'self', ua: 'На себе', ru: 'На себя' }, { key: 'partner', ua: 'На партнера', ru: 'На партнера' }, { key: 'friend', ua: 'На друга', ru: 'На друга' }, { key: 'rival', ua: 'На ворога', ru: 'На врага' } ],
-            spreads: { "card-of-day": { cards: 1, ua: "Карта дня", ru: "Карта дня", positions: { ua: ["Енергія дня"], ru: ["Энергия дня"] } }, "cross": { cards: 4, ua: "Хрест", ru: "Крест", positions: { ua: ["Суть", "Перешкода", "Порада", "Результат"], ru: ["Суть", "Препятствие", "Совет", "Результат"] }, gridClass: 'spread-cross' } },
+            spheres: [
+                { key: 'love', icon: '❤️', ua: 'Кохання', ru: 'Любовь', rec: 'cross', rec_key: 'recommendation_love' },
+                { key: 'career', icon: '💼', ua: 'Кар\'єра', ru: 'Карьера', rec: 'three-cards', rec_key: 'recommendation_work' },
+                { key: 'finance', icon: '💰', ua: 'Фінанси', ru: 'Финансы', rec: 'three-cards', rec_key: 'recommendation_work' },
+                { key: 'health', icon: '🌿', ua: 'Здоров\'я', ru: 'Здоровье', rec: 'yes-no', rec_key: 'recommendation_health' },
+                { key: 'destiny', icon: '🌌', ua: 'Призначення', ru: 'Предназначение', rec: 'path', rec_key: 'recommendation_destiny' },
+                { key: 'general', icon: '🪐', ua: 'Загальний аналіз', ru: 'Общий анализ', rec: 'three-cards', rec_key: null },
+            ],
+            targets: [
+                { key: 'self', ua: 'На себе', ru: 'На себя' }, { key: 'partner', ua: 'На партнера', ru: 'На партнера' },
+                { key: 'friend', ua: 'На друга', ru: 'На друга' }, { key: 'rival', ua: 'На ворога', ru: 'На врага' }
+            ],
+            spreadCategories: {
+                basic: {
+                    spreads: ['yes-no', 'card-of-day', 'three-cards'],
+                    ua: '⚡ БАЗОВІ ТА ШВИДКІ РОЗКЛАДИ',
+                    ru: '⚡ БАЗОВЫЕ И БЫСТРЫЕ РАСКЛАДЫ'
+                },
+                love: {
+                    spreads: ['cross', 'venus-circle', 'choice'],
+                    ua: '💖 РОЗКЛАДИ ДЛЯ СТОСУНКІВ ТА КОХАННЯ',
+                    ru: '💖 РАСКЛАДЫ ДЛЯ ОТНОШЕНИЙ И ЛЮБВИ'
+                },
+                deep: {
+                    spreads: ['celtic-cross', 'chakras', 'astro-circle'],
+                    ua: '🌟 СКЛАДНІ ТА КЛАСИЧНІ СХЕМИ',
+                    ru: '🌟 СЛОЖНЫЕ И КЛАССИЧЕСКИЕ СХЕМЫ'
+                }
+            },
+            spreads: {
+                "card-of-day": {
+                    cards: 1,
+                    ua: "Карта дня (1)", ru: "Карта дня (1)",
+                    hint_ua: "Задає головну тему або настрій доби", hint_ru: "Задает главную тему или настроение дня",
+                    positions: { ua: ["Енергія дня"], ru: ["Энергия дня"] },
+                    grid: `"pos1"`
+                },
+                "yes-no": {
+                    cards: 3,
+                    ua: "Так/Ні (3)", ru: "Да/Нет (3)",
+                    hint_ua: "Баланс позитивних та негативних відповідей", hint_ru: "Баланс положительных и отрицательных ответов",
+                    positions: { ua: ["Відповідь 1", "Відповідь 2", "Відповідь 3"], ru: ["Ответ 1", "Ответ 2", "Ответ 3"] },
+                    grid: `"pos1 pos2 pos3"`
+                },
+                "three-cards": {
+                    cards: 3,
+                    ua: "Три Карти (3)", ru: "Три Карты (3)",
+                    hint_ua: "Минуле – Теперішнє – Майбутнє. Оцінка будь-якої ситуації", hint_ru: "Прошлое – Настоящее – Будущее. Оценка любой ситуации",
+                    positions: { ua: ["Минуле", "Теперішнє", "Майбутнє"], ru: ["Прошлое", "Настоящее", "Будущее"] },
+                    grid: `"pos1 pos2 pos3"`
+                },
+                "cross": {
+                    cards: 4,
+                    ua: "Хрест (4)", ru: "Крест (4)",
+                    hint_ua: "Класична схема для глибокого аналізу ситуації", hint_ru: "Классическая схема для глубокого анализа ситуации",
+                    positions: { ua: ["Суть", "Перешкода", "Порада", "Результат"], ru: ["Суть", "Препятствие", "Совет", "Результат"] },
+                    gridClass: 'spread-cross'
+                },
+                "venus-circle": {
+                    cards: 7,
+                    ua: "Венерине коло (7)", ru: "Венерин круг (7)",
+                    hint_ua: "Почуття обох партнерів, наміри, приховані мотиви та перспективи", hint_ru: "Чувства обоих партнеров, намерения, скрытые мотивы и перспективы",
+                    positions: { ua: ["Ви", "Партнер", "Зв'язок", "Минуле", "Майбутнє", "Совет", "Підсумок"], ru: ["Вы", "Партнер", "Связь", "Прошлое", "Будущее", "Совет", "Итог"] },
+                    grid: `"pos1 pos2 pos3 pos4 pos5 pos6 pos7"`
+                },
+                "choice": {
+                    cards: 5,
+                    ua: "Вибір (5)", ru: "Выбор (5)",
+                    hint_ua: "Любовний трикутник або рішення: що буде, якщо залишитися, і якщо піти", hint_ru: "Любовный треугольник или решение: что будет, если остаться, и если уйти",
+                    positions: { ua: ["Суть", "Варіант А", "Результат А", "Варіант Б", "Результат Б"], ru: ["Суть", "Вариант А", "Результат А", "Вариант Б", "Результат Б"] },
+                    grid: `". pos1 ." "pos2 . pos4" "pos3 . pos5"`
+                },
+                "celtic-cross": {
+                    cards: 10,
+                    ua: "Кельтський хрест (10)", ru: "Кельтский крест (10)",
+                    hint_ua: "Суть проблеми, підсвідомі страхи, минуле, майбутнє та підсумок", hint_ru: "Суть проблемы, подсознательные страхи, прошлое, будущее и итог",
+                    positions: { ua: ["Основа", "Перехрестя", "Минуле", "Майбутнє", "Вище", "Нижче", "Позиція", "Оточення", "Надії", "Підсумок"], ru: ["Основа", "Перекрестие", "Прошлое", "Будущее", "Высшее", "Низшее", "Позиция", "Окружение", "Надежды", "Итог"] },
+                    grid: `"pos3 pos5 pos4" "pos1 pos2 pos7" "pos6 pos8 pos9" ". . pos10"`
+                },
+                "chakras": {
+                    cards: 7,
+                    ua: "Сім чакр (7)", ru: "Семь чакр (7)",
+                    hint_ua: "Аналіз енергетичних центрів, психологічний та духовний стан", hint_ru: "Анализ энергетических центров, психологическое и духовное состояние",
+                    positions: { ua: ["Муладхара", "Свадхістхана", "Маніпура", "Анахата", "Вішудха", "Аджна", "Сахасрара"], ru: ["Муладхара", "Свадхистана", "Манипура", "Анахата", "Вишудха", "Аджна", "Сахасрара"] },
+                    grid: `"pos7" "pos6" "pos5" "pos4" "pos3" "pos2" "pos1"`
+                },
+                "astro-circle": {
+                    cards: 12,
+                    ua: "Астрологічне коло (12)", ru: "Астрологический круг (12)",
+                    hint_ua: "12 сфер життя (гроші, кар'єра, дім, кохання) на обраний період", hint_ru: "12 сфер жизни (деньги, карьера, дом, любовь) на выбранный период",
+                    positions: { ua: ["1 дім", "2 дім", "3 дім", "4 дім", "5 дім", "6 дім", "7 дім", "8 дім", "9 дім", "10 дім", "11 дім", "12 дім"], ru: ["1 дом", "2 дом", "3 дом", "4 дом", "5 дом", "6 дом", "7 дом", "8 дом", "9 дом", "10 дом", "11 дом", "12 дом"] },
+                    grid: `"pos10 pos11 pos12 pos1" "pos9 . . pos2" "pos8 . . pos3" "pos7 pos6 pos5 pos4"`
+                }
+            },
             cards: {
-                major: { ua: ["Дурень", "Маг", "Жриця", "Імператриця", "Імператор", "Ієрофант", "Закохані", "Колісниця", "Сила", "Відлюдник", "Фортуна", "Справедливість", "Повішений", "Смерть", "Помірність", "Диявол", "Вежа", "Зірка", "Місяць", "Сонце", "Суд", "Світ"], ru: ["Шут", "Маг", "Жрица", "Императрица", "Император", "Иерофант", "Влюбленные", "Колесница", "Сила", "Отшельник", "Фортуна", "Справедливость", "Повешенный", "Смерть", "Умеренность", "Дьявол", "Башня", "Звезда", "Луна", "Солнце", "Суд", "Мир"] },
-                minor: { ua: ["Туз", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Паж", "Лицар", "Королева", "Король"], ru: ["Туз", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Паж", "Рыцарь", "Королева", "Король"] },
-                suits: { ua: { wands: "Жезлів", cups: "Кубків", swords: "Мечів", pentacles: "Пентаклів" }, ru: { wands: "Жезлов", cups: "Кубков", swords: "Мечей", pentacles: "Пентаклей" } }
+                major: {
+                    ua: ["Дурень", "Маг", "Верховна Жриця", "Імператриця", "Імператор", "Ієрофант", "Закохані", "Колісниця", "Сила", "Відшельник", "Колесо Фортуни", "Справедливість", "Повішений", "Смерть", "Помірність", "Диявол", "Вежа", "Зірка", "Місяць", "Сонце", "Суд", "Світ"],
+                    ru: ["Шут", "Маг", "Верховная Жрица", "Императрица", "Император", "Иерофант", "Влюбленные", "Колесница", "Сила", "Отшельник", "Колесо Фортуны", "Справедливость", "Повешенный", "Смерть", "Умеренность", "Дьявол", "Башня", "Звезда", "Луна", "Солнце", "Суд", "Мир"],
+                    imageIds: ['ar00', 'ar01', 'ar02', 'ar03', 'ar04', 'ar05', 'ar06', 'ar07', 'ar08', 'ar09', 'ar10', 'ar11', 'ar12', 'ar13', 'ar14', 'ar15', 'ar16', 'ar17', 'ar18', 'ar19', 'ar20', 'ar21']
+                },
+                minor: {
+                    ua: ["Туз", "Двійка", "Трійка", "Четвірка", "П'ятірка", "Шістка", "Сімка", "Вісімка", "Дев'ятка", "Десятка", "Паж", "Лицар", "Королева", "Король"],
+                    ru: ["Туз", "Двойка", "Тройка", "Четвёрка", "Пятёрка", "Шестёрка", "Семёрка", "Восьмёрка", "Девятка", "Десятка", "Паж", "Рыцарь", "Королева", "Король"],
+                    imageIds: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14']
+                },
+                suits: {
+                    ua: { wands: "Жезлів", cups: "Кубків", swords: "Мечів", pentacles: "Пентаклів" },
+                    ru: { wands: "Жезлов", cups: "Кубков", swords: "Мечей", pentacles: "Пентаклей" }
+                },
+                suitCodes: { wands: 'wa', cups: 'cu', swords: 'sw', pentacles: 'pe' }
             }
         },
 
-        getCardImageStyleById(cardId) {
-            const cardWidth = 240, cardHeight = 420, cardsPerRow = 11;
-            const [suit, rankIndexStr] = cardId.split('_');
-            const rankIndex = parseInt(rankIndexStr, 10);
-            let cardIndex = (suit === 'major') ? rankIndex : ({ 'wands': 22, 'cups': 36, 'swords': 50, 'pentacles': 64 }[suit] + rankIndex);
-            const row = Math.floor(cardIndex / cardsPerRow), col = cardIndex % cardsPerRow;
-            return `background-image: url('image_70e0be.jpg'); background-position: -${col * cardWidth}px -${row * cardHeight}px; background-size: 2640px 2940px;`;
+        // TAROT CARD IMAGE MAPPING — GitHub raw CDN (Rider-Waite, lenmorld/tarot-api)
+        // Base URL for majors: .../majors/{name}.jpg  e.g. fool.jpg, magician.jpg
+        // Base URL for minors: .../minors/{suit}/{name}.jpg  e.g. wands/ace-of-wands.jpg
+
+        TAROT_CDN_BASE: 'https://raw.githubusercontent.com/lenmorld/tarot-api/master/static/card-images',
+
+        // Major Arcana file names (index 0-21)
+        majorFileNames: [
+            'fool','magician','high-priestess','empress','emperor',
+            'hierophant','lovers','chariot','strength','hermit',
+            'wheel-of-fortune','justice','hanged-man','death','temperance',
+            'devil','tower','star','moon','sun','judgement','world'
+        ],
+
+        // Minor Arcana rank file names (index 0-13: ace..king)
+        minorRankNames: [
+            'ace','two','three','four','five','six','seven',
+            'eight','nine','ten','page','knight','queen','king'
+        ],
+
+        // Suit folder names in the repo
+        suitFolders: {
+            wands: 'wands', cups: 'cups', swords: 'swords', pentacles: 'pentacles'
         },
 
+        // Get card image URL using cardId (e.g. 'major_0', 'wands_2')
+        getCardImageURLById(cardId) {
+            const [suit, rankIndexStr] = cardId.split('_');
+            const rankIndex = parseInt(rankIndexStr, 10);
+            const base = this.TAROT_CDN_BASE;
+
+            if (suit === 'major') {
+                const name = this.majorFileNames[rankIndex];
+                if (!name) return this.fallbackCardImage();
+                return `${base}/majors/${name}.jpg`;
+            } else {
+                const folder = this.suitFolders[suit];
+                const rank = this.minorRankNames[rankIndex];
+                if (!folder || !rank) return this.fallbackCardImage();
+                return `${base}/minors/${folder}/${rank}-of-${folder}.jpg`;
+            }
+        },
+
+        fallbackCardImage() {
+            return 'https://via.placeholder.com/200x340/1a0b2e/f3c66f?text=%F0%9F%94%AE';
+        },
+
+        // Legacy helper kept for backward compat (not used in schema render)
+        getCardImageURL(cardName) {
+            return this.fallbackCardImage();
+        },
+
+        // Translate card name to current language
         translateCardName(cardId) {
             const [suit, rankIndex] = cardId.split('_');
-            if (suit === 'major') return this.data.cards.major[this.state.lang][rankIndex];
-            const rank = this.data.cards.minor[this.state.lang][rankIndex];
-            const suitName = this.data.cards.suits[this.state.lang][suit];
-            return `${rank} ${suitName}`;
+
+            if (suit === 'major') {
+                return this.data.cards.major[this.state.lang][rankIndex];
+            } else {
+                const rank = this.data.cards.minor[this.state.lang][rankIndex];
+                const suitName = this.data.cards.suits[this.state.lang][suit];
+                return `${rank} ${suitName}`;
+            }
         },
 
         init() {
@@ -270,19 +713,16 @@
         },
 
         loadFromLocalStorage() {
-            const savedState = JSON.parse(localStorage.getItem('tarotAppState'));
-            if (savedState) {
-                this.state = { ...this.state, ...savedState };
-            }
-        },
-
-        saveToLocalStorage() {
-            localStorage.setItem('tarotAppState', JSON.stringify(this.state));
+            const savedLang = localStorage.getItem('tarot_lang');
+            const savedTheme = localStorage.getItem('tarot_theme');
+            if (savedLang) this.state.lang = savedLang;
+            if (savedTheme) this.state.theme = savedTheme;
         },
 
         restoreActiveStates() {
             this.handleSelection('mode', this.state.aiMode, false);
             this.handleSelection('target', this.state.target, false);
+            this.handleSelection('cardBack', this.state.cardBackStyle, false);
             this.handleSelection('sphere', this.state.sphere, false);
             this.handleSelection('spread', this.state.spreadKey, false);
             this.updateUI();
@@ -291,46 +731,71 @@
         renderAllDynamicContent() {
             this.applyLanguage();
             this.renderAllSelectors();
-            this.renderDynamicContext();
             this.updateUI();
             this.displayMoonPhase();
         },
 
         renderAllSelectors() {
-            const createButtons = (containerId, data, group) => {
+            const createButtons = (containerId, data, group, nameKey) => {
                 const container = document.getElementById(containerId);
-                container.innerHTML = data.map(item => `<button class="control-card" data-group="${group}" data-key="${item.key}">${item.icon || ''} <span>${item[this.state.lang]}</span></button>`).join('');
+                container.innerHTML = data.map(item => `<button class="control-card" data-group="${group}" data-key="${item.key}">${item.icon || ''} <span>${item[nameKey]}</span></button>`).join('');
             };
-            createButtons('mode-selector', [{key: 'mystical', icon: '🔮', ua: 'Містичний', ru: 'Мистический'}, {key: 'psychologist', icon: '🧠', ua: 'Психологічний', ru: 'Психологический'}], 'mode');
-            createButtons('sphere-selector', this.data.spheres, 'sphere');
-            createButtons('target-selector', this.data.targets, 'target');
+            createButtons('mode-selector', [{key: 'mystical', icon: '🔮', ua: this.translations.ua.mode_mystical, ru: this.translations.ru.mode_mystical}, {key: 'psychologist', icon: '🧠', ua: this.translations.ua.mode_psychologist, ru: this.translations.ru.mode_psychologist}], 'mode', this.state.lang);
+            createButtons('sphere-selector', this.data.spheres, 'sphere', this.state.lang);
+            createButtons('target-selector', this.data.targets, 'target', this.state.lang);
+
+            // Card back selector
+            const cardBackData = [{key: 'cosmic', name: this.translations[this.state.lang].card_back_cosmic}, {key: 'witchy', name: this.translations[this.state.lang].card_back_witchy}, {key: 'gold', name: this.translations[this.state.lang].card_back_gold}];
+            document.getElementById('card-back-selector').innerHTML = cardBackData.map(item => `<button class="control-card" data-group="cardBack" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
+
+            // Spread selector with categories
             this.renderSpreadSelector();
+
+            // Suit selector
             this.renderSuitSelector();
         },
 
         renderSpreadSelector() {
             const container = document.getElementById('spread-selector');
-            container.innerHTML = Object.keys(this.data.spreads).map(key => `<button class="control-card spread-card" data-group="spread" data-key="${key}"><span>${this.data.spreads[key][this.state.lang]}</span></button>`).join('');
+            let html = '';
+
+            Object.keys(this.data.spreadCategories).forEach(catKey => {
+                const category = this.data.spreadCategories[catKey];
+                html += `<div class="spread-category">`;
+                html += `<div class="spread-category-title">${category[this.state.lang]}</div>`;
+                html += `<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">`;
+
+                category.spreads.forEach(spreadKey => {
+                    const spread = this.data.spreads[spreadKey];
+                    const hint = spread[`hint_${this.state.lang}`];
+                    html += `<button class="control-card spread-card" data-group="spread" data-key="${spreadKey}">
+                        <span>${spread[this.state.lang]}</span>
+                        <div class="spread-hint">${hint}</div>
+                    </button>`;
+                });
+
+                html += `</div></div>`;
+            });
+
+            container.innerHTML = html;
         },
 
         renderSuitSelector() {
-            const suits = [ { key: 'major', icon: '✨', name: this.translations[this.state.lang].suit_major }, { key: 'wands', icon: '🔥', name: this.translations[this.state.lang].suit_wands }, { key: 'cups', icon: '💧', name: this.translations[this.state.lang].suit_cups }, { key: 'swords', icon: '🌪', name: this.translations[this.state.lang].suit_swords }, { key: 'pentacles', icon: '⛰', name: this.translations[this.state.lang].suit_pentacles } ];
-            document.getElementById('suit-grid').innerHTML = suits.map(suit => `<div class="suit-selector-card ${this.state.activeSuit === suit.key ? 'active' : ''}" onclick="App.selectSuit('${suit.key}')"><div class="suit-icon">${suit.icon}</div><div class="suit-name">${suit.name}</div></div>`).join('');
-        },
+            const suits = [
+                { key: 'major', icon: '✨', name: this.translations[this.state.lang].suit_major },
+                { key: 'wands', icon: '🔥', name: this.translations[this.state.lang].suit_wands },
+                { key: 'cups', icon: '💧', name: this.translations[this.state.lang].suit_cups },
+                { key: 'swords', icon: '🌪', name: this.translations[this.state.lang].suit_swords },
+                { key: 'pentacles', icon: '⛰', name: this.translations[this.state.lang].suit_pentacles }
+            ];
 
-        renderDynamicContext() {
-            const container = document.getElementById('dynamic-context-container');
-            const t = this.translations[this.state.lang];
-            container.innerHTML = `
-                <div class="context-toggle"><input type="checkbox" id="morning-flow-checkbox" class="styled-checkbox" onchange="App.updateContext('morningFlow', this.checked)" ${this.state.context.morningFlow ? 'checked' : ''}><label for="morning-flow-checkbox">${t.context_morning_flow}</label></div>
-                <div class="context-toggle"><input type="checkbox" id="relationship-checkbox" class="styled-checkbox" onchange="App.updateContext('relationshipDynamic', this.checked)" ${this.state.context.relationshipDynamic ? 'checked' : ''}><label for="relationship-checkbox">${t.context_relationship_dynamic}</label><input type="text" id="partner-name-input" class="context-input" oninput="App.updateContext('partnerName', this.value)" value="${this.state.context.partnerName}"></div>
-                <div class="context-toggle"><input type="checkbox" id="geo-energy-checkbox" class="styled-checkbox" onchange="App.updateContext('geoEnergy', this.checked)" ${this.state.context.geoEnergy ? 'checked' : ''}><label for="geo-energy-checkbox">${t.context_geo_energy}</label><input type="text" id="location-input" class="context-input" oninput="App.updateContext('location', this.value)" value="${this.state.context.location}"></div>
-            `;
-        },
-
-        updateContext(key, value) {
-            this.state.context[key] = value;
-            this.saveToLocalStorage();
+            const container = document.getElementById('suit-grid');
+            container.innerHTML = suits.map(suit => `
+                <div class="suit-selector-card ${this.state.activeSuit === suit.key ? 'active' : ''}" onclick="App.selectSuit('${suit.key}')">
+                    <div class="suit-icon">${suit.icon}</div>
+                    <div class="suit-name">${suit.name}</div>
+                </div>
+            `).join('');
         },
 
         selectSuit(suitKey) {
@@ -341,26 +806,54 @@
         },
 
         renderCardCarousel() {
+            const carousel = document.getElementById('card-carousel');
             const isMajor = this.state.activeSuit === 'major';
             const ranks = isMajor ? this.data.cards.major[this.state.lang] : this.data.cards.minor[this.state.lang];
-            document.getElementById('card-carousel').innerHTML = ranks.map((rank, index) => {
+
+            let html = '';
+            ranks.forEach((rank, index) => {
                 const cardId = isMajor ? `major_${index}` : `${this.state.activeSuit}_${index}`;
+                const cardName = isMajor ? rank : `${rank} ${this.data.cards.suits[this.state.lang][this.state.activeSuit]}`;
                 const isUsed = Object.values(this.state.selectedCards).some(c => c.id === cardId);
-                return `<div class="card-item ${isUsed ? 'disabled' : ''}" onclick="App.selectCardFromCarousel('${cardId}', ${isUsed})"><div class="card-item-name">${rank}</div></div>`;
-            }).join('');
+                const disabledClass = isUsed ? 'disabled' : '';
+
+                html += `
+                    <div class="card-item ${disabledClass}" onclick="App.selectCardFromCarousel('${cardId}', '${cardName}', ${isUsed})">
+                        <div class="card-item-name">${rank}</div>
+                    </div>
+                `;
+            });
+
+            carousel.innerHTML = html;
         },
 
-        selectCardFromCarousel(cardId, isUsed) {
-            if (isUsed) return;
+        selectCardFromCarousel(cardId, cardName, isUsed) {
+            if (isUsed) {
+                alert(this.translations[this.state.lang].alert_card_already_in(cardName));
+                return;
+            }
+
             const schema = this.data.spreads[this.state.spreadKey];
             if (this.state.activePositionIndex >= schema.cards) return;
+
             const posName = schema.positions[this.state.lang][this.state.activePositionIndex];
-            this.state.selectedCards[posName] = { id: cardId, isReversed: this.state.previewReversed, imageStyle: this.getCardImageStyleById(cardId) };
+            this.state.selectedCards[posName] = {
+                id: cardId,
+                name: cardName,
+                isReversed: this.state.previewReversed,
+                imageURL: this.getCardImageURLById(cardId)
+            };
+
+            // Play sound
             this.playSound('card-select-sound');
+
+            // Reset
             this.state.previewReversed = false;
             document.getElementById('reversed-checkbox').checked = false;
+
             const nextIndex = schema.positions[this.state.lang].findIndex((_, i) => !this.state.selectedCards[schema.positions[this.state.lang][i]]);
             this.state.activePositionIndex = (nextIndex === -1) ? schema.cards : nextIndex;
+
             this.updateUI();
         },
 
@@ -384,7 +877,8 @@
             document.getElementById('music-toggle').addEventListener('click', () => this.toggleMusic());
             document.getElementById('rules-toggle').addEventListener('click', () => this.toggleRules());
             document.getElementById('refine-question-btn').addEventListener('click', () => this.refineQuestion());
-            ['mode-selector', 'sphere-selector', 'target-selector', 'spread-selector'].forEach(id => {
+
+            ['mode-selector', 'sphere-selector', 'target-selector', 'spread-selector', 'card-back-selector'].forEach(id => {
                 document.getElementById(id).addEventListener('click', e => {
                     const button = e.target.closest('button');
                     if (button && button.dataset.group) this.handleSelection(button.dataset.group, button.dataset.key);
@@ -394,14 +888,30 @@
 
         handleSelection(group, key, doUpdate = true) {
             document.querySelectorAll(`[data-group="${group}"]`).forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`[data-group="${group}"][data-key="${key}"]`)?.classList.add('active');
-            this.state[group === 'spread' ? 'spreadKey' : group] = key;
-            if (group === 'mode') this.applyTheme(this.state.theme);
-            if (doUpdate) {
-                if (group === 'spread' || group === 'target') this.resetSpread();
-                this.updateUI();
+            const button = document.querySelector(`[data-group="${group}"][data-key="${key}"]`);
+            if (button) button.classList.add('active');
+
+            switch (group) {
+                case 'mode':
+                    this.state.aiMode = key;
+                    this.applyTheme(this.state.theme);
+                    break;
+                case 'sphere':
+                    this.state.sphere = key;
+                    const sphereData = this.data.spheres.find(s => s.key === key);
+                    if (sphereData && sphereData.rec) {
+                        document.getElementById('recommendation-text').textContent = sphereData.rec_key ? this.translations[this.state.lang][sphereData.rec_key] : '';
+                        if (doUpdate) {
+                            this.handleSelection('spread', sphereData.rec, true);
+                        }
+                        return;
+                    }
+                    break;
+                case 'target': this.state.target = key; if(doUpdate) this.resetSpread(); break;
+                case 'spread': this.state.spreadKey = key; if (doUpdate) this.resetSpread(); break;
+                case 'cardBack': this.state.cardBackStyle = key; if(doUpdate) this.updateUI(); break;
             }
-            this.saveToLocalStorage();
+            if (doUpdate) this.updateUI();
         },
 
         resetSpread() {
@@ -417,7 +927,9 @@
         updateUI() {
             this.renderSchema();
             this.updateHint();
-            if (this.state.activeSuit) this.renderCardCarousel();
+            if (this.state.activeSuit) {
+                this.renderCardCarousel();
+            }
         },
 
         renderSchema() {
@@ -425,55 +937,114 @@
             const container = document.getElementById('spread-schema-container');
             container.innerHTML = '';
             container.className = `schema-container ${schema.gridClass || ''}`;
-            if (!schema.gridClass) container.style.gridTemplateAreas = schema.grid;
+
+            if (!schema.gridClass) {
+                container.style.gridTemplateAreas = schema.grid;
+                const gridMatch = schema.grid.match(/"(.*?)"/);
+                if (gridMatch) {
+                    const columns = gridMatch[1].trim().split(/\s+/).filter(x => x !== '.').length;
+                    container.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+                }
+            }
 
             schema.positions[this.state.lang].forEach((posName, index) => {
                 const cardData = this.state.selectedCards[posName];
-                const wrapper = document.createElement('div');
-                wrapper.style.cssText = 'display:flex; flex-direction:column; gap:0.4rem; align-items:stretch;';
-                if (this.state.spreadKey === 'cross') wrapper.classList.add(`cross-pos-${index + 1}`);
-                else wrapper.style.gridArea = `pos${index + 1}`;
 
+                // Outer wrapper: holds flip card + footer controls
+                const wrapper = document.createElement('div');
+                wrapper.style.display = 'flex';
+                wrapper.style.flexDirection = 'column';
+                wrapper.style.gap = '0.4rem';
+                wrapper.style.alignItems = 'stretch';
+
+                // Grid placement
+                if (this.state.spreadKey === 'cross') {
+                    wrapper.classList.add(`cross-pos-${index + 1}`);
+                } else {
+                    wrapper.style.gridArea = `pos${index + 1}`;
+                }
+
+                // ── FLIP CONTAINER (only image + card back, no buttons) ──
                 const flipContainer = document.createElement('div');
                 flipContainer.className = `card-flip-container ${cardData ? 'flipped card-flight-animation' : ''}`;
-                if (index === this.state.activePositionIndex && !cardData) flipContainer.classList.add('schema-position-active');
+
+                // Active position highlighting
+                if (index === this.state.activePositionIndex && !cardData) {
+                    flipContainer.classList.add('schema-position-active');
+                }
+
                 flipContainer.onclick = () => {
-                    if (cardData) { this.playFlipSound(); flipContainer.classList.toggle('flipped'); }
-                    else { this.state.activePositionIndex = index; this.updateUI(); }
+                    if (cardData) {
+                        this.playFlipSound();
+                        flipContainer.classList.toggle('flipped');
+                    } else {
+                        this.state.activePositionIndex = index;
+                        this.updateUI();
+                    }
                 };
 
                 const inner = document.createElement('div');
                 inner.className = 'card-flip-inner';
+
+                // Front — card back / рубашка (shown before flip)
                 const front = document.createElement('div');
-                front.className = 'card-front';
-                front.innerHTML = `<div style="font-size:2.5rem;opacity:0.5;">🔮</div><div class="slot-number" style="font-size:1.4rem;opacity:0.3;">${index + 1}</div><div class="slot-position-name" style="margin-top:0.25rem;">${posName}</div>`;
+                front.className = `card-front card-back-${this.state.cardBackStyle}`;
+                // Show card back pattern matching selected style instead of crystal ball
+                const backPatterns = { cosmic: '🌌', witchy: '🔮', gold: '⚜️' };
+                const backPattern = backPatterns[this.state.cardBackStyle] || '🔮';
+                front.innerHTML = `
+                    <div style="font-size:2.5rem;opacity:0.5;">${backPattern}</div>
+                    <div class="slot-number" style="font-size:1.4rem;opacity:0.3;">${index + 1}</div>
+                    <div class="slot-position-name" style="margin-top:0.25rem;">${posName}</div>
+                `;
+
+                // Back — card face with real image
                 const back = document.createElement('div');
                 back.className = 'card-back';
                 back.style.cssText = 'padding:0;overflow:hidden;border-radius:0.75rem;';
+
                 if (cardData) {
+                    const imageURL = cardData.imageURL || this.getCardImageURLById(cardData.id);
                     const reversedStyle = cardData.isReversed ? 'transform:rotate(180deg);' : '';
-                    back.innerHTML = `<div class="tarot-card-img" style="${cardData.imageStyle} ${reversedStyle}"></div>`;
+                    back.innerHTML = `
+                        <img
+                            src="${imageURL}"
+                            alt="${cardData.name}"
+                            class="tarot-card-img"
+                            style="width:100%;height:100%;object-fit:cover;border-radius:0.75rem;display:block;${reversedStyle}"
+                            onerror="this.onerror=null;this.src='${this.fallbackCardImage()}'"
+                        >
+                    `;
                 } else {
                     back.innerHTML = `<div class="slot-position-name">${posName}</div>`;
                 }
-                inner.append(front, back);
+
+                inner.appendChild(front);
+                inner.appendChild(back);
                 flipContainer.appendChild(inner);
                 wrapper.appendChild(flipContainer);
 
+                // ── CARD INFO FOOTER (outside the flip, no breaking borders) ──
                 if (cardData) {
+                    const translatedName = cardData.id ? this.translateCardName(cardData.id) : cardData.name;
                     const footer = document.createElement('div');
                     footer.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:0.2rem;';
+
                     const nameEl = document.createElement('div');
                     nameEl.className = 'slot-card-name text-gold';
                     nameEl.style.cssText = 'font-size:0.75rem;text-align:center;line-height:1.2;';
-                    nameEl.textContent = `${this.translateCardName(cardData.id)}${cardData.isReversed ? ' ↻' : ''}`;
+                    nameEl.textContent = translatedName + (cardData.isReversed ? ` ↻` : '');
+
                     const revBtn = document.createElement('button');
                     revBtn.className = 'reverse-btn';
                     revBtn.textContent = this.translations[this.state.lang].btn_reverse;
                     revBtn.onclick = (e) => { e.stopPropagation(); this.toggleCardReversed(posName); };
-                    footer.append(nameEl, revBtn);
+
+                    footer.appendChild(nameEl);
+                    footer.appendChild(revBtn);
                     wrapper.appendChild(footer);
                 }
+
                 container.appendChild(wrapper);
             });
         },
@@ -481,52 +1052,122 @@
         updateHint() {
             const schema = this.data.spreads[this.state.spreadKey];
             const hint = document.getElementById('current-position-hint');
-            hint.innerHTML = this.state.activePositionIndex < schema.cards
-                ? `${this.translations[this.state.lang].hint_select_card_for} <strong class="text-gold">"${schema.positions[this.state.lang][this.state.activePositionIndex]}"</strong>`
-                : this.translations[this.state.lang].hint_spread_filled;
+            if (this.state.activePositionIndex < schema.cards) {
+                hint.innerHTML = `${this.translations[this.state.lang].hint_select_card_for} <strong class="text-gold">"${schema.positions[this.state.lang][this.state.activePositionIndex]}"</strong>`;
+            } else {
+                hint.textContent = this.translations[this.state.lang].hint_spread_filled;
+            }
         },
 
         toggleLanguage() {
+            // Save current states (activeSuit is preserved — NOT reset)
             const prevLang = this.state.lang;
             this.state.lang = this.state.lang === 'ua' ? 'ru' : 'ua';
+
+            // Save to localStorage
             localStorage.setItem('tarot_lang', this.state.lang);
             document.documentElement.lang = this.state.lang;
             document.getElementById('lang-pill').style.transform = this.state.lang === 'ua' ? 'translateX(0px)' : 'translateX(20px)';
+
+            // Update spread position names in selectedCards
             const schema = this.data.spreads[this.state.spreadKey];
             const oldPositions = schema.positions[prevLang];
             const newPositions = schema.positions[this.state.lang];
             const newSelectedCards = {};
-            oldPositions.forEach((oldPos, i) => { if (this.state.selectedCards[oldPos]) newSelectedCards[newPositions[i]] = this.state.selectedCards[oldPos]; });
+
+            oldPositions.forEach((oldPosName, index) => {
+                if (this.state.selectedCards[oldPosName]) {
+                    const newPosName = newPositions[index];
+                    newSelectedCards[newPosName] = this.state.selectedCards[oldPosName];
+                }
+            });
+
             this.state.selectedCards = newSelectedCards;
-            this.renderAllDynamicContent();
+
+            // Re-render text content, keep active states and suit selection
+            this.applyLanguage();
+            this.renderAllSelectors();
             this.restoreActiveStates();
+            this.displayMoonPhase();
+
+            // If a suit was selected, keep the carousel visible and re-render it
+            if (this.state.activeSuit) {
+                document.getElementById('card-selection-step').style.display = 'block';
+                this.renderCardCarousel();
+            }
         },
 
         toggleTheme() {
             this.state.theme = this.state.theme === 'neon' ? 'witchy' : 'neon';
+            localStorage.setItem('tarot_theme', this.state.theme);
             this.applyTheme(this.state.theme);
             document.getElementById('theme-pill').style.transform = this.state.theme === 'neon' ? 'translateX(0px)' : 'translateX(26px)';
-            this.saveToLocalStorage();
         },
 
         applyTheme(theme) {
             document.body.classList.remove('theme-witchy', 'theme-psychologist');
-            if (theme === 'witchy') document.body.classList.add('theme-witchy');
-            else if (this.state.aiMode === 'psychologist') document.body.classList.add('theme-psychologist');
+            if (theme === 'witchy') {
+                document.body.classList.add('theme-witchy');
+            } else if (this.state.aiMode === 'psychologist') {
+                document.body.classList.add('theme-psychologist');
+            }
         },
 
         applyLanguage() {
             document.querySelectorAll('[data-translate-key]').forEach(el => {
                 const key = el.dataset.translateKey;
                 const translation = this.translations[this.state.lang][key];
-                if (translation) el.textContent = translation;
+                if (translation) {
+                    if (key !== 'rules_list') {
+                        el.textContent = translation;
+                    }
+                }
             });
-            document.getElementById('rules-list').innerHTML = this.translations[this.state.lang].rules_list.map(rule => `<li>${rule}</li>`).join('');
-            document.getElementById('question').placeholder = this.translations[this.state.lang].label_question;
+
+            // Update rules list
+            const rulesList = document.getElementById('rules-list');
+            if (rulesList) {
+                rulesList.innerHTML = this.translations[this.state.lang].rules_list.map(rule => `<li>${rule}</li>`).join('');
+            }
+
+            // Update textarea placeholder
+            const questionField = document.getElementById('question');
+            if (questionField) {
+                questionField.placeholder = questionField.dataset[`placeholder${this.state.lang === 'ua' ? 'Ua' : 'Ru'}`];
+            }
         },
 
         toggleRules() {
-            document.getElementById('rules-wrapper').classList.toggle('active');
+            const wrapper = document.getElementById('rules-wrapper');
+            wrapper.classList.toggle('active');
+        },
+
+        async refineQuestion() {
+            const question = document.getElementById('question').value.trim();
+            if (!question) return;
+
+            this.playSound('mystical-chime');
+
+            const requestData = {
+                lang: this.state.lang,
+                type: 'refine-question',
+                question: question,
+                sphere: this.data.spheres.find(s => s.key === this.state.sphere)[this.state.lang]
+            };
+
+            document.getElementById('loading-overlay').classList.add('active');
+            try {
+                const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestData) });
+                const data = await response.json();
+                if (response.ok) {
+                    document.getElementById('question').value = data.text;
+                    this.playSound('card-select-sound');
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                document.getElementById('loading-overlay').classList.remove('active');
+            }
         },
 
         async getSpreadInterpretation() {
@@ -535,30 +1176,31 @@
                 alert(this.translations[this.state.lang].alert_spread_not_filled);
                 return;
             }
+
             this.playSound('mystical-chime');
+
+            const requestData = {
+                lang: this.state.lang, type: 'spread', mode: this.state.aiMode,
+                theme: this.data.spheres.find(s => s.key === this.state.sphere)[this.state.lang],
+                spreadType: this.data.spreads[this.state.spreadKey][this.state.lang],
+                question: document.getElementById('question').value.trim(),
+                cards: this.state.selectedCards,
+                positions: this.data.spreads[this.state.spreadKey].positions[this.state.lang],
+                targetPerson: this.state.target === 'partner' ? (document.getElementById('other-person-input')?.value.trim() || null) : null
+            };
+            await this.handleAIRequest(requestData);
+        },
+
+        async handleAIRequest(requestData) {
             document.getElementById('loading-overlay').classList.add('active');
+            console.log("Данные для отправки:", JSON.stringify(requestData));
             try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        lang: this.state.lang, type: 'spread', mode: this.state.aiMode,
-                        theme: this.data.spheres.find(s => s.key === this.state.sphere)[this.state.lang],
-                        spreadType: this.data.spreads[this.state.spreadKey][this.state.lang],
-                        question: document.getElementById('question').value.trim(),
-                        cards: this.state.selectedCards,
-                        positions: schema.positions[this.state.lang],
-                        context: this.state.context
-                    })
-                });
+                const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestData) });
                 const data = await response.json();
-                document.getElementById('ai-response-box').innerHTML = response.ok ? data.interpretation.replace(/\n/g, '<br>') : `Помилка: ${data.error}`;
-                if (data.generatedArtUrl) {
-                    document.getElementById('art-container').classList.remove('hidden');
-                    document.getElementById('generated-art').src = data.generatedArtUrl;
-                }
+                const responseBox = document.getElementById('ai-response-box');
+                responseBox.innerHTML = `<span id="ai-placeholder">${response.ok ? data.text.replace(/\n/g, '<br>') : `Помилка: ${data.error}`}</span>`;
             } catch (error) {
-                document.getElementById('ai-response-box').innerHTML = `<span class="text-red-400">Критична помилка: ${error.message}</span>`;
+                document.getElementById('ai-response-box').innerHTML = `<span id="ai-placeholder" class="text-red-400">Критична помилка: ${error.message}</span>`;
             } finally {
                 document.getElementById('loading-overlay').classList.remove('active');
             }
@@ -566,7 +1208,11 @@
 
         playSound(soundId) {
             const sound = document.getElementById(soundId);
-            if (sound) { sound.currentTime = 0; sound.volume = 0.4; sound.play().catch(e => {}); }
+            if (sound) {
+                sound.currentTime = 0;
+                sound.volume = 0.4;
+                sound.play().catch(e => console.error("Sound play failed:", e));
+            }
         },
 
         playFlipSound() {
@@ -574,24 +1220,36 @@
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioCtx.createOscillator();
                 const gainNode = audioCtx.createGain();
+
                 oscillator.connect(gainNode);
                 gainNode.connect(audioCtx.destination);
+
                 oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
                 oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+
                 gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
                 gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.01);
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
                 oscillator.type = 'sine';
                 oscillator.start(audioCtx.currentTime);
                 oscillator.stop(audioCtx.currentTime + 0.3);
-            } catch (e) {}
+            } catch (e) {
+                console.error("Web Audio API failed:", e);
+            }
         },
 
         toggleMusic() {
             const music = document.getElementById('ambient-music');
             const button = document.getElementById('music-toggle');
-            if (music.paused) { music.volume = 0.2; music.play(); button.textContent = '🔊'; }
-            else { music.pause(); button.textContent = '🔇'; }
+            if (music.paused) {
+                music.volume = 0.2;
+                music.play().catch(e => console.error("Audio play failed:", e));
+                button.textContent = '🔊';
+            } else {
+                music.pause();
+                button.textContent = '🔇';
+            }
         },
 
         displayMoonPhase() {
