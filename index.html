@@ -15,11 +15,17 @@
             --primary-glow-color: rgba(20, 184, 166, 0.5); --secondary-glow-color: rgba(20, 184, 166, 0.2);
             --text-gold: #6ee7b7; --text-purple: #2dd4bf;
         }
+        body.theme-witchy {
+            --bg-main: #0a0a0a; --bg-surface: #1a1a1a; --border-color: #2d4a2d;
+            --primary-glow-color: rgba(52, 211, 153, 0.5); --secondary-glow-color: rgba(239, 68, 68, 0.3);
+            --text-gold: #34d399; --text-purple: #dc2626;
+        }
         html, body { height: 100%; }
         body {
             background-color: var(--bg-main);
             background-image: radial-gradient(ellipse at top, var(--bg-surface), var(--bg-main) 70%);
             color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif;
+            transition: all 0.5s ease;
         }
 
         .neon-glow { box-shadow: 0 0 8px var(--primary-glow-color), 0 0 20px var(--secondary-glow-color); transition: box-shadow 0.5s; }
@@ -54,7 +60,16 @@
             <div class="flex justify-between items-center w-full mb-4">
                 <div id="moon-widget" class="text-left text-xs"></div>
                 <div class="flex items-center gap-4">
-                    <div id="lang-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">RU</span><div class="w-10 h-5 bg-mystic-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="lang-pill" class="w-4 h-4 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">UA</span></div>
+                    <!-- Theme Switcher -->
+                    <div id="theme-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                        <span class="text-gray-400">🔮 Neon</span>
+                        <div class="w-12 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300">
+                            <div id="theme-pill" class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300"></div>
+                        </div>
+                        <span class="text-white">🖤 Witchy</span>
+                    </div>
+                    <!-- Lang Switcher -->
+                    <div id="lang-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">RU</span><div class="w-10 h-5 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="lang-pill" class="w-4 h-4 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">UA</span></div>
                     <button id="music-toggle" class="text-2xl">🔇</button>
                 </div>
             </div>
@@ -111,7 +126,7 @@
     <script>
     const App = {
         state: {
-            lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self',
+            lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self', theme: 'neon',
             spreadKey: 'cross', activeSuit: 'major', selectedCards: {}, activePositionIndex: 0,
         },
         translations: {
@@ -190,12 +205,21 @@
         },
 
         init() {
+            this.loadFromLocalStorage();
             this.addEventListeners();
             this.renderAllDynamicContent();
             this.handleSelection('mode', this.state.aiMode, false);
             this.handleSelection('target', this.state.target, false);
             this.handleSelection('suit', this.state.activeSuit, false);
             this.handleSelection('sphere', this.state.sphere, true);
+            this.applyTheme(this.state.theme);
+        },
+
+        loadFromLocalStorage() {
+            const savedLang = localStorage.getItem('tarot_lang');
+            const savedTheme = localStorage.getItem('tarot_theme');
+            if (savedLang) this.state.lang = savedLang;
+            if (savedTheme) this.state.theme = savedTheme;
         },
 
         renderAllDynamicContent() {
@@ -225,6 +249,7 @@
 
         addEventListeners() {
             document.getElementById('lang-toggle').addEventListener('click', () => this.toggleLanguage());
+            document.getElementById('theme-toggle').addEventListener('click', () => this.toggleTheme());
             document.getElementById('reset-btn').addEventListener('click', () => this.resetSpread());
             document.getElementById('ai-btn').addEventListener('click', () => this.getSpreadInterpretation());
             document.getElementById('music-toggle').addEventListener('click', () => this.toggleMusic());
@@ -243,7 +268,10 @@
             if (button) button.classList.add('active');
 
             switch (group) {
-                case 'mode': this.state.aiMode = key; document.body.classList.toggle('theme-psychologist', key === 'psychologist'); break;
+                case 'mode':
+                    this.state.aiMode = key;
+                    this.applyTheme(this.state.theme);
+                    break;
                 case 'sphere':
                     this.state.sphere = key;
                     const sphereData = this.data.spheres.find(s => s.key === key);
@@ -343,9 +371,26 @@
 
         toggleLanguage() {
             this.state.lang = this.state.lang === 'ua' ? 'ru' : 'ua';
+            localStorage.setItem('tarot_lang', this.state.lang);
             document.documentElement.lang = this.state.lang;
             document.getElementById('lang-pill').style.transform = this.state.lang === 'ua' ? 'translateX(0px)' : 'translateX(20px)';
             this.renderAllDynamicContent();
+        },
+
+        toggleTheme() {
+            this.state.theme = this.state.theme === 'neon' ? 'witchy' : 'neon';
+            localStorage.setItem('tarot_theme', this.state.theme);
+            this.applyTheme(this.state.theme);
+            document.getElementById('theme-pill').style.transform = this.state.theme === 'neon' ? 'translateX(0px)' : 'translateX(26px)';
+        },
+
+        applyTheme(theme) {
+            document.body.classList.remove('theme-witchy', 'theme-psychologist');
+            if (theme === 'witchy') {
+                document.body.classList.add('theme-witchy');
+            } else if (this.state.aiMode === 'psychologist') {
+                document.body.classList.add('theme-psychologist');
+            }
         },
 
         applyLanguage() {
