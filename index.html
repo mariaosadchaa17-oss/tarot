@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-translate-key="page_title">Таро AI Компаньйон v7.0 Final</title>
+    <title data-translate-key="page_title">Таро AI Компаньйон v8.0 Ultimate</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -40,8 +40,14 @@
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
 
-        /* 3D Card Flip */
-        .card-flip-container { perspective: 1000px; min-height: 200px; cursor: pointer; position: relative; }
+        /* 3D Card Flip - FIXED ASPECT RATIO */
+        .card-flip-container {
+            perspective: 1000px;
+            cursor: pointer;
+            position: relative;
+            aspect-ratio: 2/3;
+            min-height: 240px;
+        }
         .card-flip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.8s; transform-style: preserve-3d; }
         .card-flip-container.flipped .card-flip-inner { transform: rotateY(180deg); }
         .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 0.75rem; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem; text-align: center; overflow: hidden; }
@@ -54,7 +60,7 @@
         }
         .card-back-pattern { font-size: 3rem; opacity: 0.3; }
 
-        /* Tarot card image */
+        /* Tarot card image - ONLY IMAGE ROTATES */
         .tarot-card-image {
             width: 100%;
             height: 100%;
@@ -71,15 +77,21 @@
         .card-back-witchy { background: linear-gradient(135deg, #2d1b4e 0%, #1a0033 50%, #0d0221 100%) !important; }
         .card-back-gold { background: linear-gradient(135deg, #f3c66f 0%, #c89b3c 50%, #8b6914 100%) !important; }
 
-        /* Reversed cards controls */
-        .card-controls {
+        /* Card controls OUTSIDE the card image */
+        .card-info-footer {
             position: absolute;
             bottom: 0.5rem;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 0;
+            right: 0;
             z-index: 10;
             display: flex;
-            gap: 0.5rem;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            backdrop-filter: blur(10px);
         }
         .reverse-btn {
             background: rgba(157, 78, 223, 0.3);
@@ -102,12 +114,27 @@
         @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 15px var(--primary-glow-color); transform: scale(1.03); } 50% { box-shadow: 0 0 25px var(--primary-glow-color), 0 0 35px var(--secondary-glow-color); transform: scale(1.05); } }
         .schema-position-active { animation: pulse-glow 1.5s infinite; border-color: var(--text-gold) !important; }
 
-        /* КРЕСТ - CSS Grid 3x3 */
-        .schema-container { display: grid; gap: 2rem; padding: 3rem; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 600px; }
+        /* FIXED CROSS GRID 3x3 */
+        .schema-container {
+            display: grid;
+            gap: 1.5rem;
+            padding: 2rem;
+            border-radius: 1rem;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            min-height: 700px;
+        }
         .schema-container.spread-cross {
             grid-template-columns: repeat(3, 1fr);
             grid-template-rows: repeat(3, 1fr);
+            gap: 1.5rem;
         }
+
+        /* STRICT GRID POSITIONING FOR CROSS */
+        .cross-pos-1 { grid-row: 2; grid-column: 2; } /* Суть - центр */
+        .cross-pos-2 { grid-row: 1; grid-column: 2; } /* Перешкода - верх центр */
+        .cross-pos-3 { grid-row: 2; grid-column: 1; } /* Порада - лево центр */
+        .cross-pos-4 { grid-row: 2; grid-column: 3; } /* Результат - право центр */
 
         /* Card flight animation */
         @keyframes card-flight {
@@ -122,7 +149,6 @@
             font-weight: 600;
             text-transform: uppercase;
             color: var(--text-purple);
-            margin-top: 0.5rem;
             background: rgba(0, 0, 0, 0.6);
             padding: 0.25rem 0.5rem;
             border-radius: 0.25rem;
@@ -177,7 +203,7 @@
         }
         .control-card.spread-card { min-height: 80px; }
 
-        /* NEW CONSTRUCTOR DESIGN */
+        /* REDESIGNED CONSTRUCTOR */
         .suit-selector-card {
             background: var(--bg-surface);
             border: 2px solid var(--border-color);
@@ -214,34 +240,60 @@
             border: 1px solid var(--border-color);
         }
 
-        .styled-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
+        /* HORIZONTAL CARD CAROUSEL */
+        .card-carousel {
+            display: flex;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            gap: 0.75rem;
+            padding: 1rem 0.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Neon scrollbar */
+        .card-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        .card-carousel::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        .card-carousel::-webkit-scrollbar-thumb {
+            background: var(--text-purple);
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--primary-glow-color);
+        }
+        .card-carousel::-webkit-scrollbar-thumb:hover {
+            background: var(--text-gold);
+        }
+
+        .card-item {
+            min-width: 100px;
+            max-width: 100px;
             background: var(--bg-surface);
             border: 2px solid var(--border-color);
-            border-radius: 0.5rem;
-            color: var(--text-gold);
-            font-size: 1rem;
+            border-radius: 0.75rem;
+            padding: 0.75rem 0.5rem;
+            text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f3c66f' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            padding-right: 3rem;
+            flex-shrink: 0;
         }
-        .styled-select:hover {
+        .card-item:hover {
             border-color: var(--text-purple);
-            box-shadow: 0 0 15px var(--primary-glow-color);
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px var(--primary-glow-color);
         }
-        .styled-select:focus {
-            outline: none;
-            border-color: var(--text-gold);
+        .card-item.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            border-color: #555;
         }
-        .styled-select option {
-            background: var(--bg-surface);
+        .card-item-name {
+            font-size: 0.75rem;
+            font-weight: 600;
             color: white;
-            padding: 0.5rem;
+            line-height: 1.2;
         }
 
         .reversed-toggle {
@@ -352,7 +404,7 @@
                     </div>
                 </div>
 
-                <!-- NEW CONSTRUCTOR DESIGN -->
+                <!-- REDESIGNED CONSTRUCTOR -->
                 <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                     <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_constructor"></h2>
                     <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-color"></p>
@@ -363,21 +415,18 @@
                         <div id="suit-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
                     </div>
 
-                    <!-- Step 2: Card Selection -->
+                    <!-- Step 2: Card Carousel -->
                     <div id="card-selection-step" class="card-select-wrapper" style="display: none;">
                         <label class="block text-sm font-bold text-purple mb-2" data-translate-key="constructor_step2">Крок 2: Оберіть карту</label>
-                        <select id="card-dropdown" class="styled-select">
-                            <option value="">-- Виберіть карту --</option>
-                        </select>
+
+                        <!-- Horizontal Card Carousel -->
+                        <div id="card-carousel" class="card-carousel"></div>
 
                         <!-- Reversed Toggle -->
                         <div class="reversed-toggle" onclick="App.toggleReversedPreview()">
                             <input type="checkbox" id="reversed-checkbox" class="reversed-checkbox">
                             <label for="reversed-checkbox" class="text-sm font-semibold cursor-pointer" data-translate-key="constructor_reversed">🔄 Зробити перевернутою</label>
                         </div>
-
-                        <!-- Add Button -->
-                        <button id="add-card-final-btn" class="add-card-btn" onclick="App.addCardFromConstructor()" data-translate-key="constructor_add_btn">➕ Додати карту в розклад</button>
                     </div>
                 </div>
             </div>
@@ -412,7 +461,7 @@
         state: {
             lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self', theme: 'neon',
             spreadKey: 'cross', activeSuit: null, selectedCards: {}, activePositionIndex: 0,
-            cardBackStyle: 'cosmic', previewReversed: false
+            cardBackStyle: 'cosmic', previewReversed: false, selectedCardForAdd: null
         },
         translations: {
             ua: {
@@ -449,7 +498,10 @@
                 suit_major: "✨ Старші Аркани", suit_wands: "🔥 Жезли", suit_cups: "💧 Кубки", suit_swords: "🌪 Мечі", suit_pentacles: "⛰ Пентаклі",
                 moon_phases: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'],
                 loading_text: "Зчитуємо інформацію з простору...",
-                btn_reverse: "⤾ Перевернути"
+                btn_reverse: "⤾ Перевернути",
+                position_names: {
+                    cross: ["Суть", "Перешкода", "Порада", "Результат"]
+                }
             },
             ru: {
                 page_title: "Таро AI Компаньон", main_title: "🔮 Таро AI Компаньон",
@@ -485,7 +537,10 @@
                 suit_major: "✨ Старшие Арканы", suit_wands: "🔥 Жезлы", suit_cups: "💧 Кубки", suit_swords: "🌪 Мечи", suit_pentacles: "⛰ Пентакли",
                 moon_phases: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна'],
                 loading_text: "Считываем информацию из пространства...",
-                btn_reverse: "⤾ Перевернуть"
+                btn_reverse: "⤾ Перевернуть",
+                position_names: {
+                    cross: ["Суть", "Препятствие", "Совет", "Результат"]
+                }
             }
         },
         data: {
@@ -545,7 +600,6 @@
                     ua: "Хрест (4)", ru: "Крест (4)",
                     hint_ua: "Класична схема для глибокого аналізу ситуації", hint_ru: "Классическая схема для глубокого анализа ситуации",
                     positions: { ua: ["Суть", "Перешкода", "Порада", "Результат"], ru: ["Суть", "Препятствие", "Совет", "Результат"] },
-                    grid: `". pos2 ." "pos3 pos1 pos4" ". . ."`,
                     gridClass: 'spread-cross'
                 },
                 "venus-circle": {
@@ -603,16 +657,58 @@
             }
         },
 
+        // TAROT CARD IMAGE MAPPING
+        cardImageMap: {
+            // Major Arcana
+            'Дурень': 'https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg',
+            'Шут': 'https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg',
+            'Маг': 'https://www.sacred-texts.com/tarot/pkt/img/ar01.jpg',
+            'Верховна Жриця': 'https://www.sacred-texts.com/tarot/pkt/img/ar02.jpg',
+            'Верховная Жрица': 'https://www.sacred-texts.com/tarot/pkt/img/ar02.jpg',
+            'Імператриця': 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg',
+            'Императрица': 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg',
+            'Імператор': 'https://www.sacred-texts.com/tarot/pkt/img/ar04.jpg',
+            'Император': 'https://www.sacred-texts.com/tarot/pkt/img/ar04.jpg',
+            'Ієрофант': 'https://www.sacred-texts.com/tarot/pkt/img/ar05.jpg',
+            'Иерофант': 'https://www.sacred-texts.com/tarot/pkt/img/ar05.jpg',
+            'Закохані': 'https://www.sacred-texts.com/tarot/pkt/img/ar06.jpg',
+            'Влюбленные': 'https://www.sacred-texts.com/tarot/pkt/img/ar06.jpg',
+            'Колісниця': 'https://www.sacred-texts.com/tarot/pkt/img/ar07.jpg',
+            'Колесница': 'https://www.sacred-texts.com/tarot/pkt/img/ar07.jpg',
+            'Сила': 'https://www.sacred-texts.com/tarot/pkt/img/ar08.jpg',
+            'Відшельник': 'https://www.sacred-texts.com/tarot/pkt/img/ar09.jpg',
+            'Отшельник': 'https://www.sacred-texts.com/tarot/pkt/img/ar09.jpg',
+            'Колесо Фортуни': 'https://www.sacred-texts.com/tarot/pkt/img/ar10.jpg',
+            'Справедливість': 'https://www.sacred-texts.com/tarot/pkt/img/ar11.jpg',
+            'Справедливость': 'https://www.sacred-texts.com/tarot/pkt/img/ar11.jpg',
+            'Повішений': 'https://www.sacred-texts.com/tarot/pkt/img/ar12.jpg',
+            'Повешенный': 'https://www.sacred-texts.com/tarot/pkt/img/ar12.jpg',
+            'Смерть': 'https://www.sacred-texts.com/tarot/pkt/img/ar13.jpg',
+            'Помірність': 'https://www.sacred-texts.com/tarot/pkt/img/ar14.jpg',
+            'Умеренность': 'https://www.sacred-texts.com/tarot/pkt/img/ar14.jpg',
+            'Диявол': 'https://www.sacred-texts.com/tarot/pkt/img/ar15.jpg',
+            'Дьявол': 'https://www.sacred-texts.com/tarot/pkt/img/ar15.jpg',
+            'Вежа': 'https://www.sacred-texts.com/tarot/pkt/img/ar16.jpg',
+            'Башня': 'https://www.sacred-texts.com/tarot/pkt/img/ar16.jpg',
+            'Зірка': 'https://www.sacred-texts.com/tarot/pkt/img/ar17.jpg',
+            'Звезда': 'https://www.sacred-texts.com/tarot/pkt/img/ar17.jpg',
+            'Місяць': 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg',
+            'Луна': 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg',
+            'Сонце': 'https://www.sacred-texts.com/tarot/pkt/img/ar19.jpg',
+            'Солнце': 'https://www.sacred-texts.com/tarot/pkt/img/ar19.jpg',
+            'Суд': 'https://www.sacred-texts.com/tarot/pkt/img/ar20.jpg',
+            'Світ': 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg',
+            'Мир': 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg'
+        },
+
         // Get card image URL
         getCardImageURL(cardName) {
-            // Major Arcana
-            for (let i = 0; i < this.data.cards.major.ua.length; i++) {
-                if (this.data.cards.major.ua[i] === cardName || this.data.cards.major.ru[i] === cardName) {
-                    return `https://raw.githubusercontent.com/dariusk/corpora/master/data/divination/tarot_interpretations.json`;
-                }
+            // Check direct mapping first
+            if (this.cardImageMap[cardName]) {
+                return this.cardImageMap[cardName];
             }
 
-            // Minor Arcana
+            // Extract card rank from full name for minor arcana
             for (const suit in this.data.cards.suits.ua) {
                 const suitNameUa = this.data.cards.suits.ua[suit];
                 const suitNameRu = this.data.cards.suits.ru[suit];
@@ -622,25 +718,34 @@
                         if (cardName.includes(this.data.cards.minor.ua[i]) || cardName.includes(this.data.cards.minor.ru[i])) {
                             const suitCode = this.data.cards.suitCodes[suit];
                             const cardNum = this.data.cards.minor.imageIds[i];
-                            return `https://raw.githubusercontent.com/dariusk/corpora/master/data/divination/tarot_interpretations.json`;
+                            return `https://www.sacred-texts.com/tarot/pkt/img/${suitCode}${cardNum}.jpg`;
                         }
                     }
                 }
             }
 
-            // Fallback to Rider-Waite deck placeholder
-            const cardIndex = Math.abs(cardName.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0)) % 78;
-            return `https://www.sacred-texts.com/tarot/pkt/img/ar${String(cardIndex).padStart(2, '0')}.jpg`;
+            // Fallback
+            return 'https://via.placeholder.com/150x250/1a0b2e/f3c66f?text=Tarot+Card';
+        },
+
+        // Translate card name to current language
+        translateCardName(cardId) {
+            const [suit, rankIndex] = cardId.split('_');
+
+            if (suit === 'major') {
+                return this.data.cards.major[this.state.lang][rankIndex];
+            } else {
+                const rank = this.data.cards.minor[this.state.lang][rankIndex];
+                const suitName = this.data.cards.suits[this.state.lang][suit];
+                return `${rank} ${suitName}`;
+            }
         },
 
         init() {
             this.loadFromLocalStorage();
             this.addEventListeners();
             this.renderAllDynamicContent();
-            this.handleSelection('mode', this.state.aiMode, false);
-            this.handleSelection('target', this.state.target, false);
-            this.handleSelection('cardBack', this.state.cardBackStyle, false);
-            this.handleSelection('sphere', this.state.sphere, true);
+            this.restoreActiveStates();
             this.applyTheme(this.state.theme);
         },
 
@@ -649,6 +754,15 @@
             const savedTheme = localStorage.getItem('tarot_theme');
             if (savedLang) this.state.lang = savedLang;
             if (savedTheme) this.state.theme = savedTheme;
+        },
+
+        restoreActiveStates() {
+            this.handleSelection('mode', this.state.aiMode, false);
+            this.handleSelection('target', this.state.target, false);
+            this.handleSelection('cardBack', this.state.cardBackStyle, false);
+            this.handleSelection('sphere', this.state.sphere, false);
+            this.handleSelection('spread', this.state.spreadKey, false);
+            this.updateUI();
         },
 
         renderAllDynamicContent() {
@@ -674,7 +788,7 @@
             // Spread selector with categories
             this.renderSpreadSelector();
 
-            // NEW: Suit selector
+            // Suit selector
             this.renderSuitSelector();
         },
 
@@ -724,50 +838,44 @@
         selectSuit(suitKey) {
             this.state.activeSuit = suitKey;
             this.renderSuitSelector();
-            this.renderCardDropdown();
+            this.renderCardCarousel();
             document.getElementById('card-selection-step').style.display = 'block';
         },
 
-        renderCardDropdown() {
-            const dropdown = document.getElementById('card-dropdown');
+        renderCardCarousel() {
+            const carousel = document.getElementById('card-carousel');
             const isMajor = this.state.activeSuit === 'major';
             const ranks = isMajor ? this.data.cards.major[this.state.lang] : this.data.cards.minor[this.state.lang];
 
-            let options = `<option value="">-- ${this.state.lang === 'ua' ? 'Виберіть карту' : 'Выберите карту'} --</option>`;
-
+            let html = '';
             ranks.forEach((rank, index) => {
+                const cardId = isMajor ? `major_${index}` : `${this.state.activeSuit}_${index}`;
                 const cardName = isMajor ? rank : `${rank} ${this.data.cards.suits[this.state.lang][this.state.activeSuit]}`;
-                const isUsed = Object.values(this.state.selectedCards).some(c => c.name === cardName);
-                options += `<option value="${cardName}" ${isUsed ? 'disabled' : ''}>${cardName}${isUsed ? ' (вже використана)' : ''}</option>`;
+                const isUsed = Object.values(this.state.selectedCards).some(c => c.id === cardId);
+                const disabledClass = isUsed ? 'disabled' : '';
+
+                html += `
+                    <div class="card-item ${disabledClass}" onclick="App.selectCardFromCarousel('${cardId}', '${cardName}', ${isUsed})">
+                        <div class="card-item-name">${rank}</div>
+                    </div>
+                `;
             });
 
-            dropdown.innerHTML = options;
+            carousel.innerHTML = html;
         },
 
-        toggleReversedPreview() {
-            this.state.previewReversed = !this.state.previewReversed;
-            document.getElementById('reversed-checkbox').checked = this.state.previewReversed;
-        },
-
-        addCardFromConstructor() {
-            const dropdown = document.getElementById('card-dropdown');
-            const cardName = dropdown.value;
-
-            if (!cardName) {
-                alert(this.translations[this.state.lang].alert_no_card_selected);
+        selectCardFromCarousel(cardId, cardName, isUsed) {
+            if (isUsed) {
+                alert(this.translations[this.state.lang].alert_card_already_in(cardName));
                 return;
             }
 
             const schema = this.data.spreads[this.state.spreadKey];
             if (this.state.activePositionIndex >= schema.cards) return;
 
-            if (Object.values(this.state.selectedCards).some(c => c.name === cardName)) {
-                alert(this.translations[this.state.lang].alert_card_already_in(cardName));
-                return;
-            }
-
             const posName = schema.positions[this.state.lang][this.state.activePositionIndex];
             this.state.selectedCards[posName] = {
+                id: cardId,
                 name: cardName,
                 isReversed: this.state.previewReversed,
                 imageURL: this.getCardImageURL(cardName)
@@ -777,7 +885,6 @@
             this.playSound('card-select-sound');
 
             // Reset
-            dropdown.value = '';
             this.state.previewReversed = false;
             document.getElementById('reversed-checkbox').checked = false;
 
@@ -785,6 +892,11 @@
             this.state.activePositionIndex = (nextIndex === -1) ? schema.cards : nextIndex;
 
             this.updateUI();
+        },
+
+        toggleReversedPreview() {
+            this.state.previewReversed = !this.state.previewReversed;
+            document.getElementById('reversed-checkbox').checked = this.state.previewReversed;
         },
 
         toggleCardReversed(posName) {
@@ -826,7 +938,9 @@
                     const sphereData = this.data.spheres.find(s => s.key === key);
                     if (sphereData && sphereData.rec) {
                         document.getElementById('recommendation-text').textContent = sphereData.rec_key ? this.translations[this.state.lang][sphereData.rec_key] : '';
-                        this.handleSelection('spread', sphereData.rec, true);
+                        if (doUpdate) {
+                            this.handleSelection('spread', sphereData.rec, true);
+                        }
                         return;
                     }
                     break;
@@ -851,7 +965,7 @@
             this.renderSchema();
             this.updateHint();
             if (this.state.activeSuit) {
-                this.renderCardDropdown();
+                this.renderCardCarousel();
             }
         },
 
@@ -860,12 +974,12 @@
             const container = document.getElementById('spread-schema-container');
             container.innerHTML = '';
             container.className = `schema-container ${schema.gridClass || ''}`;
-            container.style.gridTemplateAreas = schema.grid;
 
-            const gridMatch = schema.grid.match(/"(.*?)"/);
-            if (gridMatch) {
-                const columns = gridMatch[1].trim().split(/\s+/).filter(x => x !== '.').length;
-                if (!schema.gridClass) {
+            if (!schema.gridClass) {
+                container.style.gridTemplateAreas = schema.grid;
+                const gridMatch = schema.grid.match(/"(.*?)"/);
+                if (gridMatch) {
+                    const columns = gridMatch[1].trim().split(/\s+/).filter(x => x !== '.').length;
                     container.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
                 }
             }
@@ -874,7 +988,13 @@
                 const cardData = this.state.selectedCards[posName];
                 const flipContainer = document.createElement('div');
                 flipContainer.className = `card-flip-container ${cardData ? 'flipped card-flight-animation' : ''}`;
-                flipContainer.style.gridArea = `pos${index + 1}`;
+
+                // STRICT POSITIONING FOR CROSS
+                if (this.state.spreadKey === 'cross') {
+                    flipContainer.classList.add(`cross-pos-${index + 1}`);
+                } else {
+                    flipContainer.style.gridArea = `pos${index + 1}`;
+                }
 
                 // Active position highlighting
                 if (index === this.state.activePositionIndex && !cardData) {
@@ -903,12 +1023,14 @@
                 const back = document.createElement('div');
                 back.className = `card-back`;
                 if (cardData) {
-                    const imageURL = cardData.imageURL || this.getCardImageURL(cardData.name);
+                    // Re-translate card name
+                    const translatedName = cardData.id ? this.translateCardName(cardData.id) : cardData.name;
+                    const imageURL = cardData.imageURL || this.getCardImageURL(translatedName);
                     const reversedClass = cardData.isReversed ? 'reversed-image' : '';
 
                     back.innerHTML = `
-                        <img src="${imageURL}" alt="${cardData.name}" class="tarot-card-image ${reversedClass}" onerror="this.src='https://via.placeholder.com/150x250/1a0b2e/f3c66f?text=Tarot+Card'">
-                        <div class="card-controls">
+                        <img src="${imageURL}" alt="${translatedName}" class="tarot-card-image ${reversedClass}" onerror="this.src='https://via.placeholder.com/150x250/1a0b2e/f3c66f?text=Tarot+Card'">
+                        <div class="card-info-footer">
                             <div class="slot-position-name">${posName}</div>
                             ${cardData.isReversed ? `<div class="text-xs text-red-400">↻ ${this.state.lang === 'ua' ? 'Перевернута' : 'Перевернутая'}</div>` : ''}
                             <button class="reverse-btn" onclick="event.stopPropagation(); App.toggleCardReversed('${posName}')">${this.translations[this.state.lang].btn_reverse}</button>
@@ -936,11 +1058,35 @@
         },
 
         toggleLanguage() {
+            // Save current states
+            const prevLang = this.state.lang;
             this.state.lang = this.state.lang === 'ua' ? 'ru' : 'ua';
+
+            // Save to localStorage
             localStorage.setItem('tarot_lang', this.state.lang);
             document.documentElement.lang = this.state.lang;
             document.getElementById('lang-pill').style.transform = this.state.lang === 'ua' ? 'translateX(0px)' : 'translateX(20px)';
-            this.renderAllDynamicContent();
+
+            // Update spread position names in selectedCards
+            const schema = this.data.spreads[this.state.spreadKey];
+            const oldPositions = schema.positions[prevLang];
+            const newPositions = schema.positions[this.state.lang];
+            const newSelectedCards = {};
+
+            oldPositions.forEach((oldPosName, index) => {
+                if (this.state.selectedCards[oldPosName]) {
+                    const newPosName = newPositions[index];
+                    newSelectedCards[newPosName] = this.state.selectedCards[oldPosName];
+                }
+            });
+
+            this.state.selectedCards = newSelectedCards;
+
+            // Re-render ONLY text content, keep active states
+            this.applyLanguage();
+            this.renderAllSelectors();
+            this.restoreActiveStates();
+            this.displayMoonPhase();
         },
 
         toggleTheme() {
@@ -1023,7 +1169,6 @@
                 return;
             }
 
-            // Play mystical chime
             this.playSound('mystical-chime');
 
             const requestData = {
