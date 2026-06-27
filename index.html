@@ -16,9 +16,9 @@
             --text-gold: #6ee7b7; --text-purple: #2dd4bf;
         }
         body.theme-witchy {
-            --bg-main: #0a0a0a; --bg-surface: #1a1a1a; --border-color: #2d4a2d;
-            --primary-glow-color: rgba(52, 211, 153, 0.5); --secondary-glow-color: rgba(239, 68, 68, 0.3);
-            --text-gold: #34d399; --text-purple: #dc2626;
+            --bg-main: #0f0a1a; --bg-surface: #1a1329; --border-color: #3d2f5c;
+            --primary-glow-color: rgba(168, 85, 247, 0.5); --secondary-glow-color: rgba(217, 70, 239, 0.3);
+            --text-gold: #e9d5ff; --text-purple: #c084fc;
         }
         html, body { height: 100%; }
         body {
@@ -439,10 +439,9 @@
 
         playSound(soundId) {
             const sound = document.getElementById(soundId);
-            const music = document.getElementById('ambient-music');
-            if (sound && !music.paused) {
+            if (sound) {
                 sound.currentTime = 0;
-                sound.volume = 0.3;
+                sound.volume = 0.4;
                 sound.play().catch(e => console.error("Sound play failed:", e));
             }
         },
