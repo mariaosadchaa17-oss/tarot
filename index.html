@@ -60,49 +60,31 @@
         }
         .card-back-pattern { font-size: 3rem; opacity: 0.3; }
 
-        /* Tarot card image - ONLY IMAGE ROTATES */
-        .tarot-card-image {
+        /* Tarot card image - fills the card-back face fully */
+        .tarot-card-img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
-            border-radius: 0.5rem;
-            transition: transform 0.3s;
-        }
-        .tarot-card-image.reversed-image {
-            transform: rotate(180deg);
+            object-fit: cover;
+            border-radius: 0.75rem;
+            display: block;
         }
 
-        /* Card back styles */
+        /* Card back (рубашка) style themes */
         .card-back-cosmic { background: radial-gradient(circle, #1a0b2e 0%, #16213e 50%, #0f3460 100%) !important; }
         .card-back-witchy { background: linear-gradient(135deg, #2d1b4e 0%, #1a0033 50%, #0d0221 100%) !important; }
         .card-back-gold { background: linear-gradient(135deg, #f3c66f 0%, #c89b3c 50%, #8b6914 100%) !important; }
 
-        /* Card controls OUTSIDE the card image */
-        .card-info-footer {
-            position: absolute;
-            bottom: 0.5rem;
-            left: 0;
-            right: 0;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.25rem;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            backdrop-filter: blur(10px);
-        }
+        /* Card info footer - OUTSIDE the flip card */
         .reverse-btn {
             background: rgba(157, 78, 223, 0.3);
             border: 1px solid var(--text-purple);
             color: var(--text-gold);
-            padding: 0.25rem 0.5rem;
+            padding: 0.2rem 0.5rem;
             border-radius: 0.5rem;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             cursor: pointer;
             transition: all 0.3s;
-            backdrop-filter: blur(10px);
+            white-space: nowrap;
         }
         .reverse-btn:hover { background: rgba(157, 78, 223, 0.5); transform: scale(1.05); }
 
@@ -341,122 +323,122 @@
     </style>
 </head>
 <body class="p-3 md:p-8 min-h-screen">
-    <div class="max-w-7xl mx-auto">
-        <header class="text-center mb-8 border-b pb-5 border-color">
-            <div class="flex justify-between items-center w-full mb-4">
-                <div id="moon-widget" class="text-left text-xs"></div>
-                <div class="flex items-center gap-4">
-                    <!-- Theme Switcher -->
-                    <div id="theme-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer">
-                        <span class="text-gray-400">🔮 Neon</span>
-                        <div class="w-12 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300">
-                            <div id="theme-pill" class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300"></div>
-                        </div>
-                        <span class="text-white">🖤 Witchy</span>
+<div class="max-w-7xl mx-auto">
+    <header class="text-center mb-8 border-b pb-5 border-color">
+        <div class="flex justify-between items-center w-full mb-4">
+            <div id="moon-widget" class="text-left text-xs"></div>
+            <div class="flex items-center gap-4">
+                <!-- Theme Switcher -->
+                <div id="theme-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                    <span class="text-gray-400">🔮 Neon</span>
+                    <div class="w-12 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300">
+                        <div id="theme-pill" class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300"></div>
                     </div>
-                    <!-- Lang Switcher -->
-                    <div id="lang-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">RU</span><div class="w-10 h-5 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="lang-pill" class="w-4 h-4 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">UA</span></div>
-                    <button id="music-toggle" class="text-2xl">🔇</button>
+                    <span class="text-white">🖤 Witchy</span>
                 </div>
+                <!-- Lang Switcher -->
+                <div id="lang-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">RU</span><div class="w-10 h-5 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="lang-pill" class="w-4 h-4 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">UA</span></div>
+                <button id="music-toggle" class="text-2xl">🔇</button>
             </div>
-            <h1 class="text-3xl md:text-4xl font-extrabold tracking-widest uppercase text-gold" style="filter: drop-shadow(0 0 10px var(--primary-glow-color));" data-translate-key="main_title"></h1>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-widest uppercase text-gold" style="filter: drop-shadow(0 0 10px var(--primary-glow-color));" data-translate-key="main_title"></h1>
 
-            <!-- Rules Accordion -->
-            <div class="mt-6">
-                <button id="rules-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="rules_toggle">📜 Свод правил таролога</button>
-                <div id="rules-wrapper" class="accordion-wrapper">
-                    <div class="text-left bg-surface border border-color rounded-xl p-4">
-                        <ol class="list-decimal list-inside space-y-2 text-sm" id="rules-list"></ol>
-                    </div>
-                </div>
-            </div>
-        </header>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-            <div class="lg:col-span-7 space-y-6">
-                <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
-                    <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_mode_sphere"></h2>
-                    <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_ai_mode"></label><div id="mode-selector" class="grid grid-cols-2 gap-2"></div></div>
-                    <div><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_sphere"></label><div id="sphere-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div><p id="recommendation-text" class="text-xs text-purple mt-2 text-center"></p></div>
-                </div>
-                <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
-                    <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_context_spread"></h2>
-                    <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_target"></label><div id="target-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div></div>
-
-                    <!-- Question field -->
-                    <div class="mb-4">
-                        <div class="flex items-center justify-between mb-2">
-                            <label class="block text-sm font-bold text-purple" data-translate-key="label_question">Ваше питання</label>
-                            <button id="refine-question-btn" class="text-xs text-gold hover:brightness-125 transition" title="Сформулювати питання правильно">✨🪄</button>
-                        </div>
-                        <textarea id="question" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" rows="2" data-placeholder-ua="Ваше питання (необов'язково)" data-placeholder-ru="Ваш вопрос (необязательно)"></textarea>
-                    </div>
-
-                    <!-- Card back style selector -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_card_back">Вибір сорочки карт</label>
-                        <div id="card-back-selector" class="grid grid-cols-3 gap-2"></div>
-                    </div>
-
-                    <!-- Spread type with categories -->
-                    <div>
-                        <label class="block text-sm font-bold text-purple mb-3" data-translate-key="label_spread_type"></label>
-                        <div id="spread-selector"></div>
-                    </div>
-                </div>
-
-                <!-- REDESIGNED CONSTRUCTOR -->
-                <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
-                    <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_constructor"></h2>
-                    <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-color"></p>
-
-                    <!-- Step 1: Suit Selection -->
-                    <div class="mb-4">
-                        <label class="block text-sm font-bold text-purple mb-3" data-translate-key="constructor_step1">Крок 1: Оберіть групу/масть</label>
-                        <div id="suit-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
-                    </div>
-
-                    <!-- Step 2: Card Carousel -->
-                    <div id="card-selection-step" class="card-select-wrapper" style="display: none;">
-                        <label class="block text-sm font-bold text-purple mb-2" data-translate-key="constructor_step2">Крок 2: Оберіть карту</label>
-
-                        <!-- Horizontal Card Carousel -->
-                        <div id="card-carousel" class="card-carousel"></div>
-
-                        <!-- Reversed Toggle -->
-                        <div class="reversed-toggle" onclick="App.toggleReversedPreview()">
-                            <input type="checkbox" id="reversed-checkbox" class="reversed-checkbox">
-                            <label for="reversed-checkbox" class="text-sm font-semibold cursor-pointer" data-translate-key="constructor_reversed">🔄 Зробити перевернутою</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="lg:col-span-5 space-y-6">
-                <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
-                    <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold text-gold" data-translate-key="section_title_schema"></h2><button id="reset-btn" class="text-xs text-red-400 hover:text-red-300 transition">🗑 <span data-translate-key="btn_reset"></span></button></div>
-                    <div id="spread-schema-container" class="schema-container"></div>
-                </div>
-                <div id="ai-response-container" class="bg-surface p-5 rounded-2xl border border-purple-500/30 shadow-2xl neon-glow">
-                    <h2 class="text-lg font-semibold text-gold mb-3" data-translate-key="section_title_interpretation"></h2>
-                    <button id="ai-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:brightness-110 transition uppercase tracking-wider text-sm mb-3" data-translate-key="btn_get_interpretation"></button>
-                    <div id="ai-response-box" class="text-base bg-mystic-900 p-4 rounded-xl border border-color min-h-[200px] max-h-[60vh] overflow-y-auto flex justify-center items-center"><span id="ai-placeholder" data-translate-key="placeholder_ai_response"></span></div>
+        <!-- Rules Accordion -->
+        <div class="mt-6">
+            <button id="rules-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="rules_toggle">📜 Свод правил таролога</button>
+            <div id="rules-wrapper" class="accordion-wrapper">
+                <div class="text-left bg-surface border border-color rounded-xl p-4">
+                    <ol class="list-decimal list-inside space-y-2 text-sm" id="rules-list"></ol>
                 </div>
             </div>
         </div>
-        <footer class="text-center py-8 mt-8 border-t border-color"><p class="text-sm text-gold" style="filter: drop-shadow(0 0 5px var(--primary-glow-color));">Made with 💜 by Mary • Support Engineer & Tarot Master</p></footer>
-    </div>
-    <!-- Audio Elements -->
-    <audio id="ambient-music" loop><source src="https://assets.chosic.com/wp-content/uploads/2021/07/The-Cradle-of-Your-Soul.mp3" type="audio/mpeg"></audio>
-    <audio id="card-select-sound"><source src="https://cdn.freesound.org/previews/220/220173_4056037-lq.mp3" type="audio/mpeg"></audio>
-    <audio id="mystical-chime"><source src="https://cdn.freesound.org/previews/411/411749_5121236-lq.mp3" type="audio/mpeg"></audio>
+    </header>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-7 space-y-6">
+            <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
+                <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_mode_sphere"></h2>
+                <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_ai_mode"></label><div id="mode-selector" class="grid grid-cols-2 gap-2"></div></div>
+                <div><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_sphere"></label><div id="sphere-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div><p id="recommendation-text" class="text-xs text-purple mt-2 text-center"></p></div>
+            </div>
+            <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
+                <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_context_spread"></h2>
+                <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_target"></label><div id="target-selector" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div></div>
 
-    <div id="loading-overlay">
-        <div class="crystal-ball">
-            <div class="moon-phase"></div>
+                <!-- Question field -->
+                <div class="mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <label class="block text-sm font-bold text-purple" data-translate-key="label_question">Ваше питання</label>
+                        <button id="refine-question-btn" class="text-xs text-gold hover:brightness-125 transition" title="Сформулювати питання правильно">✨🪄</button>
+                    </div>
+                    <textarea id="question" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" rows="2" data-placeholder-ua="Ваше питання (необов'язково)" data-placeholder-ru="Ваш вопрос (необязательно)"></textarea>
+                </div>
+
+                <!-- Card back style selector -->
+                <div class="mb-4">
+                    <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_card_back">Вибір сорочки карт</label>
+                    <div id="card-back-selector" class="grid grid-cols-3 gap-2"></div>
+                </div>
+
+                <!-- Spread type with categories -->
+                <div>
+                    <label class="block text-sm font-bold text-purple mb-3" data-translate-key="label_spread_type"></label>
+                    <div id="spread-selector"></div>
+                </div>
+            </div>
+
+            <!-- REDESIGNED CONSTRUCTOR -->
+            <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
+                <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_constructor"></h2>
+                <p id="current-position-hint" class="text-sm text-center mb-4 bg-mystic-900/80 p-2 rounded-lg border border-color"></p>
+
+                <!-- Step 1: Suit Selection -->
+                <div class="mb-4">
+                    <label class="block text-sm font-bold text-purple mb-3" data-translate-key="constructor_step1">Крок 1: Оберіть групу/масть</label>
+                    <div id="suit-grid" class="grid grid-cols-2 md:grid-cols-5 gap-3"></div>
+                </div>
+
+                <!-- Step 2: Card Carousel -->
+                <div id="card-selection-step" class="card-select-wrapper" style="display: none;">
+                    <label class="block text-sm font-bold text-purple mb-2" data-translate-key="constructor_step2">Крок 2: Оберіть карту</label>
+
+                    <!-- Horizontal Card Carousel -->
+                    <div id="card-carousel" class="card-carousel"></div>
+
+                    <!-- Reversed Toggle -->
+                    <div class="reversed-toggle" onclick="App.toggleReversedPreview()">
+                        <input type="checkbox" id="reversed-checkbox" class="reversed-checkbox">
+                        <label for="reversed-checkbox" class="text-sm font-semibold cursor-pointer" data-translate-key="constructor_reversed">🔄 Зробити перевернутою</label>
+                    </div>
+                </div>
+            </div>
         </div>
-        <p class="mt-8 text-xl text-gold font-semibold" id="loading-text" data-translate-key="loading_text">Зчитуємо інформацію з простору...</p>
+        <div class="lg:col-span-5 space-y-6">
+            <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
+                <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold text-gold" data-translate-key="section_title_schema"></h2><button id="reset-btn" class="text-xs text-red-400 hover:text-red-300 transition">🗑 <span data-translate-key="btn_reset"></span></button></div>
+                <div id="spread-schema-container" class="schema-container"></div>
+            </div>
+            <div id="ai-response-container" class="bg-surface p-5 rounded-2xl border border-purple-500/30 shadow-2xl neon-glow">
+                <h2 class="text-lg font-semibold text-gold mb-3" data-translate-key="section_title_interpretation"></h2>
+                <button id="ai-btn" class="w-full bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:brightness-110 transition uppercase tracking-wider text-sm mb-3" data-translate-key="btn_get_interpretation"></button>
+                <div id="ai-response-box" class="text-base bg-mystic-900 p-4 rounded-xl border border-color min-h-[200px] max-h-[60vh] overflow-y-auto flex justify-center items-center"><span id="ai-placeholder" data-translate-key="placeholder_ai_response"></span></div>
+            </div>
+        </div>
     </div>
+    <footer class="text-center py-8 mt-8 border-t border-color"><p class="text-sm text-gold" style="filter: drop-shadow(0 0 5px var(--primary-glow-color));">Made with 💜 by Mary • Support Engineer & Tarot Master</p></footer>
+</div>
+<!-- Audio Elements -->
+<audio id="ambient-music" loop><source src="https://assets.chosic.com/wp-content/uploads/2021/07/The-Cradle-of-Your-Soul.mp3" type="audio/mpeg"></audio>
+<audio id="card-select-sound"><source src="https://cdn.freesound.org/previews/220/220173_4056037-lq.mp3" type="audio/mpeg"></audio>
+<audio id="mystical-chime"><source src="https://cdn.freesound.org/previews/411/411749_5121236-lq.mp3" type="audio/mpeg"></audio>
 
-    <script>
+<div id="loading-overlay">
+    <div class="crystal-ball">
+        <div class="moon-phase"></div>
+    </div>
+    <p class="mt-8 text-xl text-gold font-semibold" id="loading-text" data-translate-key="loading_text">Зчитуємо інформацію з простору...</p>
+</div>
+
+<script>
     const App = {
         state: {
             lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self', theme: 'neon',
@@ -657,75 +639,56 @@
             }
         },
 
-        // TAROT CARD IMAGE MAPPING
-        cardImageMap: {
-            // Major Arcana
-            'Дурень': 'https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg',
-            'Шут': 'https://www.sacred-texts.com/tarot/pkt/img/ar00.jpg',
-            'Маг': 'https://www.sacred-texts.com/tarot/pkt/img/ar01.jpg',
-            'Верховна Жриця': 'https://www.sacred-texts.com/tarot/pkt/img/ar02.jpg',
-            'Верховная Жрица': 'https://www.sacred-texts.com/tarot/pkt/img/ar02.jpg',
-            'Імператриця': 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg',
-            'Императрица': 'https://www.sacred-texts.com/tarot/pkt/img/ar03.jpg',
-            'Імператор': 'https://www.sacred-texts.com/tarot/pkt/img/ar04.jpg',
-            'Император': 'https://www.sacred-texts.com/tarot/pkt/img/ar04.jpg',
-            'Ієрофант': 'https://www.sacred-texts.com/tarot/pkt/img/ar05.jpg',
-            'Иерофант': 'https://www.sacred-texts.com/tarot/pkt/img/ar05.jpg',
-            'Закохані': 'https://www.sacred-texts.com/tarot/pkt/img/ar06.jpg',
-            'Влюбленные': 'https://www.sacred-texts.com/tarot/pkt/img/ar06.jpg',
-            'Колісниця': 'https://www.sacred-texts.com/tarot/pkt/img/ar07.jpg',
-            'Колесница': 'https://www.sacred-texts.com/tarot/pkt/img/ar07.jpg',
-            'Сила': 'https://www.sacred-texts.com/tarot/pkt/img/ar08.jpg',
-            'Відшельник': 'https://www.sacred-texts.com/tarot/pkt/img/ar09.jpg',
-            'Отшельник': 'https://www.sacred-texts.com/tarot/pkt/img/ar09.jpg',
-            'Колесо Фортуни': 'https://www.sacred-texts.com/tarot/pkt/img/ar10.jpg',
-            'Справедливість': 'https://www.sacred-texts.com/tarot/pkt/img/ar11.jpg',
-            'Справедливость': 'https://www.sacred-texts.com/tarot/pkt/img/ar11.jpg',
-            'Повішений': 'https://www.sacred-texts.com/tarot/pkt/img/ar12.jpg',
-            'Повешенный': 'https://www.sacred-texts.com/tarot/pkt/img/ar12.jpg',
-            'Смерть': 'https://www.sacred-texts.com/tarot/pkt/img/ar13.jpg',
-            'Помірність': 'https://www.sacred-texts.com/tarot/pkt/img/ar14.jpg',
-            'Умеренность': 'https://www.sacred-texts.com/tarot/pkt/img/ar14.jpg',
-            'Диявол': 'https://www.sacred-texts.com/tarot/pkt/img/ar15.jpg',
-            'Дьявол': 'https://www.sacred-texts.com/tarot/pkt/img/ar15.jpg',
-            'Вежа': 'https://www.sacred-texts.com/tarot/pkt/img/ar16.jpg',
-            'Башня': 'https://www.sacred-texts.com/tarot/pkt/img/ar16.jpg',
-            'Зірка': 'https://www.sacred-texts.com/tarot/pkt/img/ar17.jpg',
-            'Звезда': 'https://www.sacred-texts.com/tarot/pkt/img/ar17.jpg',
-            'Місяць': 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg',
-            'Луна': 'https://www.sacred-texts.com/tarot/pkt/img/ar18.jpg',
-            'Сонце': 'https://www.sacred-texts.com/tarot/pkt/img/ar19.jpg',
-            'Солнце': 'https://www.sacred-texts.com/tarot/pkt/img/ar19.jpg',
-            'Суд': 'https://www.sacred-texts.com/tarot/pkt/img/ar20.jpg',
-            'Світ': 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg',
-            'Мир': 'https://www.sacred-texts.com/tarot/pkt/img/ar21.jpg'
+        // TAROT CARD IMAGE MAPPING — GitHub raw CDN (Rider-Waite, lenmorld/tarot-api)
+        // Base URL for majors: .../majors/{name}.jpg  e.g. fool.jpg, magician.jpg
+        // Base URL for minors: .../minors/{suit}/{name}.jpg  e.g. wands/ace-of-wands.jpg
+
+        TAROT_CDN_BASE: 'https://raw.githubusercontent.com/lenmorld/tarot-api/master/static/card-images',
+
+        // Major Arcana file names (index 0-21)
+        majorFileNames: [
+            'fool','magician','high-priestess','empress','emperor',
+            'hierophant','lovers','chariot','strength','hermit',
+            'wheel-of-fortune','justice','hanged-man','death','temperance',
+            'devil','tower','star','moon','sun','judgement','world'
+        ],
+
+        // Minor Arcana rank file names (index 0-13: ace..king)
+        minorRankNames: [
+            'ace','two','three','four','five','six','seven',
+            'eight','nine','ten','page','knight','queen','king'
+        ],
+
+        // Suit folder names in the repo
+        suitFolders: {
+            wands: 'wands', cups: 'cups', swords: 'swords', pentacles: 'pentacles'
         },
 
-        // Get card image URL
+        // Get card image URL using cardId (e.g. 'major_0', 'wands_2')
+        getCardImageURLById(cardId) {
+            const [suit, rankIndexStr] = cardId.split('_');
+            const rankIndex = parseInt(rankIndexStr, 10);
+            const base = this.TAROT_CDN_BASE;
+
+            if (suit === 'major') {
+                const name = this.majorFileNames[rankIndex];
+                if (!name) return this.fallbackCardImage();
+                return `${base}/majors/${name}.jpg`;
+            } else {
+                const folder = this.suitFolders[suit];
+                const rank = this.minorRankNames[rankIndex];
+                if (!folder || !rank) return this.fallbackCardImage();
+                return `${base}/minors/${folder}/${rank}-of-${folder}.jpg`;
+            }
+        },
+
+        fallbackCardImage() {
+            return 'https://via.placeholder.com/200x340/1a0b2e/f3c66f?text=%F0%9F%94%AE';
+        },
+
+        // Legacy helper kept for backward compat (not used in schema render)
         getCardImageURL(cardName) {
-            // Check direct mapping first
-            if (this.cardImageMap[cardName]) {
-                return this.cardImageMap[cardName];
-            }
-
-            // Extract card rank from full name for minor arcana
-            for (const suit in this.data.cards.suits.ua) {
-                const suitNameUa = this.data.cards.suits.ua[suit];
-                const suitNameRu = this.data.cards.suits.ru[suit];
-
-                if (cardName.includes(suitNameUa) || cardName.includes(suitNameRu)) {
-                    for (let i = 0; i < this.data.cards.minor.ua.length; i++) {
-                        if (cardName.includes(this.data.cards.minor.ua[i]) || cardName.includes(this.data.cards.minor.ru[i])) {
-                            const suitCode = this.data.cards.suitCodes[suit];
-                            const cardNum = this.data.cards.minor.imageIds[i];
-                            return `https://www.sacred-texts.com/tarot/pkt/img/${suitCode}${cardNum}.jpg`;
-                        }
-                    }
-                }
-            }
-
-            // Fallback
-            return 'https://via.placeholder.com/150x250/1a0b2e/f3c66f?text=Tarot+Card';
+            return this.fallbackCardImage();
         },
 
         // Translate card name to current language
@@ -878,7 +841,7 @@
                 id: cardId,
                 name: cardName,
                 isReversed: this.state.previewReversed,
-                imageURL: this.getCardImageURL(cardName)
+                imageURL: this.getCardImageURLById(cardId)
             };
 
             // Play sound
@@ -986,15 +949,24 @@
 
             schema.positions[this.state.lang].forEach((posName, index) => {
                 const cardData = this.state.selectedCards[posName];
+
+                // Outer wrapper: holds flip card + footer controls
+                const wrapper = document.createElement('div');
+                wrapper.style.display = 'flex';
+                wrapper.style.flexDirection = 'column';
+                wrapper.style.gap = '0.4rem';
+                wrapper.style.alignItems = 'stretch';
+
+                // Grid placement
+                if (this.state.spreadKey === 'cross') {
+                    wrapper.classList.add(`cross-pos-${index + 1}`);
+                } else {
+                    wrapper.style.gridArea = `pos${index + 1}`;
+                }
+
+                // ── FLIP CONTAINER (only image + card back, no buttons) ──
                 const flipContainer = document.createElement('div');
                 flipContainer.className = `card-flip-container ${cardData ? 'flipped card-flight-animation' : ''}`;
-
-                // STRICT POSITIONING FOR CROSS
-                if (this.state.spreadKey === 'cross') {
-                    flipContainer.classList.add(`cross-pos-${index + 1}`);
-                } else {
-                    flipContainer.style.gridArea = `pos${index + 1}`;
-                }
 
                 // Active position highlighting
                 if (index === this.state.activePositionIndex && !cardData) {
@@ -1014,27 +986,34 @@
                 const inner = document.createElement('div');
                 inner.className = 'card-flip-inner';
 
-                // Front (рубашка)
+                // Front — card back / рубашка (shown before flip)
                 const front = document.createElement('div');
                 front.className = `card-front card-back-${this.state.cardBackStyle}`;
-                front.innerHTML = `<div class="card-back-pattern">🔮</div><div class="slot-number">${index + 1}</div><div class="slot-position-name">${posName}</div>`;
+                // Show card back pattern matching selected style instead of crystal ball
+                const backPatterns = { cosmic: '🌌', witchy: '🔮', gold: '⚜️' };
+                const backPattern = backPatterns[this.state.cardBackStyle] || '🔮';
+                front.innerHTML = `
+                    <div style="font-size:2.5rem;opacity:0.5;">${backPattern}</div>
+                    <div class="slot-number" style="font-size:1.4rem;opacity:0.3;">${index + 1}</div>
+                    <div class="slot-position-name" style="margin-top:0.25rem;">${posName}</div>
+                `;
 
-                // Back (лицо с изображением)
+                // Back — card face with real image
                 const back = document.createElement('div');
-                back.className = `card-back`;
-                if (cardData) {
-                    // Re-translate card name
-                    const translatedName = cardData.id ? this.translateCardName(cardData.id) : cardData.name;
-                    const imageURL = cardData.imageURL || this.getCardImageURL(translatedName);
-                    const reversedClass = cardData.isReversed ? 'reversed-image' : '';
+                back.className = 'card-back';
+                back.style.cssText = 'padding:0;overflow:hidden;border-radius:0.75rem;';
 
+                if (cardData) {
+                    const imageURL = cardData.imageURL || this.getCardImageURLById(cardData.id);
+                    const reversedStyle = cardData.isReversed ? 'transform:rotate(180deg);' : '';
                     back.innerHTML = `
-                        <img src="${imageURL}" alt="${translatedName}" class="tarot-card-image ${reversedClass}" onerror="this.src='https://via.placeholder.com/150x250/1a0b2e/f3c66f?text=Tarot+Card'">
-                        <div class="card-info-footer">
-                            <div class="slot-position-name">${posName}</div>
-                            ${cardData.isReversed ? `<div class="text-xs text-red-400">↻ ${this.state.lang === 'ua' ? 'Перевернута' : 'Перевернутая'}</div>` : ''}
-                            <button class="reverse-btn" onclick="event.stopPropagation(); App.toggleCardReversed('${posName}')">${this.translations[this.state.lang].btn_reverse}</button>
-                        </div>
+                        <img
+                            src="${imageURL}"
+                            alt="${cardData.name}"
+                            class="tarot-card-img"
+                            style="width:100%;height:100%;object-fit:cover;border-radius:0.75rem;display:block;${reversedStyle}"
+                            onerror="this.onerror=null;this.src='${this.fallbackCardImage()}'"
+                        >
                     `;
                 } else {
                     back.innerHTML = `<div class="slot-position-name">${posName}</div>`;
@@ -1043,7 +1022,30 @@
                 inner.appendChild(front);
                 inner.appendChild(back);
                 flipContainer.appendChild(inner);
-                container.appendChild(flipContainer);
+                wrapper.appendChild(flipContainer);
+
+                // ── CARD INFO FOOTER (outside the flip, no breaking borders) ──
+                if (cardData) {
+                    const translatedName = cardData.id ? this.translateCardName(cardData.id) : cardData.name;
+                    const footer = document.createElement('div');
+                    footer.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:0.2rem;';
+
+                    const nameEl = document.createElement('div');
+                    nameEl.className = 'slot-card-name text-gold';
+                    nameEl.style.cssText = 'font-size:0.75rem;text-align:center;line-height:1.2;';
+                    nameEl.textContent = translatedName + (cardData.isReversed ? ` ↻` : '');
+
+                    const revBtn = document.createElement('button');
+                    revBtn.className = 'reverse-btn';
+                    revBtn.textContent = this.translations[this.state.lang].btn_reverse;
+                    revBtn.onclick = (e) => { e.stopPropagation(); this.toggleCardReversed(posName); };
+
+                    footer.appendChild(nameEl);
+                    footer.appendChild(revBtn);
+                    wrapper.appendChild(footer);
+                }
+
+                container.appendChild(wrapper);
             });
         },
 
@@ -1058,7 +1060,7 @@
         },
 
         toggleLanguage() {
-            // Save current states
+            // Save current states (activeSuit is preserved — NOT reset)
             const prevLang = this.state.lang;
             this.state.lang = this.state.lang === 'ua' ? 'ru' : 'ua';
 
@@ -1082,11 +1084,17 @@
 
             this.state.selectedCards = newSelectedCards;
 
-            // Re-render ONLY text content, keep active states
+            // Re-render text content, keep active states and suit selection
             this.applyLanguage();
             this.renderAllSelectors();
             this.restoreActiveStates();
             this.displayMoonPhase();
+
+            // If a suit was selected, keep the carousel visible and re-render it
+            if (this.state.activeSuit) {
+                document.getElementById('card-selection-step').style.display = 'block';
+                this.renderCardCarousel();
+            }
         },
 
         toggleTheme() {
@@ -1252,6 +1260,6 @@
         }
     };
     document.addEventListener('DOMContentLoaded', () => App.init());
-    </script>
+</script>
 </body>
 </html>
