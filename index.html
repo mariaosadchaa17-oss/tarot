@@ -60,11 +60,15 @@
         .toggle-slider { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: transform 0.3s; }
         .toggle-switch.active .toggle-slider { transform: translateX(26px); }
 
-        /* Accordion */
-        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
-        .accordion-content.active { max-height: 1000px; }
+        /* Accordion - COMPLETE HIDING */
+        .accordion-wrapper { display: none; margin-top: 0.75rem; }
+        .accordion-wrapper.active { display: block; }
 
-        .schema-container { display: grid; gap: 10px; padding: 10px; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 220px; }
+        /* Active position pulse animation */
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 15px var(--primary-glow-color); transform: scale(1.03); } 50% { box-shadow: 0 0 25px var(--primary-glow-color), 0 0 35px var(--secondary-glow-color); transform: scale(1.05); } }
+        .schema-position-active { animation: pulse-glow 1.5s infinite; border-color: var(--text-gold) !important; }
+
+        .schema-container { display: grid; gap: 1rem; padding: 1rem; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 220px; }
         .slot-number { font-size: 1.5rem; font-weight: 700; color: rgba(255,255,255,0.1); }
         .slot-position-name { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-purple); }
         .slot-card-name { font-size: 0.9rem; font-weight: 600; margin-top: 4px; }
@@ -98,8 +102,10 @@
             <!-- Rules Accordion -->
             <div class="mt-6">
                 <button id="rules-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="rules_toggle">📜 Свод правил таролога</button>
-                <div id="rules-content" class="accordion-content mt-3 text-left bg-surface border border-color rounded-xl p-4">
-                    <ol class="list-decimal list-inside space-y-2 text-sm" id="rules-list"></ol>
+                <div id="rules-wrapper" class="accordion-wrapper">
+                    <div class="text-left bg-surface border border-color rounded-xl p-4">
+                        <ol class="list-decimal list-inside space-y-2 text-sm" id="rules-list"></ol>
+                    </div>
                 </div>
             </div>
         </header>
@@ -120,7 +126,7 @@
                             <label class="block text-sm font-bold text-purple" data-translate-key="label_question">Ваше питання</label>
                             <button id="refine-question-btn" class="text-xs text-gold hover:brightness-125 transition" title="Сформулювати питання правильно">✨🪄</button>
                         </div>
-                        <textarea id="question" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" rows="2" placeholder="Ваше питання (необов'язково)"></textarea>
+                        <textarea id="question" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" rows="2" data-placeholder-ua="Ваше питання (необов'язково)" data-placeholder-ru="Ваш вопрос (необязательно)"></textarea>
                     </div>
 
                     <!-- Reversed cards toggle -->
@@ -243,11 +249,11 @@
                 { key: 'friend', ua: 'На друга', ru: 'На друга' }, { key: 'rival', ua: 'На ворога', ru: 'На врага' }
             ],
             spreads: {
-                "yes-no": { cards: 1, ua: "Так/Ні", ru: "Да/Нет", positions: { ua: ["Відповідь"], ru: ["Ответ"] }, grid: `"pos1"` },
-                "three-cards": { cards: 3, ua: "Три Карти", ru: "Три Карты", positions: { ua: ["Минуле", "Теперішнє", "Майбутнє"], ru: ["Прошлое", "Настоящее", "Будущее"] }, grid: `"pos1 pos2 pos3"` },
-                "cross": { cards: 4, ua: "Хрест", ru: "Крест", positions: { ua: ["Суть", "Перешкода", "Порада", "Результат"], ru: ["Суть", "Препятствие", "Совет", "Результат"] }, grid: `". pos2 ." "pos3 pos1 pos4"` },
-                "choice": { cards: 5, ua: "Вибір", ru: "Выбор", positions: { ua: ["Суть", "Варіант А", "Результат А", "Варіант Б", "Результат Б"], ru: ["Суть", "Вариант А", "Результат А", "Вариант Б", "Результат Б"] }, grid: `". pos1 ." "pos2 pos3" "pos4 pos5"` },
-                "path": { cards: 7, ua: "Шлях", ru: "Путь", positions: { ua: ["1", "2", "3", "4", "5", "6", "7"], ru: ["1", "2", "3", "4", "5", "6", "7"] }, grid: `"pos1 pos2 pos3 pos4 pos5 pos6 pos7"` }
+                "yes-no": { cards: 1, ua: "Так/Ні (1)", ru: "Да/Нет (1)", positions: { ua: ["Відповідь"], ru: ["Ответ"] }, grid: `"pos1"` },
+                "three-cards": { cards: 3, ua: "Три Карти (3)", ru: "Три Карты (3)", positions: { ua: ["Минуле", "Теперішнє", "Майбутнє"], ru: ["Прошлое", "Настоящее", "Будущее"] }, grid: `"pos1 pos2 pos3"` },
+                "cross": { cards: 4, ua: "Хрест (4)", ru: "Крест (4)", positions: { ua: ["Суть", "Перешкода", "Порада", "Результат"], ru: ["Суть", "Препятствие", "Совет", "Результат"] }, grid: `". pos2 ." "pos3 pos1 pos4"` },
+                "choice": { cards: 5, ua: "Вибір (5)", ru: "Выбор (5)", positions: { ua: ["Суть", "Варіант А", "Результат А", "Варіант Б", "Результат Б"], ru: ["Суть", "Вариант А", "Результат А", "Вариант Б", "Результат Б"] }, grid: `". pos1 ." "pos2 pos3" "pos4 pos5"` },
+                "path": { cards: 7, ua: "Шлях (7)", ru: "Путь (7)", positions: { ua: ["1", "2", "3", "4", "5", "6", "7"], ru: ["1", "2", "3", "4", "5", "6", "7"] }, grid: `"pos1 pos2 pos3 pos4 pos5 pos6 pos7"` }
             },
             cards: {
                 major: { ua: ["Дурень", "Маг", "Верховна Жриця", "Імператриця", "Імператор", "Ієрофант", "Закохані", "Колісниця", "Сила", "Відшельник", "Колесо Фортуни", "Справедливість", "Повішений", "Смерть", "Помірність", "Диявол", "Вежа", "Зірка", "Місяць", "Сонце", "Суд", "Світ"], ru: ["Шут", "Маг", "Верховная Жрица", "Императрица", "Император", "Иерофант", "Влюбленные", "Колесница", "Сила", "Отшельник", "Колесо Фортуны", "Справедливость", "Повешенный", "Смерть", "Умеренность", "Дьявол", "Башня", "Звезда", "Луна", "Солнце", "Суд", "Мир"] },
@@ -290,7 +296,7 @@
             createButtons('sphere-selector', this.data.spheres, 'sphere', this.state.lang);
             createButtons('target-selector', this.data.targets, 'target', this.state.lang);
 
-            const spreadData = Object.keys(this.data.spreads).map(key => ({ key, name: `${this.data.spreads[key][this.state.lang]} (${this.data.spreads[key].cards})` }));
+            const spreadData = Object.keys(this.data.spreads).map(key => ({ key, name: this.data.spreads[key][this.state.lang] }));
             document.getElementById('spread-selector').innerHTML = spreadData.map(item => `<button class="control-card" data-group="spread" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
 
             const suitData = ['major', 'wands', 'cups', 'swords', 'pentacles'].map(s => ({key: s, name: this.translations[this.state.lang][`suit_${s}`]}));
@@ -407,6 +413,11 @@
                 flipContainer.className = `card-flip-container ${cardData ? 'flipped' : ''}`;
                 flipContainer.style.gridArea = `pos${index + 1}`;
 
+                // Add active position highlighting
+                if (index === this.state.activePositionIndex && !cardData) {
+                    flipContainer.classList.add('schema-position-active');
+                }
+
                 flipContainer.onclick = () => {
                     if (cardData) {
                         this.playSound('card-flip-sound');
@@ -433,11 +444,6 @@
                     back.innerHTML = `<div class="slot-position-name">${posName}</div><div class="slot-card-name">${cardData.name}</div>${reversedLabel}`;
                 } else {
                     back.innerHTML = `<div class="slot-position-name">${posName}</div>`;
-                }
-
-                if (index === this.state.activePositionIndex && !cardData) {
-                    flipContainer.style.boxShadow = '0 0 15px var(--primary-glow-color)';
-                    flipContainer.style.transform = 'scale(1.03)';
                 }
 
                 inner.appendChild(front);
@@ -493,16 +499,23 @@
                     }
                 }
             });
+
             // Update rules list
             const rulesList = document.getElementById('rules-list');
             if (rulesList) {
                 rulesList.innerHTML = this.translations[this.state.lang].rules_list.map(rule => `<li>${rule}</li>`).join('');
             }
+
+            // Update textarea placeholder
+            const questionField = document.getElementById('question');
+            if (questionField) {
+                questionField.placeholder = questionField.dataset[`placeholder${this.state.lang === 'ua' ? 'Ua' : 'Ru'}`];
+            }
         },
 
         toggleRules() {
-            const content = document.getElementById('rules-content');
-            content.classList.toggle('active');
+            const wrapper = document.getElementById('rules-wrapper');
+            wrapper.classList.toggle('active');
         },
 
         toggleReversed() {
@@ -555,7 +568,7 @@
                 question: document.getElementById('question').value.trim(),
                 cards: this.state.selectedCards,
                 positions: this.data.spreads[this.state.spreadKey].positions[this.state.lang],
-                targetPerson: this.state.target === 'other' ? document.getElementById('other-person-input').value.trim() : null
+                targetPerson: this.state.target === 'partner' ? (document.getElementById('other-person-input')?.value.trim() || null) : null
             };
             await this.handleAIRequest(requestData);
         },
@@ -576,11 +589,44 @@
         },
 
         playSound(soundId) {
-            const sound = document.getElementById(soundId);
-            if (sound) {
-                sound.currentTime = 0;
-                sound.volume = 0.4;
-                sound.play().catch(e => console.error("Sound play failed:", e));
+            if (soundId === 'card-flip-sound') {
+                // Generate flip sound with Web Audio API
+                this.playFlipSound();
+            } else {
+                const sound = document.getElementById(soundId);
+                if (sound) {
+                    sound.currentTime = 0;
+                    sound.volume = 0.4;
+                    sound.play().catch(e => console.error("Sound play failed:", e));
+                }
+            }
+        },
+
+        playFlipSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                // Create oscillator for bell-like sound
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                // High frequency for mystical bell sound
+                oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+
+                // Soft attack and decay
+                gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+
+                oscillator.type = 'sine';
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + 0.3);
+            } catch (e) {
+                console.error("Web Audio API failed:", e);
             }
         },
 
