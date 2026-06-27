@@ -101,7 +101,11 @@
         </div>
         <footer class="text-center py-8 mt-8 border-t border-color"><p class="text-sm text-gold" style="filter: drop-shadow(0 0 5px var(--primary-glow-color));">Made with 💜 by Mary • Support Engineer & Tarot Master</p></footer>
     </div>
+    <!-- Audio Elements -->
     <audio id="ambient-music" loop><source src="https://assets.chosic.com/wp-content/uploads/2021/07/The-Cradle-of-Your-Soul.mp3" type="audio/mpeg"></audio>
+    <audio id="card-select-sound"><source src="https://cdn.freesound.org/previews/220/220173_4056037-lq.mp3" type="audio/mpeg"></audio>
+    <audio id="mystical-chime"><source src="https://cdn.freesound.org/previews/411/411749_5121236-lq.mp3" type="audio/mpeg"></audio>
+
     <div id="loading-overlay"><div class="loader-spinner"></div></div>
 
     <script>
@@ -282,6 +286,10 @@
             }
             const posName = schema.positions[this.state.lang][this.state.activePositionIndex];
             this.state.selectedCards[posName] = { name: cardName };
+
+            // Play card select sound
+            this.playSound('card-select-sound');
+
             const nextIndex = schema.positions[this.state.lang].findIndex((_, i) => !this.state.selectedCards[schema.positions[this.state.lang][i]]);
             this.state.activePositionIndex = (nextIndex === -1) ? schema.cards : nextIndex;
             this.updateUI();
@@ -353,6 +361,10 @@
                 alert(this.translations[this.state.lang].alert_spread_not_filled);
                 return;
             }
+
+            // Play mystical chime sound
+            this.playSound('mystical-chime');
+
             const requestData = {
                 lang: this.state.lang, type: 'spread', mode: this.state.aiMode,
                 theme: this.data.spheres.find(s => s.key === this.state.sphere)[this.state.lang],
@@ -377,6 +389,16 @@
                 document.getElementById('ai-response-box').innerHTML = `<span id="ai-placeholder" class="text-red-400">Критична помилка: ${error.message}</span>`;
             } finally {
                 document.getElementById('loading-overlay').classList.remove('active');
+            }
+        },
+
+        playSound(soundId) {
+            const sound = document.getElementById(soundId);
+            const music = document.getElementById('ambient-music');
+            if (sound && !music.paused) {
+                sound.currentTime = 0;
+                sound.volume = 0.3;
+                sound.play().catch(e => console.error("Sound play failed:", e));
             }
         },
 
