@@ -41,10 +41,16 @@
 
         .constructor-btn { white-space: nowrap; padding: 0.75rem 1.25rem; font-size: 0.9rem; }
 
+        /* 3D Card Flip */
+        .card-flip-container { perspective: 1000px; min-height: 120px; cursor: pointer; }
+        .card-flip-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+        .card-flip-container.flipped .card-flip-inner { transform: rotateY(180deg); }
+        .card-front, .card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 0.75rem; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 1rem; text-align: center; }
+        .card-front { background: var(--bg-surface); border: 2px solid var(--border-color); }
+        .card-back { background: linear-gradient(135deg, var(--bg-surface), rgba(157, 78, 223, 0.2)); border: 2px solid var(--text-purple); transform: rotateY(180deg); }
+        .card-back-pattern { font-size: 3rem; opacity: 0.3; }
+
         .schema-container { display: grid; gap: 10px; padding: 10px; border-radius: 1rem; background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); min-height: 220px; }
-        .schema-slot { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: all 0.2s; min-height: 100px; cursor: pointer; }
-        .schema-slot.active { border-color: var(--text-gold); transform: scale(1.03); box-shadow: 0 0 15px var(--primary-glow-color); }
-        .schema-slot.filled { background-color: rgba(157, 78, 223, 0.1); border-color: var(--text-purple); }
         .slot-number { font-size: 1.5rem; font-weight: 700; color: rgba(255,255,255,0.1); }
         .slot-position-name { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: var(--text-purple); }
         .slot-card-name { font-size: 0.9rem; font-weight: 600; margin-top: 4px; }
@@ -119,6 +125,7 @@
     <!-- Audio Elements -->
     <audio id="ambient-music" loop><source src="https://assets.chosic.com/wp-content/uploads/2021/07/The-Cradle-of-Your-Soul.mp3" type="audio/mpeg"></audio>
     <audio id="card-select-sound"><source src="https://cdn.freesound.org/previews/220/220173_4056037-lq.mp3" type="audio/mpeg"></audio>
+    <audio id="card-flip-sound"><source src="https://cdn.freesound.org/previews/171/171671_2437358-lq.mp3" type="audio/mpeg"></audio>
     <audio id="mystical-chime"><source src="https://cdn.freesound.org/previews/411/411749_5121236-lq.mp3" type="audio/mpeg"></audio>
 
     <div id="loading-overlay"><div class="loader-spinner"></div></div>
@@ -342,20 +349,49 @@
             container.style.gridTemplateAreas = schema.grid;
             const columns = schema.grid.match(/"(.*?)"/)[1].trim().split(/\s+/).length;
             container.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+
             schema.positions[this.state.lang].forEach((posName, index) => {
-                const slot = document.createElement('div');
-                slot.className = 'schema-slot';
-                slot.style.gridArea = `pos${index + 1}`;
-                slot.onclick = () => { this.state.activePositionIndex = index; this.updateUI(); };
-                if (index === this.state.activePositionIndex) slot.classList.add('active');
                 const cardData = this.state.selectedCards[posName];
+                const flipContainer = document.createElement('div');
+                flipContainer.className = `card-flip-container ${cardData ? 'flipped' : ''}`;
+                flipContainer.style.gridArea = `pos${index + 1}`;
+
+                flipContainer.onclick = () => {
+                    if (cardData) {
+                        this.playSound('card-flip-sound');
+                        flipContainer.classList.toggle('flipped');
+                    } else {
+                        this.state.activePositionIndex = index;
+                        this.updateUI();
+                    }
+                };
+
+                const inner = document.createElement('div');
+                inner.className = 'card-flip-inner';
+
+                // Front (рубашка карты)
+                const front = document.createElement('div');
+                front.className = 'card-front';
+                front.innerHTML = `<div class="card-back-pattern">🔮</div><div class="slot-number">${index + 1}</div><div class="slot-position-name">${posName}</div>`;
+
+                // Back (лицо карты)
+                const back = document.createElement('div');
+                back.className = 'card-back';
                 if (cardData) {
-                    slot.classList.add('filled');
-                    slot.innerHTML = `<div class="slot-position-name">${posName}</div><div class="slot-card-name">${cardData.name}</div>`;
+                    back.innerHTML = `<div class="slot-position-name">${posName}</div><div class="slot-card-name">${cardData.name}</div>`;
                 } else {
-                    slot.innerHTML = `<div class="slot-number">${index + 1}</div><div class="slot-position-name">${posName}</div>`;
+                    back.innerHTML = `<div class="slot-position-name">${posName}</div>`;
                 }
-                container.appendChild(slot);
+
+                if (index === this.state.activePositionIndex && !cardData) {
+                    flipContainer.style.boxShadow = '0 0 15px var(--primary-glow-color)';
+                    flipContainer.style.transform = 'scale(1.03)';
+                }
+
+                inner.appendChild(front);
+                inner.appendChild(back);
+                flipContainer.appendChild(inner);
+                container.appendChild(flipContainer);
             });
         },
 
