@@ -333,6 +333,44 @@
 
         .target-person-wrapper { display: none; margin-top: 0.75rem; }
         .target-person-wrapper.active { display: block; }
+
+        /* Reading preview + full-screen interpretation modal */
+        .reading-preview { width: 100%; text-align: left; }
+        .reading-preview-header { text-align: center; margin-bottom: 1rem; }
+        .reading-preview-title { font-size: 1.15rem; font-weight: 800; color: var(--text-gold); }
+        .reading-preview-subtitle { font-size: 0.78rem; color: rgba(255,255,255,0.62); margin-top: 0.25rem; }
+        .reading-question-box { margin: 0.9rem 0; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: 0.85rem; background: rgba(0,0,0,0.24); }
+        .reading-question-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-purple); font-weight: 800; margin-bottom: 0.35rem; }
+        .reading-question-text { font-size: 0.9rem; color: rgba(255,255,255,0.9); line-height: 1.45; }
+        .reading-cards-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
+        @media (min-width: 640px) { .reading-cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        .reading-card-mini { border: 1px solid var(--border-color); border-radius: 0.9rem; padding: 0.65rem; background: rgba(255,255,255,0.035); display: flex; gap: 0.65rem; align-items: center; min-width: 0; }
+        .reading-card-thumb { width: 44px; height: 70px; flex: 0 0 auto; border-radius: 0.5rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.35); }
+        .reading-card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .reading-card-thumb.reversed img, .reading-card-thumb.reversed > div { transform: rotate(180deg); }
+        .reading-card-meta { min-width: 0; }
+        .reading-card-position { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-purple); font-weight: 800; line-height: 1.2; }
+        .reading-card-name { font-size: 0.82rem; color: var(--text-gold); font-weight: 800; line-height: 1.2; margin-top: 0.2rem; overflow-wrap: break-word; word-break: break-word; }
+        .reading-card-orientation { font-size: 0.68rem; color: rgba(255,255,255,0.65); margin-top: 0.2rem; }
+        .reading-actions { display: grid; grid-template-columns: 1fr; gap: 0.6rem; margin-top: 1rem; }
+        @media (min-width: 640px) { .reading-actions { grid-template-columns: 1.3fr 1fr 1fr; } }
+        .reading-action-primary, .reading-action-secondary { border-radius: 0.85rem; padding: 0.78rem 0.9rem; font-weight: 800; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; transition: all 0.2s ease; }
+        .reading-action-primary { background: linear-gradient(135deg, var(--text-purple), #7c3aed); color: white; box-shadow: 0 0 18px var(--secondary-glow-color); }
+        .reading-action-primary:hover, .reading-action-secondary:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        .reading-action-secondary { background: rgba(255,255,255,0.06); color: var(--text-gold); border: 1px solid var(--border-color); }
+        .result-modal { position: fixed; inset: 0; z-index: 1100; display: none; align-items: center; justify-content: center; padding: 1rem; background: rgba(6,2,12,0.86); backdrop-filter: blur(18px); }
+        .result-modal.active { display: flex; }
+        .result-modal-panel { width: min(920px, 100%); max-height: 90vh; overflow: hidden; border: 1px solid var(--border-color); border-radius: 1.35rem; background: linear-gradient(180deg, rgba(16,10,31,0.98), rgba(6,2,12,0.98)); box-shadow: 0 0 45px var(--primary-glow-color); display: flex; flex-direction: column; }
+        .result-modal-header { padding: 1rem 1.1rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        .result-modal-title { color: var(--text-gold); font-weight: 900; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.08em; }
+        .result-modal-close { width: 2.2rem; height: 2.2rem; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-gold); background: rgba(255,255,255,0.05); font-weight: 900; }
+        .result-modal-body { padding: 1rem; overflow-y: auto; }
+        .result-modal-cards { display: flex; gap: 0.55rem; overflow-x: auto; padding-bottom: 0.75rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
+        .result-modal-card-chip { flex: 0 0 auto; max-width: 170px; border: 1px solid var(--border-color); border-radius: 999px; padding: 0.45rem 0.7rem; background: rgba(255,255,255,0.05); font-size: 0.75rem; color: rgba(255,255,255,0.86); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .result-modal-text { color: rgba(255,255,255,0.92); line-height: 1.75; font-size: 0.98rem; }
+        .result-modal-footer { padding: 0.9rem 1.1rem; border-top: 1px solid var(--border-color); display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: flex-end; }
+        .body-modal-open { overflow: hidden; }
+
     </style>
 </head>
 <body class="p-3 md:p-8 min-h-screen">
@@ -469,6 +507,21 @@
     <p class="mt-8 text-xl text-gold font-semibold" id="loading-text" data-translate-key="loading_text">Зчитуємо інформацію з простору...</p>
 </div>
 
+
+<div id="result-modal" class="result-modal" role="dialog" aria-modal="true" aria-labelledby="result-modal-title">
+    <div class="result-modal-panel">
+        <div class="result-modal-header">
+            <div id="result-modal-title" class="result-modal-title"></div>
+            <button type="button" class="result-modal-close" onclick="App.closeResultModal()" aria-label="Close">×</button>
+        </div>
+        <div id="result-modal-body" class="result-modal-body"></div>
+        <div class="result-modal-footer">
+            <button type="button" class="reading-action-secondary" onclick="App.copyResultToClipboard()" data-translate-key="btn_copy_result"></button>
+            <button type="button" class="reading-action-secondary" onclick="App.closeResultModal()" data-translate-key="btn_close_result"></button>
+        </div>
+    </div>
+</div>
+
 <script>
     const App = {
         state: {
@@ -514,6 +567,18 @@
                 moon_phases: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'],
                 loading_text: "Зчитуємо інформацію з простору...",
                 btn_reverse: "⤾ Перевернути",
+                reading_cards_title: "Ваш розклад готовий",
+                reading_cards_subtitle: "Подивіться на карти перед тлумаченням — перше відчуття теж важливе.",
+                reading_question_label: "Питання",
+                reading_no_question: "Питання не вказано",
+                orientation_upright: "Пряме положення",
+                orientation_reversed: "Перевернуте положення",
+                btn_open_interpretation: "Відкрити трактування",
+                btn_new_reading: "Новий розклад",
+                btn_copy_result: "Копіювати результат",
+                btn_close_result: "Закрити",
+                result_modal_title: "Трактування розкладу",
+                result_copied: "✅ Результат скопійовано!",
                 position_names: {
                     cross: ["Суть", "Перешкода", "Порада", "Результат"]
                 }
@@ -555,6 +620,18 @@
                 moon_phases: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна'],
                 loading_text: "Считываем информацию из пространства...",
                 btn_reverse: "⤾ Перевернуть",
+                reading_cards_title: "Ваш расклад готов",
+                reading_cards_subtitle: "Посмотрите на карты перед трактовкой — первое ощущение тоже важно.",
+                reading_question_label: "Вопрос",
+                reading_no_question: "Вопрос не указан",
+                orientation_upright: "Прямое положение",
+                orientation_reversed: "Перевёрнутое положение",
+                btn_open_interpretation: "Открыть трактовку",
+                btn_new_reading: "Новый расклад",
+                btn_copy_result: "Копировать результат",
+                btn_close_result: "Закрыть",
+                result_modal_title: "Трактовка расклада",
+                result_copied: "✅ Результат скопирован!",
                 position_names: {
                     cross: ["Суть", "Препятствие", "Совет", "Результат"]
                 }
@@ -1036,6 +1113,15 @@
             document.getElementById('music-toggle').addEventListener('click', () => this.toggleMusic());
             document.getElementById('rules-toggle').addEventListener('click', () => this.toggleRules());
             document.getElementById('refine-question-btn').addEventListener('click', () => this.refineQuestion());
+            const resultModal = document.getElementById('result-modal');
+            if (resultModal) {
+                resultModal.addEventListener('click', e => {
+                    if (e.target === resultModal) this.closeResultModal();
+                });
+            }
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') this.closeResultModal();
+            });
 
             ['mode-selector', 'deck-selector', 'sphere-selector', 'target-selector', 'spread-selector', 'card-back-selector'].forEach(id => {
                 document.getElementById(id).addEventListener('click', e => {
@@ -1100,8 +1186,15 @@
             this.state.activePositionIndex = 0;
             this.state.activeSuit = null;
             this.state.previewReversed = false;
+            this._lastInterpretation = '';
+            this._lastReadingSnapshot = null;
             document.getElementById('question').value = '';
             document.getElementById('card-selection-step').style.display = 'none';
+            const responseBox = document.getElementById('ai-response-box');
+            if (responseBox) {
+                responseBox.innerHTML = `<span id="ai-placeholder">${this.translations[this.state.lang].placeholder_ai_response}</span>`;
+            }
+            this.closeResultModal();
             this.updateUI();
         },
 
@@ -1390,12 +1483,172 @@
                 const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestData) });
                 const data = await response.json();
                 const responseBox = document.getElementById('ai-response-box');
-                responseBox.innerHTML = `<span id="ai-placeholder">${response.ok ? data.text.replace(/\n/g, '<br>') : `Помилка: ${data.error}`}</span>`;
+
+                if (!response.ok) {
+                    const errorText = data?.error || (this.state.lang === 'ua' ? 'Невідома помилка' : 'Неизвестная ошибка');
+                    responseBox.innerHTML = `<span id="ai-placeholder" class="text-red-400">${this.escapeHTML(errorText)}</span>`;
+                    return;
+                }
+
+                const text = data?.text || '';
+                this._lastInterpretation = text;
+                this._lastReadingSnapshot = this.buildReadingSnapshot(requestData, text);
+                this.renderReadingPreview(this._lastReadingSnapshot);
+                document.getElementById('ai-response-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch (error) {
-                document.getElementById('ai-response-box').innerHTML = `<span id="ai-placeholder" class="text-red-400">Критична помилка: ${error.message}</span>`;
+                const label = this.state.lang === 'ua' ? 'Критична помилка' : 'Критическая ошибка';
+                document.getElementById('ai-response-box').innerHTML = `<span id="ai-placeholder" class="text-red-400">${label}: ${this.escapeHTML(error.message)}</span>`;
             } finally {
                 document.getElementById('loading-overlay').classList.remove('active');
             }
+        },
+
+
+        escapeHTML(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
+            }[ch]));
+        },
+
+        formatAIText(text) {
+            return this.escapeHTML(text).replace(/\n\n+/g, '<br><br>').replace(/\n/g, '<br>');
+        },
+
+        getOrientationLabel(isReversed) {
+            return isReversed ? this.translations[this.state.lang].orientation_reversed : this.translations[this.state.lang].orientation_upright;
+        },
+
+        buildReadingSnapshot(requestData, interpretation) {
+            const schema = this.data.spreads[this.state.spreadKey];
+            const positions = schema.positions[this.state.lang];
+            const cards = positions
+                .map(position => {
+                    const card = requestData.cards[position] || this.state.selectedCards[position];
+                    if (!card) return null;
+                    return {
+                        position,
+                        id: card.id,
+                        name: this.translateCardName(card.id),
+                        isReversed: Boolean(card.isReversed),
+                        imagePath: this.getCardImagePath(card.id)
+                    };
+                })
+                .filter(Boolean);
+
+            return {
+                lang: this.state.lang,
+                question: requestData.question || '',
+                spreadType: requestData.spreadType,
+                theme: requestData.theme,
+                cards,
+                interpretation
+            };
+        },
+
+        renderReadingPreview(snapshot) {
+            const responseBox = document.getElementById('ai-response-box');
+            if (!responseBox || !snapshot) return;
+            const t = this.translations[this.state.lang];
+            const question = snapshot.question ? this.escapeHTML(snapshot.question) : this.escapeHTML(t.reading_no_question);
+            const cardsHTML = snapshot.cards.map((card, index) => `
+                <div class="reading-card-mini" style="animation: card-flight 0.55s ease ${index * 70}ms both;">
+                    <div class="reading-card-thumb ${card.isReversed ? 'reversed' : ''}">
+                        <img src="${card.imagePath}" alt="${this.escapeHTML(card.name)}" loading="lazy" onerror="this.replaceWith(App.fallbackArtNode('${card.id}'))">
+                    </div>
+                    <div class="reading-card-meta">
+                        <div class="reading-card-position">${this.escapeHTML(card.position)}</div>
+                        <div class="reading-card-name">${this.escapeHTML(card.name)}${card.isReversed ? ' ↻' : ''}</div>
+                        <div class="reading-card-orientation">${this.escapeHTML(this.getOrientationLabel(card.isReversed))}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            responseBox.innerHTML = `
+                <div class="reading-preview">
+                    <div class="reading-preview-header">
+                        <div class="reading-preview-title">${this.escapeHTML(t.reading_cards_title)}</div>
+                        <div class="reading-preview-subtitle">${this.escapeHTML(t.reading_cards_subtitle)}</div>
+                    </div>
+                    <div class="reading-question-box">
+                        <div class="reading-question-label">${this.escapeHTML(t.reading_question_label)}</div>
+                        <div class="reading-question-text">${question}</div>
+                    </div>
+                    <div class="reading-cards-grid">${cardsHTML}</div>
+                    <div class="reading-actions">
+                        <button type="button" class="reading-action-primary" onclick="App.openResultModal()">${this.escapeHTML(t.btn_open_interpretation)}</button>
+                        <button type="button" class="reading-action-secondary" onclick="App.copyResultToClipboard()">${this.escapeHTML(t.btn_copy_result)}</button>
+                        <button type="button" class="reading-action-secondary" onclick="App.resetSpread()">${this.escapeHTML(t.btn_new_reading)}</button>
+                    </div>
+                </div>
+            `;
+        },
+
+        renderResultModal(snapshot) {
+            if (!snapshot) return;
+            const t = this.translations[this.state.lang];
+            const titleEl = document.getElementById('result-modal-title');
+            const bodyEl = document.getElementById('result-modal-body');
+            if (!titleEl || !bodyEl) return;
+
+            titleEl.textContent = t.result_modal_title;
+            const question = snapshot.question ? this.escapeHTML(snapshot.question) : this.escapeHTML(t.reading_no_question);
+            const chips = snapshot.cards.map(card => `
+                <div class="result-modal-card-chip" title="${this.escapeHTML(card.position)} — ${this.escapeHTML(card.name)}">
+                    ${this.escapeHTML(card.position)}: ${this.escapeHTML(card.name)}${card.isReversed ? ' ↻' : ''}
+                </div>
+            `).join('');
+
+            bodyEl.innerHTML = `
+                <div class="reading-question-box">
+                    <div class="reading-question-label">${this.escapeHTML(t.reading_question_label)}</div>
+                    <div class="reading-question-text">${question}</div>
+                </div>
+                <div class="result-modal-cards">${chips}</div>
+                <div class="result-modal-text">${this.formatAIText(snapshot.interpretation)}</div>
+            `;
+        },
+
+        openResultModal() {
+            if (!this._lastReadingSnapshot) return;
+            this.renderResultModal(this._lastReadingSnapshot);
+            document.getElementById('result-modal')?.classList.add('active');
+            document.body.classList.add('body-modal-open');
+        },
+
+        closeResultModal() {
+            document.getElementById('result-modal')?.classList.remove('active');
+            document.body.classList.remove('body-modal-open');
+        },
+
+        getResultPlainText() {
+            const snapshot = this._lastReadingSnapshot;
+            if (!snapshot) return '';
+            const t = this.translations[this.state.lang];
+            const cardLines = snapshot.cards.map(card => `- ${card.position}: ${card.name}${card.isReversed ? ' ↻' : ''} (${this.getOrientationLabel(card.isReversed)})`);
+            return [
+                `${t.reading_cards_title}`,
+                `${t.reading_question_label}: ${snapshot.question || t.reading_no_question}`,
+                cardLines.join('\n'),
+                snapshot.interpretation
+            ].filter(Boolean).join('\n\n');
+        },
+
+        async copyResultToClipboard() {
+            const text = this.getResultPlainText();
+            if (!text) return;
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (error) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                textarea.remove();
+            }
+            alert(this.translations[this.state.lang].result_copied);
         },
 
         playSound(soundId) {
