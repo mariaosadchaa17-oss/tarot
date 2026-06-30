@@ -39,6 +39,11 @@
         .control-card span { font-size: 0.8rem; line-height: 1.2; overflow-wrap: break-word; word-break: break-word; }
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
+        .settings-panel { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem; text-align: left; }
+        .deck-selector-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        @media (min-width: 768px) { .deck-selector-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        .card-back-option { min-height: 92px; gap: 0.35rem; }
+        .card-back-thumb { width: 38px; height: 58px; object-fit: cover; border-radius: 0.35rem; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 0 8px rgba(0,0,0,0.4); }
 
         /* 3D Card Flip - FLEXIBLE HEIGHT SO TEXT NEVER GETS CLIPPED */
         .card-flip-container {
@@ -85,6 +90,12 @@
             word-break: break-word;
             white-space: normal;
             line-height: 1.25;
+        }
+        .card-back-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .slot-back-overlay {
+            position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.3rem; padding: 0.75rem; background: linear-gradient(180deg, rgba(6,2,12,0.08), rgba(6,2,12,0.45));
+            pointer-events: none;
         }
 
         /* Card info footer - OUTSIDE the flip card, height grows to fit content */
@@ -345,9 +356,28 @@
         </div>
         <h1 class="text-3xl md:text-4xl font-extrabold tracking-widest uppercase text-gold" style="filter: drop-shadow(0 0 10px var(--primary-glow-color));" data-translate-key="main_title"></h1>
 
+        <!-- Top-level settings: does not interrupt the spread flow -->
+        <div class="settings-panel mt-6 neon-glow">
+            <h2 class="text-sm font-semibold text-gold mb-3 uppercase tracking-wider" data-translate-key="section_title_settings"></h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_ai_mode"></label>
+                    <div id="mode-selector" class="grid grid-cols-2 gap-2"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_deck"></label>
+                    <div id="deck-selector" class="grid deck-selector-grid gap-2"></div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_card_back"></label>
+                    <div id="card-back-selector" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Rules Accordion -->
         <div class="mt-6">
-            <button id="rules-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="rules_toggle">📜 Свод правил таролога</button>
+            <button id="rules-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="rules_toggle">📜 Звід правил таролога</button>
             <div id="rules-wrapper" class="accordion-wrapper">
                 <div class="text-left bg-surface border border-color rounded-xl p-4">
                     <ol class="list-decimal list-inside space-y-2 text-sm" id="rules-list"></ol>
@@ -358,8 +388,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div class="lg:col-span-7 space-y-6">
             <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
-                <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_mode_sphere"></h2>
-                <div class="mb-4"><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_ai_mode"></label><div id="mode-selector" class="grid grid-cols-2 gap-2"></div></div>
+                <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_sphere"></h2>
                 <div><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_sphere"></label><div id="sphere-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div><p id="recommendation-text" class="text-xs text-purple mt-2 text-center"></p></div>
             </div>
             <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
@@ -379,12 +408,6 @@
                         <button id="refine-question-btn" class="text-xs text-gold hover:brightness-125 transition" title="Сформулювати питання правильно">✨🪄</button>
                     </div>
                     <textarea id="question" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" rows="2" data-placeholder-ua="Ваше питання (необов'язково)" data-placeholder-ru="Ваш вопрос (необязательно)"></textarea>
-                </div>
-
-                <!-- Card back style selector -->
-                <div class="mb-4">
-                    <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_card_back">Вибір сорочки карт</label>
-                    <div id="card-back-selector" class="grid grid-cols-3 gap-2"></div>
                 </div>
 
                 <!-- Spread type with categories -->
@@ -451,19 +474,22 @@
         state: {
             lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self', theme: 'neon',
             spreadKey: 'cross', activeSuit: null, selectedCards: {}, activePositionIndex: 0,
-            cardBackStyle: 'cosmic', previewReversed: false, selectedCardForAdd: null
+            selectedDeck: 'retro', cardBackStyle: 'standard', previewReversed: false, selectedCardForAdd: null
         },
         translations: {
             ua: {
                 page_title: "Таро AI Компаньйон", main_title: "🔮 Таро AI Компаньйон",
-                rules_toggle: "📜 Свод правил таролога",
+                rules_toggle: "📜 Звід правил таролога",
                 rules_list: ["Формулюйте запит чітко та екологічно (без злого умислу).", "Не дублюйте один і той же запит картам декілька разів на день.", "Підходьте до розкладу у спокійному, медитативному стані.", "Пам'ятайте: карти показують найбільш вірогідний вектор, але фінальний вибір завжди за вами."],
+                section_title_settings: "⚙️ Налаштування",
+                section_title_sphere: "✨ 1. Сфера",
                 section_title_mode_sphere: "✨ 1. Режим та Сфера", label_ai_mode: "Режим ШІ",
                 mode_mystical: "Містичний", mode_psychologist: "Психологічний",
-                label_sphere: "Сфера життя",
+                label_sphere: "Сфера життя", label_deck: "Колода карт",
                 section_title_context_spread: "🃏 2. Контекст та Розклад", label_target: "На кого ворожимо?",
                 target_self: "На себе", target_partner: "На партнера", target_friend: "На друга", target_rival: "На ворога",
-                label_question: "Ваше питання", label_card_back: "Вибір сорочки карт",
+                label_question: "Ваше питання", label_card_back: "Сорочка карт",
+                card_back_standard: "Стандартна сорочка",
                 card_back_cosmic: "🌌 Космічна", card_back_witchy: "🔮 Відьминська", card_back_gold: "⚜️ Золото",
                 label_spread_type: "Тип розкладу",
                 spread_category_basic: "⚡ БАЗОВІ ТА ШВИДКІ РОЗКЛАДИ",
@@ -484,7 +510,7 @@
                 recommendation_work: "💡 Аналізуємо перспективи та варіанти розвитку.",
                 recommendation_health: "💡 Для швидкої оцінки стану достатньо однієї карти.",
                 recommendation_destiny: "💡 Глибокий розклад 'Шлях' покаже ваш вектор.",
-                suit_major: "✨ Старші Аркани", suit_wands: "🔥 Жезли", suit_cups: "💧 Кубки", suit_swords: "🌪 Мечі", suit_pentacles: "⛰ Пентаклі",
+                suit_major: "🔮 Старші Аркани", suit_wands: "🪄 Жезли", suit_cups: "🌙 Кубки", suit_swords: "👁️ Мечі", suit_pentacles: "🪬 Пентаклі",
                 moon_phases: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'],
                 loading_text: "Зчитуємо інформацію з простору...",
                 btn_reverse: "⤾ Перевернути",
@@ -496,12 +522,15 @@
                 page_title: "Таро AI Компаньон", main_title: "🔮 Таро AI Компаньон",
                 rules_toggle: "📜 Свод правил таролога",
                 rules_list: ["Формулируйте запрос четко и экологично (без злого умысла).", "Не дублируйте один и тот же запрос картам несколько раз в день.", "Подходите к раскладу в спокойном, медитативном состоянии.", "Помните: карты показывают наиболее вероятный вектор, но финальный выбор всегда за вами."],
+                section_title_settings: "⚙️ Настройки",
+                section_title_sphere: "✨ 1. Сфера",
                 section_title_mode_sphere: "✨ 1. Режим и Сфера", label_ai_mode: "Режим ИИ",
                 mode_mystical: "Мистический", mode_psychologist: "Психологический",
-                label_sphere: "Сфера жизни",
+                label_sphere: "Сфера жизни", label_deck: "Колода карт",
                 section_title_context_spread: "🃏 2. Контекст и Расклад", label_target: "На кого гадаем?",
                 target_self: "На себя", target_partner: "На партнера", target_friend: "На друга", target_rival: "На врага",
-                label_question: "Ваш вопрос", label_card_back: "Выбор рубашки карт",
+                label_question: "Ваш вопрос", label_card_back: "Рубашка карт",
+                card_back_standard: "Стандартная рубашка",
                 card_back_cosmic: "🌌 Космическая", card_back_witchy: "🔮 Ведьминская", card_back_gold: "⚜️ Золото",
                 label_spread_type: "Тип расклада",
                 spread_category_basic: "⚡ БАЗОВЫЕ И БЫСТРЫЕ РАСКЛАДЫ",
@@ -522,7 +551,7 @@
                 recommendation_work: "💡 Анализируем перспективы и варианты развития.",
                 recommendation_health: "💡 Для быстрой оценки состояния достаточно одной карты.",
                 recommendation_destiny: "💡 Глубокий расклад 'Путь' покажет ваш вектор.",
-                suit_major: "✨ Старшие Арканы", suit_wands: "🔥 Жезлы", suit_cups: "💧 Кубки", suit_swords: "🌪 Мечи", suit_pentacles: "⛰ Пентакли",
+                suit_major: "🔮 Старшие Арканы", suit_wands: "🪄 Жезлы", suit_cups: "🌙 Кубки", suit_swords: "👁️ Мечи", suit_pentacles: "🪬 Пентакли",
                 moon_phases: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна'],
                 loading_text: "Считываем информацию из пространства...",
                 btn_reverse: "⤾ Перевернуть",
@@ -532,6 +561,11 @@
             }
         },
         data: {
+            decks: [
+                { key: 'retro', dir: 'retro', ua: 'Ретро стиль', ru: 'Ретро стиль', backs: [{ key: 'standard', file: 'back.jpg', ua: 'Стандартна', ru: 'Стандартная' }] },
+                { key: 'mirror', dir: 'mirror', ua: 'Зеркало долі', ru: 'Зеркало судьбы', backs: [{ key: 'standard', file: 'back.jpg', ua: 'Стандартна', ru: 'Стандартная' }] },
+                { key: 'crow', dir: 'crow', ua: 'Магічний ворон', ru: 'Магический ворон', backs: [{ key: 'standard', file: 'back.jpg', ua: 'Стандартна', ru: 'Стандартная' }] }
+            ],
             spheres: [
                 { key: 'love', icon: '❤️', ua: 'Кохання', ru: 'Любовь', rec: 'cross', rec_key: 'recommendation_love' },
                 { key: 'career', icon: '💼', ua: 'Кар\'єра', ru: 'Карьера', rec: 'three-cards', rec_key: 'recommendation_work' },
@@ -570,11 +604,11 @@
                     grid: `"pos1"`
                 },
                 "yes-no": {
-                    cards: 3,
-                    ua: "Так/Ні (3)", ru: "Да/Нет (3)",
-                    hint_ua: "Баланс позитивних та негативних відповідей", hint_ru: "Баланс положительных и отрицательных ответов",
-                    positions: { ua: ["Відповідь 1", "Відповідь 2", "Відповідь 3"], ru: ["Ответ 1", "Ответ 2", "Ответ 3"] },
-                    grid: `"pos1 pos2 pos3"`
+                    cards: 1,
+                    ua: "Так/Ні (1)", ru: "Да/Нет (1)",
+                    hint_ua: "Одна карта дає пряму відповідь і головний вектор ситуації", hint_ru: "Одна карта дает прямой ответ и главный вектор ситуации",
+                    positions: { ua: ["Відповідь"], ru: ["Ответ"] },
+                    grid: `"pos1"`
                 },
                 "three-cards": {
                     cards: 3,
@@ -651,33 +685,50 @@
         // If a file is ever missing, buildCardArt() below provides a
         // fully code-generated SVG fallback so a slot is never empty.
         // ══════════════════════════════════════════════════════════════
-        CARDS_DIR: 'cards',
+        DECKS_DIR: 'assets/decks',
+
+        getCurrentDeck() {
+            return this.data.decks.find(deck => deck.key === this.state.selectedDeck) || this.data.decks[0];
+        },
+
+        getCurrentBack() {
+            const deck = this.getCurrentDeck();
+            return deck.backs.find(back => back.key === this.state.cardBackStyle) || deck.backs[0];
+        },
+
+        getDeckPathBase() {
+            return `${this.DECKS_DIR}/${this.getCurrentDeck().dir}`;
+        },
 
         getCardImagePath(cardId) {
             const [suit, idxStr] = cardId.split('_');
             const idx = parseInt(idxStr, 10);
-            if (suit === 'major') return `${this.CARDS_DIR}/major-${idx}.jpg`;
+            if (suit === 'major') return `${this.getDeckPathBase()}/major-${idx}.jpg`;
             // idx 0..9 = Ace..10 -> value 1..10 ; idx 10..13 = Page..King -> value 11..14
             const value = idx + 1;
-            return `${this.CARDS_DIR}/${suit}-${value}.jpg`;
+            return `${this.getDeckPathBase()}/${suit}-${value}.jpg`;
+        },
+
+        getCardBackImagePath() {
+            return `${this.getDeckPathBase()}/${this.getCurrentBack().file}`;
         },
 
 
         majorSymbols: [
-            '🃏','🪄','🌙','👑','🏛️','⛪','💞','🏇','🦁','🏮',
-            '🎡','⚖️','🙃','💀','🜂','😈','🗼','⭐','🌕','☀️',
+            '🃏','🪄','🌙','👑','🜃','🗝️','💞','✨','🦁','🕯️',
+            '🔮','⚖️','🌀','💀','🜂','👁️','🜏','⭐','🌕','☀️',
             '📯','🌍'
         ],
         majorRoman: ['0','I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV','XVI','XVII','XVIII','XIX','XX','XXI'],
 
         suitTheme: {
-            wands:     { c1: '#3a1d0d', c2: '#c2691d', accent: '#ffb066', icon: '🔥' },
-            cups:      { c1: '#0d2438', c2: '#1d7fb0', accent: '#7fd4ff', icon: '💧' },
-            swords:    { c1: '#1c1f26', c2: '#5b6b7a', accent: '#cfe3ef', icon: '⚔️' },
-            pentacles: { c1: '#241b06', c2: '#a87f23', accent: '#ffd76b', icon: '🪙' }
+            wands:     { c1: '#3a1d0d', c2: '#c2691d', accent: '#ffb066', icon: '🪄' },
+            cups:      { c1: '#0d2438', c2: '#1d7fb0', accent: '#7fd4ff', icon: '🌙' },
+            swords:    { c1: '#1c1f26', c2: '#5b6b7a', accent: '#cfe3ef', icon: '👁️' },
+            pentacles: { c1: '#241b06', c2: '#a87f23', accent: '#ffd76b', icon: '🪬' }
         },
 
-        courtSymbols: ['🧒', '🐎', '👸', '🤴'], // page, knight, queen, king
+        courtSymbols: ['🃏', '✨', '🌙', '👑'], // page, knight, queen, king
 
         // Compute a centered grid of (x,y) points inside a box for pip layouts
         gridPoints(count, box) {
@@ -800,12 +851,19 @@
         loadFromLocalStorage() {
             const savedLang = localStorage.getItem('tarot_lang');
             const savedTheme = localStorage.getItem('tarot_theme');
+            const savedDeck = localStorage.getItem('tarot_deck');
+            const savedBack = localStorage.getItem('tarot_card_back');
+            const savedAiMode = localStorage.getItem('tarot_ai_mode');
             if (savedLang) this.state.lang = savedLang;
             if (savedTheme) this.state.theme = savedTheme;
+            if (savedAiMode) this.state.aiMode = savedAiMode;
+            if (savedDeck && this.data.decks.some(deck => deck.key === savedDeck)) this.state.selectedDeck = savedDeck;
+            if (savedBack) this.state.cardBackStyle = savedBack;
         },
 
         restoreActiveStates() {
             this.handleSelection('mode', this.state.aiMode, false);
+            this.handleSelection('deck', this.state.selectedDeck, false);
             this.handleSelection('target', this.state.target, false);
             this.handleSelection('cardBack', this.state.cardBackStyle, false);
             this.handleSelection('sphere', this.state.sphere, false);
@@ -828,10 +886,8 @@
             createButtons('mode-selector', [{key: 'mystical', icon: '🔮', ua: this.translations.ua.mode_mystical, ru: this.translations.ru.mode_mystical}, {key: 'psychologist', icon: '🧠', ua: this.translations.ua.mode_psychologist, ru: this.translations.ru.mode_psychologist}], 'mode', this.state.lang);
             createButtons('sphere-selector', this.data.spheres, 'sphere', this.state.lang);
             createButtons('target-selector', this.data.targets, 'target', this.state.lang);
-
-            // Card back selector
-            const cardBackData = [{key: 'cosmic', name: this.translations[this.state.lang].card_back_cosmic}, {key: 'witchy', name: this.translations[this.state.lang].card_back_witchy}, {key: 'gold', name: this.translations[this.state.lang].card_back_gold}];
-            document.getElementById('card-back-selector').innerHTML = cardBackData.map(item => `<button class="control-card" data-group="cardBack" data-key="${item.key}"><span>${item.name}</span></button>`).join('');
+            createButtons('deck-selector', this.data.decks, 'deck', this.state.lang);
+            this.renderCardBackSelector();
 
             // Spread selector with categories
             this.renderSpreadSelector();
@@ -844,6 +900,18 @@
             if (personInput) {
                 personInput.placeholder = personInput.dataset[`placeholder${this.state.lang === 'ua' ? 'Ua' : 'Ru'}`];
             }
+        },
+
+        renderCardBackSelector() {
+            const container = document.getElementById('card-back-selector');
+            if (!container) return;
+            const deck = this.getCurrentDeck();
+            container.innerHTML = deck.backs.map(item => `
+                <button class="control-card card-back-option" data-group="cardBack" data-key="${item.key}">
+                    <img class="card-back-thumb" src="${this.DECKS_DIR}/${deck.dir}/${item.file}" alt="${item[this.state.lang]}" loading="lazy">
+                    <span>${item[this.state.lang]}</span>
+                </button>
+            `).join('');
         },
 
         renderSpreadSelector() {
@@ -873,11 +941,11 @@
 
         renderSuitSelector() {
             const suits = [
-                { key: 'major', icon: '✨', name: this.translations[this.state.lang].suit_major },
-                { key: 'wands', icon: '🔥', name: this.translations[this.state.lang].suit_wands },
-                { key: 'cups', icon: '💧', name: this.translations[this.state.lang].suit_cups },
-                { key: 'swords', icon: '🌪', name: this.translations[this.state.lang].suit_swords },
-                { key: 'pentacles', icon: '⛰', name: this.translations[this.state.lang].suit_pentacles }
+                { key: 'major', icon: '🔮', name: this.translations[this.state.lang].suit_major },
+                { key: 'wands', icon: '🪄', name: this.translations[this.state.lang].suit_wands },
+                { key: 'cups', icon: '🌙', name: this.translations[this.state.lang].suit_cups },
+                { key: 'swords', icon: '👁️', name: this.translations[this.state.lang].suit_swords },
+                { key: 'pentacles', icon: '🪬', name: this.translations[this.state.lang].suit_pentacles }
             ];
 
             const container = document.getElementById('suit-grid');
@@ -909,7 +977,7 @@
                 const disabledClass = isUsed ? 'disabled' : '';
 
                 html += `
-                    <div class="card-item ${disabledClass}" onclick="App.selectCardFromCarousel('${cardId}', '${cardName}', ${isUsed})">
+                    <div class="card-item ${disabledClass}" onclick="App.selectCardFromCarousel('${cardId}', ${isUsed})">
                         <div class="card-item-name">${rank}</div>
                     </div>
                 `;
@@ -918,7 +986,8 @@
             carousel.innerHTML = html;
         },
 
-        selectCardFromCarousel(cardId, cardName, isUsed) {
+        selectCardFromCarousel(cardId, isUsed) {
+            const cardName = this.translateCardName(cardId);
             if (isUsed) {
                 alert(this.translations[this.state.lang].alert_card_already_in(cardName));
                 return;
@@ -968,7 +1037,7 @@
             document.getElementById('rules-toggle').addEventListener('click', () => this.toggleRules());
             document.getElementById('refine-question-btn').addEventListener('click', () => this.refineQuestion());
 
-            ['mode-selector', 'sphere-selector', 'target-selector', 'spread-selector', 'card-back-selector'].forEach(id => {
+            ['mode-selector', 'deck-selector', 'sphere-selector', 'target-selector', 'spread-selector', 'card-back-selector'].forEach(id => {
                 document.getElementById(id).addEventListener('click', e => {
                     const button = e.target.closest('button');
                     if (button && button.dataset.group) this.handleSelection(button.dataset.group, button.dataset.key);
@@ -984,8 +1053,22 @@
             switch (group) {
                 case 'mode':
                     this.state.aiMode = key;
+                    localStorage.setItem('tarot_ai_mode', key);
                     this.applyTheme(this.state.theme);
                     break;
+                case 'deck': {
+                    this.state.selectedDeck = key;
+                    localStorage.setItem('tarot_deck', key);
+                    const deck = this.getCurrentDeck();
+                    if (!deck.backs.some(back => back.key === this.state.cardBackStyle)) {
+                        this.state.cardBackStyle = deck.backs[0].key;
+                    }
+                    if (doUpdate) {
+                        this.renderCardBackSelector();
+                        this.handleSelection('cardBack', this.state.cardBackStyle, false);
+                    }
+                    break;
+                }
                 case 'sphere':
                     this.state.sphere = key;
                     const sphereData = this.data.spheres.find(s => s.key === key);
@@ -1004,7 +1087,10 @@
                     if (doUpdate) this.resetSpread();
                     break;
                 case 'spread': this.state.spreadKey = key; if (doUpdate) this.resetSpread(); break;
-                case 'cardBack': this.state.cardBackStyle = key; break;
+                case 'cardBack':
+                    this.state.cardBackStyle = key;
+                    localStorage.setItem('tarot_card_back', key);
+                    break;
             }
             if (doUpdate) this.updateUI();
         },
@@ -1086,15 +1172,18 @@
                 const inner = document.createElement('div');
                 inner.className = 'card-flip-inner';
 
-                // Front — card back / рубашка (shown before flip)
+                // Front — actual image of the selected deck back / рубашка (shown before flip)
                 const front = document.createElement('div');
-                front.className = `card-front card-back-${this.state.cardBackStyle}`;
-                const backPatterns = { cosmic: '🌌', witchy: '🔮', gold: '⚜️' };
-                const backPattern = backPatterns[this.state.cardBackStyle] || '🔮';
+                front.className = 'card-front';
+                front.style.cssText = 'padding:0;overflow:hidden;border:2px solid var(--border-color);background:var(--bg-surface);';
+                const backImgPath = this.getCardBackImagePath();
                 front.innerHTML = `
-                    <div style="font-size:2.5rem;opacity:0.5;">${backPattern}</div>
-                    <div class="slot-number">${index + 1}</div>
-                    <div class="slot-position-name" style="margin-top:0.25rem;">${posName}</div>
+                    <img class="card-back-image" src="${backImgPath}" alt="${this.getCurrentBack()[this.state.lang]}" loading="lazy"
+                         onerror="this.style.display='none'; this.parentElement.style.background='radial-gradient(circle, #1a0b2e 0%, #16213e 50%, #0f3460 100%)'">
+                    <div class="slot-back-overlay">
+                        <div class="slot-number">${index + 1}</div>
+                        <div class="slot-position-name" style="margin-top:0.25rem;">${posName}</div>
+                    </div>
                 `;
 
                 // Back — card face with real image
@@ -1285,6 +1374,7 @@
                 lang: this.state.lang, type: 'spread', mode: this.state.aiMode,
                 theme: this.data.spheres.find(s => s.key === this.state.sphere)[this.state.lang],
                 spreadType: this.data.spreads[this.state.spreadKey][this.state.lang],
+                deck: this.getCurrentDeck()[this.state.lang],
                 question: document.getElementById('question').value.trim(),
                 cards: this.state.selectedCards,
                 positions: this.data.spreads[this.state.spreadKey].positions[this.state.lang],
