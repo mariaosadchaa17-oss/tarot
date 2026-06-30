@@ -7,27 +7,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
-            --bg-main: #06020c; --bg-surface: #100a1f; --border-color: #342956;
-            --primary-glow-color: rgba(157, 78, 223, 0.5); --secondary-glow-color: rgba(157, 78, 223, 0.3);
-            --text-gold: #f3c66f; --text-purple: #9d4edf;
-            --text-main: #f6f0ff; --text-muted: rgba(246,240,255,0.74); --field-bg: rgba(16,10,31,0.88);
-            --panel-soft: rgba(255,255,255,0.06); --panel-strong: rgba(0,0,0,0.24);
-        }
-        body.theme-psychologist {
-            --primary-glow-color: rgba(20, 184, 166, 0.5); --secondary-glow-color: rgba(20, 184, 166, 0.2);
-            --text-gold: #6ee7b7; --text-purple: #2dd4bf;
-        }
-        body.theme-witchy {
-            --bg-main: #0f0a1a; --bg-surface: #1a1329; --border-color: #3d2f5c;
-            --primary-glow-color: rgba(168, 85, 247, 0.5); --secondary-glow-color: rgba(217, 70, 239, 0.3);
-            --text-gold: #e9d5ff; --text-purple: #c084fc;
+            --bg-main: #07030f; --bg-surface: #140d24; --border-color: #4a3a6c;
+            --primary-glow-color: rgba(157, 78, 223, 0.34); --secondary-glow-color: rgba(157, 78, 223, 0.18);
+            --text-gold: #f3c66f; --text-purple: #c8a2ff;
+            --text-main: #fff9ff; --text-muted: #d8cfee; --field-bg: #211735;
+            --panel-soft: rgba(255,255,255,0.09); --panel-strong: #100a1f;
+            --panel-readable: #191127; --button-soft: rgba(200,162,255,0.16);
         }
         body.theme-light {
-            --bg-main: #f7f1e8; --bg-surface: #fffaf2; --border-color: #d8c2a4;
-            --primary-glow-color: rgba(185, 125, 63, 0.26); --secondary-glow-color: rgba(113, 75, 45, 0.14);
-            --text-gold: #8f5f24; --text-purple: #6d4c91;
-            --text-main: #241a2f; --text-muted: rgba(36,26,47,0.72); --field-bg: rgba(255,250,242,0.94);
-            --panel-soft: rgba(109,76,145,0.08); --panel-strong: rgba(255,255,255,0.62);
+            --bg-main: #f5efe6; --bg-surface: #fffaf2; --border-color: #cdb896;
+            --primary-glow-color: rgba(142, 95, 36, 0.18); --secondary-glow-color: rgba(109, 76, 145, 0.1);
+            --text-gold: #7e4f15; --text-purple: #5e3f82;
+            --text-main: #211729; --text-muted: #5a4d66; --field-bg: #fffdf8;
+            --panel-soft: rgba(94,63,130,0.08); --panel-strong: #ffffff;
+            --panel-readable: #fffaf2; --button-soft: rgba(94,63,130,0.12);
         }
         html, body { height: 100%; }
         body {
@@ -43,11 +36,12 @@
         .border-color { border-color: var(--border-color); transition: border-color 0.5s; }
         .bg-surface { background-color: var(--bg-surface); transition: background-color 0.5s; }
         .bg-mystic-900 { background-color: var(--field-bg); }
-        body.theme-light .bg-purple-600 { background-color: #7b5ba7 !important; }
+        body.theme-light .bg-purple-600 { background-color: #6d4c91 !important; }
         body.theme-light .text-white,
         body.theme-light .text-gray-200,
         body.theme-light .text-gray-300,
         body.theme-light .text-gray-400 { color: var(--text-main) !important; }
+        .text-gray-200, .text-gray-300, .text-gray-400 { color: var(--text-muted) !important; }
         body.theme-light input,
         body.theme-light textarea,
         body.theme-light select { color: var(--text-main); }
@@ -56,8 +50,22 @@
         .control-card { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.65rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 66px; color: var(--text-main); }
         .control-card span { font-size: 0.82rem; line-height: 1.3; overflow-wrap: break-word; word-break: break-word; }
         .control-card:hover { border-color: var(--text-purple); }
-        .control-card.active { border-color: var(--text-gold); background-color: var(--panel-soft); box-shadow: 0 0 10px var(--primary-glow-color); }
-        .settings-panel { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem; text-align: left; }
+        .control-card.active { border-color: var(--text-purple); background-color: var(--panel-soft); box-shadow: 0 0 10px var(--secondary-glow-color); }
+        .settings-panel { background-color: var(--panel-readable); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem; text-align: left; }
+        .top-service-row { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 1.1rem; }
+        @media (min-width: 768px) { .top-service-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
+        .top-service-card { border: 1px solid var(--border-color); border-radius: 1rem; background: var(--panel-readable); padding: 0.85rem; text-align: left; }
+        .header-icon-btn { width: 2rem; height: 2rem; display: grid; place-items: center; border: 1px solid var(--border-color); border-radius: 999px; color: var(--text-gold); background: var(--button-soft); transition: all 0.2s ease; }
+        .header-icon-btn:hover, .header-icon-btn.active { border-color: var(--text-gold); box-shadow: 0 0 12px var(--secondary-glow-color); }
+        .top-focus-row { display: grid; grid-template-columns: 1fr; gap: 0.85rem; margin-top: 1.1rem; text-align: left; }
+        @media (min-width: 768px) { .top-focus-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; } }
+        .top-focus-row .quick-panel, .top-focus-row .daily-panel { margin-top: 0; }
+        .top-settings-panel { display: none; margin-top: 0.9rem; }
+        .top-settings-panel.open { display: block; }
+        .side-settings-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; color: var(--text-gold); font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.82rem; }
+        .top-settings-panel .accordion-wrapper { margin-top: 0.9rem; }
+        .top-settings-grid { display: grid; grid-template-columns: 1fr; gap: 0.9rem; }
+        @media (min-width: 1024px) { .top-settings-grid { grid-template-columns: 0.8fr 1.4fr 1fr; align-items: start; } }
         .deck-selector-grid { grid-template-columns: 1fr; }
         @media (min-width: 640px) { .deck-selector-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
         .deck-card { min-height: 124px; padding: 0.85rem; gap: 0.45rem; }
@@ -350,23 +358,23 @@
 
         .target-person-wrapper { display: none; margin-top: 0.75rem; }
         .target-person-wrapper.active { display: block; }
-        .client-panel { margin-top: 1rem; text-align: left; border: 1px solid var(--border-color); border-radius: 1rem; background: rgba(255,255,255,0.035); padding: 1rem; }
+        .client-panel { margin-top: 1rem; text-align: left; border: 1px solid var(--border-color); border-radius: 1rem; background: var(--panel-readable); padding: 1rem; }
         .client-form { display: grid; grid-template-columns: 1fr; gap: 0.65rem; }
         @media (min-width: 768px) { .client-form { grid-template-columns: 1fr 1fr auto; align-items: end; } .client-form-notes { grid-column: 1 / 3; } }
         .client-input { width: 100%; background: var(--field-bg); border: 1px solid var(--border-color); border-radius: 0.7rem; padding: 0.65rem 0.75rem; color: var(--text-main); font-size: 0.85rem; }
-        .client-add-btn { border-radius: 0.7rem; padding: 0.7rem 0.9rem; background: rgba(157,78,223,0.28); color: var(--text-gold); border: 1px solid var(--border-color); font-weight: 800; font-size: 0.82rem; }
+        .client-add-btn { border-radius: 0.7rem; padding: 0.7rem 0.9rem; background: var(--button-soft); color: var(--text-gold); border: 1px solid var(--border-color); font-weight: 800; font-size: 0.82rem; }
         .client-list { display: grid; grid-template-columns: 1fr; gap: 0.55rem; margin-top: 0.9rem; }
         @media (min-width: 768px) { .client-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-        .client-card { border: 1px solid var(--border-color); border-radius: 0.85rem; padding: 0.75rem; background: rgba(0,0,0,0.18); cursor: pointer; transition: all 0.2s ease; min-width: 0; }
+        .client-card { border: 1px solid var(--border-color); border-radius: 0.85rem; padding: 0.75rem; background: var(--panel-soft); cursor: pointer; transition: all 0.2s ease; min-width: 0; }
         .client-card:hover, .client-card.active { border-color: var(--text-gold); box-shadow: 0 0 12px var(--secondary-glow-color); }
         .client-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.55rem; }
         .client-name { color: var(--text-gold); font-weight: 900; line-height: 1.2; overflow-wrap: break-word; word-break: break-word; }
         .client-contact, .client-notes { color: var(--text-muted); font-size: 0.76rem; line-height: 1.35; margin-top: 0.25rem; overflow-wrap: break-word; word-break: break-word; }
         .client-delete-btn { flex: 0 0 auto; color: #f87171; font-size: 0.82rem; padding: 0 0.2rem; }
         .client-empty { color: var(--text-muted); font-size: 0.82rem; text-align: center; padding: 0.75rem; border: 1px dashed var(--border-color); border-radius: 0.8rem; }
-        .active-client-pill { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.65rem; padding: 0.4rem 0.65rem; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-gold); background: rgba(255,255,255,0.045); font-size: 0.78rem; font-weight: 800; }
-        .account-panel { margin-top: 1rem; text-align: left; border: 1px solid var(--border-color); border-radius: 1rem; background: rgba(255,255,255,0.035); padding: 1rem; }
-        .auth-mode-tabs { display: inline-flex; gap: 0.35rem; padding: 0.25rem; margin-bottom: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.8rem; background: rgba(16,10,31,0.7); }
+        .active-client-pill { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.65rem; padding: 0.4rem 0.65rem; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-gold); background: var(--panel-soft); font-size: 0.78rem; font-weight: 800; }
+        .account-panel { margin-top: 1rem; text-align: left; border: 1px solid var(--border-color); border-radius: 1rem; background: var(--panel-readable); padding: 1rem; }
+        .auth-mode-tabs { display: inline-flex; gap: 0.35rem; padding: 0.25rem; margin-bottom: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.8rem; background: var(--panel-soft); }
         .auth-mode-btn { border: 0; border-radius: 0.55rem; padding: 0.45rem 0.8rem; color: var(--text-muted); background: transparent; font-size: 0.82rem; font-weight: 700; transition: all 0.2s ease; }
         .auth-mode-btn.active { color: white; background: linear-gradient(135deg, var(--purple), var(--gold)); box-shadow: 0 8px 18px rgba(123, 44, 191, 0.26); }
         .auth-grid { display: grid; grid-template-columns: 1fr; gap: 0.65rem; }
@@ -383,18 +391,20 @@
         .history-toolbar { display: grid; grid-template-columns: 1fr; gap: 0.65rem; margin-bottom: 0.8rem; }
         @media (min-width: 768px) { .history-toolbar { grid-template-columns: 1fr auto auto; } }
         .history-list { display: grid; gap: 0.65rem; }
-        .history-card { border: 1px solid var(--border-color); border-radius: 0.9rem; background: rgba(0,0,0,0.18); padding: 0.8rem; }
+        .history-card { border: 1px solid var(--border-color); border-radius: 0.9rem; background: var(--panel-soft); padding: 0.8rem; }
         .history-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.65rem; }
         .history-title { color: var(--text-gold); font-weight: 900; line-height: 1.25; }
         .history-meta, .history-note, .history-tags { color: var(--text-muted); font-size: 0.76rem; line-height: 1.35; margin-top: 0.3rem; }
         .history-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.65rem; }
-        .history-action { border: 1px solid var(--border-color); border-radius: 999px; padding: 0.35rem 0.6rem; color: var(--text-gold); background: rgba(255,255,255,0.045); font-size: 0.72rem; font-weight: 800; }
+        .history-action { border: 1px solid var(--border-color); border-radius: 999px; padding: 0.35rem 0.6rem; color: var(--text-gold); background: var(--button-soft); font-size: 0.72rem; font-weight: 800; }
         .reading-options-grid { display: grid; grid-template-columns: 1fr; gap: 0.65rem; margin-top: 0.85rem; }
         @media (min-width: 768px) { .reading-options-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
         .option-select { width: 100%; background: var(--field-bg); border: 1px solid var(--border-color); border-radius: 0.7rem; padding: 0.62rem 0.7rem; color: var(--text-main); font-size: 0.84rem; }
+        .question-tools { display: flex; align-items: center; gap: 0.5rem; }
+        .question-tool-btn { width: 1.9rem; height: 1.9rem; display: grid; place-items: center; border: 1px solid var(--border-color); border-radius: 999px; color: var(--text-gold); background: var(--button-soft); font-size: 0.82rem; }
         .question-tips { margin-top: 0.65rem; display: grid; gap: 0.45rem; }
         .question-tip { border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.55rem 0.65rem; background: var(--panel-soft); color: var(--text-main); font-size: 0.78rem; text-align: left; }
-        .quick-panel, .daily-panel { margin-top: 0.85rem; border: 1px solid var(--border-color); border-radius: 0.95rem; padding: 0.85rem; background: rgba(255,255,255,0.035); }
+        .quick-panel, .daily-panel { margin-top: 0.85rem; border: 1px solid var(--border-color); border-radius: 0.95rem; padding: 0.85rem; background: var(--panel-readable); }
         .deck-preview-strip { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.35rem; justify-items: center; margin-top: 0.35rem; overflow: hidden; }
         .deck-preview-strip img { width: min(100%, 38px); height: 56px; object-fit: cover; border-radius: 0.3rem; border: 1px solid rgba(255,255,255,0.25); }
         .shuffle-pulse { animation: shuffle-pulse 0.42s ease; }
@@ -404,29 +414,29 @@
         .reading-preview { width: 100%; text-align: left; }
         .reading-preview-header { text-align: center; margin-bottom: 1rem; }
         .reading-preview-title { font-size: 1.15rem; font-weight: 800; color: var(--text-gold); }
-        .reading-preview-subtitle { font-size: 0.78rem; color: rgba(255,255,255,0.62); margin-top: 0.25rem; }
-        .reading-question-box { margin: 0.9rem 0; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: 0.85rem; background: rgba(0,0,0,0.24); }
+        .reading-preview-subtitle { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.25rem; }
+        .reading-question-box { margin: 0.9rem 0; padding: 0.8rem; border: 1px solid var(--border-color); border-radius: 0.85rem; background: var(--panel-readable); }
         .reading-question-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-purple); font-weight: 800; margin-bottom: 0.35rem; }
-        .reading-question-text { font-size: 0.9rem; color: rgba(255,255,255,0.9); line-height: 1.45; }
+        .reading-question-text { font-size: 0.9rem; color: var(--text-main); line-height: 1.45; }
         .reading-cards-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; }
         @media (min-width: 640px) { .reading-cards-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-        .reading-card-mini { border: 1px solid var(--border-color); border-radius: 0.9rem; padding: 0.65rem; background: rgba(255,255,255,0.035); display: flex; gap: 0.65rem; align-items: center; min-width: 0; }
+        .reading-card-mini { border: 1px solid var(--border-color); border-radius: 0.9rem; padding: 0.65rem; background: var(--panel-readable); display: flex; gap: 0.65rem; align-items: center; min-width: 0; }
         .reading-card-thumb { width: 44px; height: 70px; flex: 0 0 auto; border-radius: 0.5rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.35); }
         .reading-card-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .reading-card-thumb.reversed img, .reading-card-thumb.reversed > div { transform: rotate(180deg); }
         .reading-card-meta { min-width: 0; }
         .reading-card-position { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-purple); font-weight: 800; line-height: 1.2; }
         .reading-card-name { font-size: 0.82rem; color: var(--text-gold); font-weight: 800; line-height: 1.2; margin-top: 0.2rem; overflow-wrap: break-word; word-break: break-word; }
-        .reading-card-orientation { font-size: 0.68rem; color: rgba(255,255,255,0.65); margin-top: 0.2rem; }
+        .reading-card-orientation { font-size: 0.68rem; color: var(--text-muted); margin-top: 0.2rem; }
         .reading-actions { display: grid; grid-template-columns: 1fr; gap: 0.6rem; margin-top: 1rem; }
         @media (min-width: 640px) { .reading-actions { grid-template-columns: 1.3fr 1fr 1fr; } }
         .reading-action-primary, .reading-action-secondary { border-radius: 0.85rem; padding: 0.78rem 0.9rem; font-weight: 800; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; transition: all 0.2s ease; }
         .reading-action-primary { background: linear-gradient(135deg, var(--text-purple), #7c3aed); color: white; box-shadow: 0 0 18px var(--secondary-glow-color); }
         .reading-action-primary:hover, .reading-action-secondary:hover { transform: translateY(-1px); filter: brightness(1.1); }
-        .reading-action-secondary { background: rgba(255,255,255,0.06); color: var(--text-gold); border: 1px solid var(--border-color); }
+        .reading-action-secondary { background: var(--button-soft); color: var(--text-gold); border: 1px solid var(--border-color); }
         .result-modal { position: fixed; inset: 0; z-index: 1100; display: none; align-items: center; justify-content: center; padding: 1rem; background: rgba(6,2,12,0.86); backdrop-filter: blur(18px); }
         .result-modal.active { display: flex; }
-        .result-modal-panel { width: min(920px, 100%); max-height: 90vh; overflow: hidden; border: 1px solid var(--border-color); border-radius: 1.35rem; background: linear-gradient(180deg, rgba(16,10,31,0.98), rgba(6,2,12,0.98)); box-shadow: 0 0 45px var(--primary-glow-color); display: flex; flex-direction: column; }
+        .result-modal-panel { width: min(920px, 100%); max-height: 90vh; overflow: hidden; border: 1px solid var(--border-color); border-radius: 1.35rem; background: var(--panel-readable); box-shadow: 0 0 45px var(--primary-glow-color); display: flex; flex-direction: column; }
         .result-modal-header { padding: 1rem 1.1rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
         .result-modal-title { color: var(--text-gold); font-weight: 900; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.08em; }
         .result-modal-close { width: 2.2rem; height: 2.2rem; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-gold); background: rgba(255,255,255,0.05); font-weight: 900; }
@@ -438,20 +448,26 @@
         .result-summary-count { flex: 0 0 auto; min-width: 2.35rem; height: 2.35rem; border-radius: 999px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.24); color: var(--text-gold); font-weight: 900; }
         .result-modal-cards { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 0.55rem; margin: 0.75rem 0 1rem; }
         @media (min-width: 640px) { .result-modal-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-        .result-modal-card-chip { min-width: 0; border: 1px solid var(--border-color); border-radius: 0.85rem; padding: 0.6rem 0.7rem; background: rgba(255,255,255,0.045); display: grid; grid-template-columns: auto 1fr; gap: 0.55rem; align-items: center; }
+        .result-modal-card-chip { min-width: 0; border: 1px solid var(--border-color); border-radius: 0.85rem; padding: 0.6rem 0.7rem; background: var(--panel-soft); display: grid; grid-template-columns: auto 1fr; gap: 0.55rem; align-items: center; }
         .result-card-number { width: 1.7rem; height: 1.7rem; border-radius: 999px; display: grid; place-items: center; background: rgba(243,198,111,0.12); color: var(--text-gold); font-size: 0.72rem; font-weight: 900; }
         .result-card-position { color: var(--text-purple); font-size: 0.66rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .result-card-name { color: rgba(255,255,255,0.9); font-size: 0.82rem; font-weight: 800; line-height: 1.2; overflow-wrap: break-word; word-break: break-word; }
-        .result-modal-text { display: grid; gap: 0.8rem; color: rgba(255,255,255,0.92); line-height: 1.7; font-size: 0.95rem; }
-        .interpretation-section { border: 1px solid var(--border-color); border-radius: 1rem; padding: 0.95rem; background: rgba(255,255,255,0.04); box-shadow: inset 0 0 18px rgba(0,0,0,0.14); }
+        .result-card-name { color: var(--text-main); font-size: 0.82rem; font-weight: 800; line-height: 1.2; overflow-wrap: break-word; word-break: break-word; }
+        .result-modal-text { display: grid; gap: 0.8rem; color: var(--text-main); line-height: 1.7; font-size: 0.95rem; }
+        .interpretation-section { border: 1px solid var(--border-color); border-radius: 1rem; padding: 0.95rem; background: var(--panel-soft); box-shadow: inset 0 0 18px rgba(0,0,0,0.14); }
         .interpretation-section-title { color: var(--text-gold); font-weight: 900; line-height: 1.25; margin-bottom: 0.7rem; }
         .interpretation-section-body { display: grid; gap: 0.55rem; }
         .interpretation-paragraph { margin: 0; }
         .interpretation-label { color: var(--text-purple); font-weight: 900; }
         .interpretation-section strong { color: var(--text-gold); font-weight: 900; }
-        .interpretation-section em { color: rgba(255,255,255,0.98); font-style: normal; }
+        .interpretation-section em { color: var(--text-main); font-style: normal; }
         .result-modal-footer { padding: 0.9rem 1.1rem; border-top: 1px solid var(--border-color); display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: flex-end; }
         .body-modal-open { overflow: hidden; }
+        .spread-card.recommended { position: relative; overflow: hidden; border-color: var(--text-gold); box-shadow: 0 0 14px var(--secondary-glow-color); background: linear-gradient(135deg, var(--panel-soft), rgba(243,198,111,0.12)); animation: recommended-pulse 2s ease-in-out infinite; }
+        .spread-card.recommended::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.18) 45%, transparent 70%); transform: translateX(-120%); animation: recommended-sweep 2.6s ease-in-out infinite; }
+        .spread-recommended-badge { margin-top: 0.45rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 0.22rem 0.5rem; color: var(--text-gold); border: 1px solid rgba(243,198,111,0.45); background: var(--button-soft); font-size: 0.66rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em; animation: recommended-badge 1.6s ease-in-out infinite; }
+        @keyframes recommended-pulse { 0%, 100% { box-shadow: 0 0 12px var(--secondary-glow-color); } 50% { box-shadow: 0 0 18px var(--primary-glow-color), 0 0 28px var(--secondary-glow-color); } }
+        @keyframes recommended-sweep { 0% { transform: translateX(-120%); } 55%, 100% { transform: translateX(120%); } }
+        @keyframes recommended-badge { 0%, 100% { opacity: 0.82; } 50% { opacity: 1; } }
 
     </style>
 </head>
@@ -462,58 +478,41 @@
             <div id="moon-widget" class="text-left text-xs"></div>
             <div class="flex items-center gap-4">
                 <!-- Theme Switcher -->
-                <div id="theme-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer">
-                    <span id="theme-label-left" class="text-gray-400">✨ Neon</span>
-                    <div class="w-16 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300">
-                        <div id="theme-pill" class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300"></div>
-                    </div>
-                    <span id="theme-label-right" class="text-white">🌙 Witchy</span>
-                </div>
+                <div id="theme-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span id="theme-label-left" class="text-gray-400">Темна</span><div class="w-12 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="theme-pill" class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300"></div></div><span id="theme-label-right" class="text-white">Світла</span></div>
+                <button id="settings-toggle" type="button" class="header-icon-btn" aria-label="Settings">⚙️</button>
                 <!-- Lang Switcher -->
                 <div id="lang-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">RU</span><div class="w-10 h-5 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="lang-pill" class="w-4 h-4 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">UA</span></div>
-                <button id="music-toggle" class="text-2xl">🔇</button>
             </div>
         </div>
         <h1 class="text-3xl md:text-4xl font-extrabold tracking-widest uppercase text-gold" style="filter: drop-shadow(0 0 10px var(--primary-glow-color));" data-translate-key="main_title"></h1>
 
-        <!-- Top-level settings: does not interrupt the spread flow -->
-        <div class="settings-panel mt-6 neon-glow">
-            <h2 class="text-sm font-semibold text-gold mb-3 uppercase tracking-wider" data-translate-key="section_title_settings"></h2>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div>
-                    <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_ai_mode"></label>
-                    <div id="mode-selector" class="grid grid-cols-2 gap-2"></div>
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_deck"></label>
-                    <div id="deck-selector" class="grid deck-selector-grid gap-2"></div>
-                </div>
-                <div>
-                    <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_card_back"></label>
-                    <div id="card-back-selector" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+        <div class="top-focus-row">
+            <div class="quick-panel">
+                <div class="text-gold font-bold mb-2" data-translate-key="quick_title"></div>
+                <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-2">
+                    <input id="quick-question-input" class="client-input" type="text" data-placeholder-key="quick_question_placeholder">
+                    <button id="quick-reading-btn" type="button" class="client-add-btn" data-translate-key="quick_btn"></button>
                 </div>
             </div>
-            <div class="reading-options-grid">
-                <select id="tone-select" class="option-select"></select>
-                <select id="length-select" class="option-select"></select>
-                <select id="focus-select" class="option-select"></select>
-                <select id="mood-before-select" class="option-select"></select>
-                <select id="reversal-mode-select" class="option-select"></select>
+            <div class="daily-panel">
+                <div class="flex items-center justify-between gap-3">
+                    <div>
+                        <div class="text-gold font-bold" data-translate-key="daily_card_title"></div>
+                        <div class="text-xs text-gray-300" data-translate-key="daily_card_subtitle"></div>
+                    </div>
+                    <button id="daily-card-btn" type="button" class="reading-action-secondary" data-translate-key="daily_card_btn"></button>
+                </div>
+                <div id="daily-card-result" class="text-sm text-gray-200 mt-3"></div>
             </div>
         </div>
 
         <!-- Rules Accordion -->
-        <div class="mt-6">
-            <button id="rules-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="rules_toggle">📜 Правила таролога</button>
+        <div class="top-service-row"><div class="top-service-card"><button id="rules-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="rules_toggle">📜 Правила таролога</button>
             <div id="rules-wrapper" class="accordion-wrapper">
                 <div class="text-left bg-surface border border-color rounded-xl p-4">
                     <ol class="list-decimal list-inside space-y-2 text-sm" id="rules-list"></ol>
                 </div>
-            </div>
-        </div>
-
-        <div class="mt-4">
-            <button id="account-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="account_toggle"></button>
+            </div></div><div class="top-service-card"><button id="account-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="account_toggle"></button>
             <div id="account-wrapper" class="accordion-wrapper">
                 <div class="account-panel">
                     <div id="auth-view" class="account-view">
@@ -562,6 +561,32 @@
                         </div>
                     </div>
                 </div>
+            </div></div>
+        <div class="settings-panel top-settings-panel neon-glow">
+            <div id="settings-wrapper" class="accordion-wrapper">
+                <div class="side-settings-toggle"><span data-translate-key="section_title_settings"></span><span>▾</span></div>
+                <div class="top-settings-grid">
+                    <div>
+                        <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_ai_mode"></label>
+                        <div id="mode-selector" class="grid grid-cols-2 gap-2"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_deck"></label>
+                        <div id="deck-selector" class="grid deck-selector-grid gap-2"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_card_back"></label>
+                        <div id="card-back-selector" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+                    </div>
+                </div>
+                <div class="reading-options-grid">
+                    <select id="tone-select" class="option-select"></select>
+                    <select id="length-select" class="option-select"></select>
+                    <select id="focus-select" class="option-select"></select>
+                    <select id="mood-before-select" class="option-select"></select>
+                    <select id="reversal-mode-select" class="option-select"></select>
+                    <select id="sound-mode-select" class="option-select"></select>
+                </div>
             </div>
         </div>
     </header>
@@ -570,23 +595,6 @@
             <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                 <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_sphere"></h2>
                 <div><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_sphere"></label><div id="sphere-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div><p id="recommendation-text" class="text-xs text-purple mt-2 text-center"></p></div>
-                <div class="daily-panel">
-                    <div class="flex items-center justify-between gap-3">
-                        <div>
-                            <div class="text-gold font-bold" data-translate-key="daily_card_title"></div>
-                            <div class="text-xs text-gray-300" data-translate-key="daily_card_subtitle"></div>
-                        </div>
-                        <button id="daily-card-btn" type="button" class="reading-action-secondary" data-translate-key="daily_card_btn"></button>
-                    </div>
-                    <div id="daily-card-result" class="text-sm text-gray-200 mt-3"></div>
-                </div>
-                <div class="quick-panel">
-                    <div class="text-gold font-bold mb-2" data-translate-key="quick_title"></div>
-                    <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-2">
-                        <input id="quick-question-input" class="client-input" type="text" data-placeholder-key="quick_question_placeholder">
-                        <button id="quick-reading-btn" type="button" class="client-add-btn" data-translate-key="quick_btn"></button>
-                    </div>
-                </div>
             </div>
             <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                 <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_context_spread"></h2>
@@ -602,7 +610,10 @@
                 <div class="mb-4">
                     <div class="flex items-center justify-between mb-2">
                         <label class="block text-sm font-bold text-purple" data-translate-key="label_question">Ваше питання</label>
-                        <button id="refine-question-btn" class="text-xs text-gold hover:brightness-125 transition" title="Сформулювати питання правильно">✍️</button>
+                        <div class="question-tools">
+                            <button id="random-question-tip-btn" type="button" class="question-tool-btn" data-title-key="btn_random_question" title="Випадкове питання">🎲</button>
+                            <button id="refine-question-btn" class="question-tool-btn" title="Сформулювати питання правильно">✍️</button>
+                        </div>
                     </div>
                     <textarea id="question" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" rows="2" data-placeholder-ua="Ваше питання (необов'язково)" data-placeholder-ru="Ваш вопрос (необязательно)"></textarea>
                     <div id="question-tips" class="question-tips"></div>
@@ -692,11 +703,11 @@
 <script>
     const App = {
         state: {
-            lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self', theme: 'neon',
-            spreadKey: 'cross', activeSuit: null, selectedCards: {}, activePositionIndex: 0,
+            lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self', theme: 'dark',
+            spreadKey: 'venus-circle', activeSuit: null, selectedCards: {}, activePositionIndex: 0,
             selectedDeck: 'retro', cardBackStyle: 'standard', previewReversed: false, selectedCardForAdd: null,
             clients: [], activeClientId: null, account: null, registeredAccount: null, authMode: 'login', readings: [], activeAccountTab: 'clients',
-            answerTone: 'soft', answerLength: 'standard', answerFocus: 'advice', moodBefore: 'neutral', allowReversals: true
+            answerTone: 'soft', answerLength: 'standard', answerFocus: 'advice', moodBefore: 'neutral', allowReversals: true, soundEnabled: false
         },
         translations: {
             ua: {
@@ -740,6 +751,8 @@
                 daily_card_title: "Карта дня",
                 daily_card_subtitle: "Одна карта як м'який фокус на день.",
                 daily_card_btn: "Відкрити",
+                daily_card_loading: "Складаємо фразу дня...",
+                daily_card_fallback: "Порада дня: зробіть один спокійний крок у напрямку ясності.",
                 quick_title: "Швидке гадання",
                 quick_question_placeholder: "Коротке питання для однієї карти",
                 quick_btn: "Швидко",
@@ -763,6 +776,10 @@
                 mood_calm: "Настрій: спокій",
                 reversals_on: "Перевернуті: увімкнено",
                 reversals_off: "Перевернуті: вимкнено",
+                sound_on: "Звук: увімкнено",
+                sound_off: "Звук: вимкнено",
+                btn_random_question: "Випадкове питання",
+                recommended_badge: "Рекомендовано",
                 rules_list: ["Формулюйте запит чітко та екологічно (без злого умислу).", "Не дублюйте один і той же запит картам декілька разів на день.", "Підходьте до розкладу у спокійному, медитативному стані.", "Пам'ятайте: карти показують найбільш вірогідний вектор, але фінальний вибір завжди за вами."],
                 section_title_settings: "⚙️ Налаштування",
                 section_title_sphere: "✨ 1. Сфера",
@@ -789,12 +806,14 @@
                 alert_spread_not_filled: "Будь ласка, заповніть усі позиції в розкладі.",
                 alert_card_already_in: (card) => `Карта "${card}" вже є в розкладі.`,
                 alert_no_card_selected: "Будь ласка, оберіть карту зі списку.",
-                recommendation_love: "💡 Для стосунків найкраще підходить розклад 'Хрест'.",
-                recommendation_work: "💡 Аналізуємо перспективи та варіанти розвитку.",
-                recommendation_health: "💡 Для швидкої оцінки стану достатньо однієї карти.",
-                recommendation_destiny: "💡 Глибокий розклад 'Шлях' покаже ваш вектор.",
-                recommendation_emotional: "💡 Сфокусуємося на внутрішньому стані, ресурсах та м'якому кроці вперед.",
-                recommendation_change: "💡 Добре підійде розклад на варіанти, ризики та наймудріший наступний крок.",
+                recommendation_love: "💡 Для стосунків логічніше брати «Венерине коло»: воно показує обох людей, зв'язок і перспективу.",
+                recommendation_family: "💡 Для сімейної теми краще «Три карти»: причина напруги, теперішній стан і м'який крок до згоди.",
+                recommendation_work: "💡 Для роботи, навчання і фінансів добре працюють «Три карти»: ситуація, ресурс і наступний крок.",
+                recommendation_health: "💡 Для самопочуття краще «Сім чакр»: м'яко дивимося ресурси й напругу без медичних висновків.",
+                recommendation_destiny: "💡 Для глибоких тем обираємо «Кельтський хрест»: він розкриває причини, впливи й підсумок.",
+                recommendation_emotional: "💡 Для внутрішнього стану краще «Сім чакр»: тіло, емоції, воля, серце, голос, інтуїція і сенс.",
+                recommendation_change: "💡 Для переїзду, кризи чи вибору логічний розклад «Вибір»: порівнюємо варіанти й наслідки.",
+                recommendation_general: "💡 Для загального аналізу достатньо «Три карти»: минуле, теперішнє і найближчий розвиток.",
                 suit_major: "✨ Старші Аркани", suit_wands: "🪄 Жезли", suit_cups: "🏆 Кубки", suit_swords: "⚔️ Мечі", suit_pentacles: "🪙 Пентаклі",
                 moon_phases: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'],
                 loading_text: "Зчитуємо інформацію з простору...",
@@ -858,6 +877,8 @@
                 daily_card_title: "Карта дня",
                 daily_card_subtitle: "Одна карта как мягкий фокус на день.",
                 daily_card_btn: "Открыть",
+                daily_card_loading: "Составляем фразу дня...",
+                daily_card_fallback: "Совет дня: сделайте один спокойный шаг в сторону ясности.",
                 quick_title: "Быстрое гадание",
                 quick_question_placeholder: "Короткий вопрос для одной карты",
                 quick_btn: "Быстро",
@@ -881,6 +902,10 @@
                 mood_calm: "Настроение: спокойствие",
                 reversals_on: "Перевернутые: включены",
                 reversals_off: "Перевернутые: выключены",
+                sound_on: "Звук: включен",
+                sound_off: "Звук: выключен",
+                btn_random_question: "Случайный вопрос",
+                recommended_badge: "Рекомендовано",
                 rules_list: ["Формулируйте запрос четко и экологично (без злого умысла).", "Не дублируйте один и тот же запрос картам несколько раз в день.", "Подходите к раскладу в спокойном, медитативном состоянии.", "Помните: карты показывают наиболее вероятный вектор, но финальный выбор всегда за вами."],
                 section_title_settings: "⚙️ Настройки",
                 section_title_sphere: "✨ 1. Сфера",
@@ -907,12 +932,14 @@
                 alert_spread_not_filled: "Пожалуйста, заполните все позиции в раскладе.",
                 alert_card_already_in: (card) => `Карта "${card}" уже есть в раскладе.`,
                 alert_no_card_selected: "Пожалуйста, выберите карту из списка.",
-                recommendation_love: "💡 Для отношений лучше всего подходит расклад 'Крест'.",
-                recommendation_work: "💡 Анализируем перспективы и варианты развития.",
-                recommendation_health: "💡 Для быстрой оценки состояния достаточно одной карты.",
-                recommendation_destiny: "💡 Глубокий расклад 'Путь' покажет ваш вектор.",
-                recommendation_emotional: "💡 Сфокусируемся на внутреннем состоянии, ресурсах и мягком шаге вперед.",
-                recommendation_change: "💡 Подойдет расклад на варианты, риски и самый мудрый следующий шаг.",
+                recommendation_love: "💡 Для отношений логичнее брать «Венерин круг»: он показывает обоих людей, связь и перспективу.",
+                recommendation_family: "💡 Для семейной темы лучше «Три карты»: причина напряжения, текущее состояние и мягкий шаг к согласию.",
+                recommendation_work: "💡 Для работы, обучения и финансов хорошо работают «Три карты»: ситуация, ресурс и следующий шаг.",
+                recommendation_health: "💡 Для самочувствия лучше «Семь чакр»: мягко смотрим ресурсы и напряжение без медицинских выводов.",
+                recommendation_destiny: "💡 Для глубоких тем выбираем «Кельтский крест»: он раскрывает причины, влияния и итог.",
+                recommendation_emotional: "💡 Для внутреннего состояния лучше «Семь чакр»: тело, эмоции, воля, сердце, голос, интуиция и смысл.",
+                recommendation_change: "💡 Для переезда, кризиса или выбора логичен расклад «Выбор»: сравниваем варианты и последствия.",
+                recommendation_general: "💡 Для общего анализа достаточно «Три карты»: прошлое, настоящее и ближайшее развитие.",
                 suit_major: "✨ Старшие Арканы", suit_wands: "🪄 Жезлы", suit_cups: "🏆 Кубки", suit_swords: "⚔️ Мечи", suit_pentacles: "🪙 Пентакли",
                 moon_phases: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна'],
                 loading_text: "Считываем информацию из пространства...",
@@ -943,20 +970,20 @@
                 { key: 'crow', dir: 'crow', ua: 'Магічний ворон', ru: 'Магический ворон', backs: [{ key: 'standard', file: 'back.jpg', ua: 'Стандартна', ru: 'Стандартная' }] }
             ],
             spheres: [
-                { key: 'love', icon: '❤️', ua: 'Кохання', ru: 'Любовь', rec: 'cross', rec_key: 'recommendation_love' },
+                { key: 'love', icon: '❤️', ua: 'Кохання', ru: 'Любовь', rec: 'venus-circle', rec_key: 'recommendation_love' },
                 { key: 'ex', icon: '💔', ua: 'Колишні стосунки', ru: 'Бывшие отношения', rec: 'venus-circle', rec_key: 'recommendation_love' },
-                { key: 'family', icon: '🏠', ua: 'Сім\'я', ru: 'Семья', rec: 'cross', rec_key: 'recommendation_emotional' },
+                { key: 'family', icon: '🏠', ua: 'Сім\'я', ru: 'Семья', rec: 'three-cards', rec_key: 'recommendation_family' },
                 { key: 'career', icon: '💼', ua: 'Кар\'єра', ru: 'Карьера', rec: 'three-cards', rec_key: 'recommendation_work' },
                 { key: 'study', icon: '📚', ua: 'Навчання', ru: 'Обучение', rec: 'three-cards', rec_key: 'recommendation_work' },
                 { key: 'finance', icon: '💰', ua: 'Фінанси', ru: 'Финансы', rec: 'three-cards', rec_key: 'recommendation_work' },
-                { key: 'health', icon: '🌿', ua: 'Здоров\'я', ru: 'Здоровье', rec: 'yes-no', rec_key: 'recommendation_health' },
-                { key: 'selfworth', icon: '🌸', ua: 'Самооцінка', ru: 'Самооценка', rec: 'three-cards', rec_key: 'recommendation_emotional' },
-                { key: 'spirituality', icon: '🕯️', ua: 'Духовність', ru: 'Духовность', rec: 'celtic-cross', rec_key: 'recommendation_destiny' },
+                { key: 'health', icon: '🌿', ua: 'Здоров\'я', ru: 'Здоровье', rec: 'chakras', rec_key: 'recommendation_health' },
+                { key: 'selfworth', icon: '🌸', ua: 'Самооцінка', ru: 'Самооценка', rec: 'chakras', rec_key: 'recommendation_emotional' },
+                { key: 'spirituality', icon: '🕯️', ua: 'Духовність', ru: 'Духовность', rec: 'chakras', rec_key: 'recommendation_emotional' },
                 { key: 'moving', icon: '🧳', ua: 'Переїзд', ru: 'Переезд', rec: 'choice', rec_key: 'recommendation_change' },
                 { key: 'crisis', icon: '🌘', ua: 'Кризис / зміни', ru: 'Кризис / перемены', rec: 'choice', rec_key: 'recommendation_change' },
                 { key: 'decision', icon: '⚖️', ua: 'Важливий вибір', ru: 'Важный выбор', rec: 'choice', rec_key: 'recommendation_change' },
                 { key: 'destiny', icon: '🧭', ua: 'Призначення', ru: 'Предназначение', rec: 'celtic-cross', rec_key: 'recommendation_destiny' },
-                { key: 'general', icon: '🃏', ua: 'Загальний аналіз', ru: 'Общий анализ', rec: 'three-cards', rec_key: null },
+                { key: 'general', icon: '🃏', ua: 'Загальний аналіз', ru: 'Общий анализ', rec: 'three-cards', rec_key: 'recommendation_general' },
             ],
             targets: [
                 { key: 'self', ua: 'На себе', ru: 'На себя' }, { key: 'partner', ua: 'На партнера', ru: 'На партнера' },
@@ -988,11 +1015,11 @@
                     grid: `"pos1"`
                 },
                 "yes-no": {
-                    cards: 1,
-                    ua: "Так/Ні (1)", ru: "Да/Нет (1)",
-                    hint_ua: "Одна карта дає пряму відповідь і головний вектор ситуації", hint_ru: "Одна карта дает прямой ответ и главный вектор ситуации",
-                    positions: { ua: ["Відповідь"], ru: ["Ответ"] },
-                    grid: `"pos1"`
+                    cards: 3,
+                    ua: "Так/Ні (3)", ru: "Да/Нет (3)",
+                    hint_ua: "Три карти за гайдом: що підтримує «так», що стримує і фінальний підсумок", hint_ru: "Три карты по гайду: что поддерживает «да», что сдерживает и финальный итог",
+                    positions: { ua: ["Що каже «так»", "Що каже «ні»", "Підсумок"], ru: ["Что говорит «да»", "Что говорит «нет»", "Итог"] },
+                    grid: `"pos1 pos2 pos3"`
                 },
                 "three-cards": {
                     cards: 3,
@@ -1248,8 +1275,9 @@
             const savedFocus = localStorage.getItem('tarot_answer_focus');
             const savedMood = localStorage.getItem('tarot_mood_before');
             const savedReversals = localStorage.getItem('tarot_allow_reversals');
+            const savedSound = localStorage.getItem('tarot_sound_enabled');
             if (savedLang) this.state.lang = savedLang;
-            if (savedTheme) this.state.theme = savedTheme;
+            if (savedTheme) this.state.theme = savedTheme === 'light' ? 'light' : 'dark';
             if (savedAiMode) this.state.aiMode = savedAiMode;
             if (savedDeck && this.data.decks.some(deck => deck.key === savedDeck)) this.state.selectedDeck = savedDeck;
             if (savedBack) this.state.cardBackStyle = savedBack;
@@ -1258,6 +1286,7 @@
             if (savedFocus) this.state.answerFocus = savedFocus;
             if (savedMood) this.state.moodBefore = savedMood;
             if (savedReversals) this.state.allowReversals = savedReversals !== 'false';
+            if (savedSound) this.state.soundEnabled = savedSound === 'true';
             try {
                 this.state.clients = savedClients ? JSON.parse(savedClients) : [];
             } catch (error) {
@@ -1296,6 +1325,7 @@
             this.handleSelection('sphere', this.state.sphere, false);
             this.handleSelection('spread', this.state.spreadKey, false);
             this.updateUI();
+            this.syncSoundState();
         },
 
         renderAllDynamicContent() {
@@ -1365,6 +1395,8 @@
         renderSpreadSelector() {
             const container = document.getElementById('spread-selector');
             let html = '';
+            const recommendedSpread = this.data.spheres.find(s => s.key === this.state.sphere)?.rec;
+            const recommendedLabel = this.translations[this.state.lang].recommended_badge;
 
             Object.keys(this.data.spreadCategories).forEach(catKey => {
                 const category = this.data.spreadCategories[catKey];
@@ -1375,9 +1407,11 @@
                 category.spreads.forEach(spreadKey => {
                     const spread = this.data.spreads[spreadKey];
                     const hint = spread[`hint_${this.state.lang}`];
-                    html += `<button class="control-card spread-card" data-group="spread" data-key="${spreadKey}">
+                    const isRecommended = spreadKey === recommendedSpread;
+                    html += `<button class="control-card spread-card ${isRecommended ? 'recommended' : ''}" data-group="spread" data-key="${spreadKey}">
                         <span>${spread[this.state.lang]}</span>
                         <div class="spread-hint">${hint}</div>
+                        ${isRecommended ? `<div class="spread-recommended-badge">${recommendedLabel}</div>` : ''}
                     </button>`;
                 });
 
@@ -1483,9 +1517,9 @@
             document.getElementById('reset-btn').addEventListener('click', () => this.resetSpread());
             document.getElementById('random-btn').addEventListener('click', () => this.randomizeSpread());
             document.getElementById('ai-btn').addEventListener('click', () => this.getSpreadInterpretation());
-            document.getElementById('music-toggle').addEventListener('click', () => this.toggleMusic());
             document.getElementById('rules-toggle').addEventListener('click', () => this.toggleRules());
             document.getElementById('account-toggle').addEventListener('click', () => this.toggleAccordion('account-wrapper', 'rules-wrapper'));
+            document.getElementById('settings-toggle').addEventListener('click', () => this.toggleSettings());
             document.querySelectorAll('[data-auth-mode]').forEach(button => {
                 button.addEventListener('click', () => this.setAuthMode(button.dataset.authMode));
             });
@@ -1502,11 +1536,12 @@
             document.getElementById('history-stats-btn').addEventListener('click', () => this.toggleHistoryStats());
             document.getElementById('daily-card-btn').addEventListener('click', () => this.showDailyCard());
             document.getElementById('quick-reading-btn').addEventListener('click', () => this.quickReading());
+            document.getElementById('random-question-tip-btn').addEventListener('click', () => this.useRandomQuestionTip());
             document.getElementById('refine-question-btn').addEventListener('click', () => this.refineQuestion());
             document.querySelectorAll('[data-account-tab]').forEach(button => {
                 button.addEventListener('click', () => this.setAccountTab(button.dataset.accountTab));
             });
-            ['tone-select', 'length-select', 'focus-select', 'mood-before-select', 'reversal-mode-select'].forEach(id => {
+            ['tone-select', 'length-select', 'focus-select', 'mood-before-select', 'reversal-mode-select', 'sound-mode-select'].forEach(id => {
                 document.getElementById(id).addEventListener('change', e => this.handleReadingOptionChange(id, e.target.value));
             });
             document.getElementById('client-list').addEventListener('click', e => {
@@ -1568,6 +1603,7 @@
                 case 'sphere':
                     this.state.sphere = key;
                     this.renderQuestionTips();
+                    this.renderSpreadSelector();
                     const sphereData = this.data.spheres.find(s => s.key === key);
                     if (sphereData && sphereData.rec) {
                         document.getElementById('recommendation-text').textContent = sphereData.rec_key ? this.translations[this.state.lang][sphereData.rec_key] : '';
@@ -1834,24 +1870,15 @@
                 this.renderCardCarousel();
             }
         },
-
         toggleTheme() {
-            const themes = ['neon', 'witchy', 'light'];
-            const currentIndex = themes.indexOf(this.state.theme);
-            this.state.theme = themes[(currentIndex + 1) % themes.length];
+            this.state.theme = this.state.theme === 'light' ? 'dark' : 'light';
             localStorage.setItem('tarot_theme', this.state.theme);
             this.applyTheme(this.state.theme);
         },
 
         applyTheme(theme) {
-            document.body.classList.remove('theme-witchy', 'theme-psychologist', 'theme-light');
-            if (theme === 'witchy') {
-                document.body.classList.add('theme-witchy');
-            } else if (theme === 'light') {
-                document.body.classList.add('theme-light');
-            } else if (this.state.aiMode === 'psychologist') {
-                document.body.classList.add('theme-psychologist');
-            }
+            this.state.theme = theme === 'light' ? 'light' : 'dark';
+            document.body.classList.toggle('theme-light', this.state.theme === 'light');
             this.updateThemeToggle();
         },
 
@@ -1859,10 +1886,9 @@
             const pill = document.getElementById('theme-pill');
             const left = document.getElementById('theme-label-left');
             const right = document.getElementById('theme-label-right');
-            const index = ['neon', 'witchy', 'light'].indexOf(this.state.theme);
-            if (pill) pill.style.transform = `translateX(${Math.max(index, 0) * 20}px)`;
-            if (left) left.textContent = this.state.theme === 'light' ? '☀️ Light' : '✨ Neon';
-            if (right) right.textContent = this.state.theme === 'witchy' ? '🌙 Witchy' : this.state.theme === 'light' ? '✨ Neon' : '🌙 Witchy';
+            if (pill) pill.style.transform = this.state.theme === 'light' ? 'translateX(24px)' : 'translateX(0px)';
+            if (left) left.textContent = this.state.lang === 'ua' ? 'Темна' : 'Темная';
+            if (right) right.textContent = this.state.lang === 'ua' ? 'Світла' : 'Светлая';
         },
 
         applyLanguage() {
@@ -1898,6 +1924,10 @@
                 const value = this.translations[this.state.lang][el.dataset.placeholderKey];
                 if (value) el.placeholder = value;
             });
+            document.querySelectorAll('[data-title-key]').forEach(el => {
+                const value = this.translations[this.state.lang][el.dataset.titleKey];
+                if (value) el.title = value;
+            });
         },
 
         toggleAccordion(showId, hideId = null) {
@@ -1907,6 +1937,17 @@
             const wasActive = showEl.classList.contains('active');
             if (hideEl) hideEl.classList.remove('active');
             showEl.classList.toggle('active', !wasActive);
+        },
+
+        toggleSettings() {
+            const panel = document.querySelector('.top-settings-panel');
+            const wrapper = document.getElementById('settings-wrapper');
+            const button = document.getElementById('settings-toggle');
+            if (!panel || !wrapper) return;
+            const open = !wrapper.classList.contains('active');
+            panel.classList.toggle('open', open);
+            wrapper.classList.toggle('active', open);
+            button?.classList.toggle('active', open);
         },
 
         toggleRules() {
@@ -2282,6 +2323,9 @@
             fill('reversal-mode-select', [
                 { value: 'on', label: 'reversals_on' }, { value: 'off', label: 'reversals_off' }
             ], this.state.allowReversals ? 'on' : 'off');
+            fill('sound-mode-select', [
+                { value: 'on', label: 'sound_on' }, { value: 'off', label: 'sound_off' }
+            ], this.state.soundEnabled ? 'on' : 'off');
         },
 
         handleReadingOptionChange(id, value) {
@@ -2300,12 +2344,20 @@
             } else if (id === 'reversal-mode-select') {
                 this.state.allowReversals = value !== 'off';
                 localStorage.setItem('tarot_allow_reversals', String(this.state.allowReversals));
+            } else if (id === 'sound-mode-select') {
+                this.setSoundEnabled(value === 'on');
             }
         },
 
         renderQuestionTips() {
             const box = document.getElementById('question-tips');
             if (!box) return;
+            box.innerHTML = this.getQuestionTips()
+                .map(tip => `<button type="button" class="question-tip" onclick="App.useQuestionTip('${this.escapeAttr(tip)}')">${this.escapeHTML(tip)}</button>`)
+                .join('');
+        },
+
+        getQuestionTips() {
             const isUa = this.state.lang === 'ua';
             const tipsBySphere = {
                 love: isUa ? ['Що мені важливо зрозуміти про ці стосунки?', 'Який крок допоможе мені діяти чесно?'] : ['Что мне важно понять об этих отношениях?', 'Какой шаг поможет мне действовать честно?'],
@@ -2323,13 +2375,18 @@
                 destiny: isUa ? ['Який урок зараз веде мене вперед?', 'На що мені варто спиратися у виборі шляху?'] : ['Какой урок сейчас ведет меня вперед?', 'На что мне стоит опираться в выборе пути?'],
                 general: isUa ? ['Що мені важливо побачити в цій ситуації?', 'Який наступний крок буде наймудрішим?'] : ['Что мне важно увидеть в этой ситуации?', 'Какой следующий шаг будет самым мудрым?']
             };
-            box.innerHTML = (tipsBySphere[this.state.sphere] || tipsBySphere.general)
-                .map(tip => `<button type="button" class="question-tip" onclick="App.useQuestionTip('${this.escapeAttr(tip)}')">${this.escapeHTML(tip)}</button>`)
-                .join('');
+            return tipsBySphere[this.state.sphere] || tipsBySphere.general;
         },
 
         useQuestionTip(tip) {
             document.getElementById('question').value = tip;
+        },
+
+        useRandomQuestionTip() {
+            const tips = this.getQuestionTips();
+            if (!tips.length) return;
+            const tip = tips[Math.floor(Math.random() * tips.length)];
+            this.useQuestionTip(tip);
         },
 
         getAllCardIds() {
@@ -2341,7 +2398,7 @@
             return ids;
         },
 
-        showDailyCard() {
+        async showDailyCard() {
             const today = new Date();
             const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
             const ids = this.getAllCardIds();
@@ -2351,7 +2408,20 @@
             result.classList.remove('shuffle-pulse');
             void result.offsetWidth;
             result.classList.add('shuffle-pulse');
-            result.innerHTML = `<strong class="text-gold">${this.escapeHTML(name)}</strong><div>${this.state.lang === 'ua' ? 'Фокус дня: помітьте головний знак і зробіть один спокійний крок.' : 'Фокус дня: заметьте главный знак и сделайте один спокойный шаг.'}</div>`;
+            result.innerHTML = `<strong class="text-gold">${this.escapeHTML(name)}</strong><div>${this.escapeHTML(this.translations[this.state.lang].daily_card_loading)}</div>`;
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lang: this.state.lang, type: 'card-of-the-day', card: name })
+                });
+                const data = await response.json();
+                const text = response.ok && data.text ? data.text : this.translations[this.state.lang].daily_card_fallback;
+                result.innerHTML = `<strong class="text-gold">${this.escapeHTML(name)}</strong><div>${this.formatAIText(text)}</div>`;
+            } catch (error) {
+                result.innerHTML = `<strong class="text-gold">${this.escapeHTML(name)}</strong><div>${this.escapeHTML(this.translations[this.state.lang].daily_card_fallback)}</div>`;
+            }
         },
 
         quickReading() {
@@ -2359,13 +2429,8 @@
             const question = input.value.trim();
             if (question) document.getElementById('question').value = question;
             this.handleSelection('spread', 'yes-no', true);
-            const ids = this.getAllCardIds();
-            const available = ids.filter(id => !Object.values(this.state.selectedCards).some(card => card.id === id));
-            const randomId = available[Math.floor(Math.random() * available.length)];
-            this.state.selectedCards = {};
-            this.state.activePositionIndex = 0;
-            this.state.previewReversed = this.state.allowReversals && Math.random() < 0.35;
-            this.selectCardFromCarousel(randomId, false);
+            if (question) document.getElementById('question').value = question;
+            this.randomizeSpread();
             this.getSpreadInterpretation();
         },
 
@@ -2684,6 +2749,7 @@
         },
 
         playSound(soundId) {
+            if (!this.state.soundEnabled) return;
             const sound = document.getElementById(soundId);
             if (sound) {
                 sound.currentTime = 0;
@@ -2693,6 +2759,7 @@
         },
 
         playFlipSound() {
+            if (!this.state.soundEnabled) return;
             try {
                 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
                 const oscillator = audioCtx.createOscillator();
@@ -2717,15 +2784,25 @@
         },
 
         toggleMusic() {
+            this.setSoundEnabled(!this.state.soundEnabled);
+        },
+
+        setSoundEnabled(enabled) {
+            this.state.soundEnabled = enabled;
+            localStorage.setItem('tarot_sound_enabled', String(enabled));
+            this.syncSoundState();
+        },
+
+        syncSoundState() {
             const music = document.getElementById('ambient-music');
-            const button = document.getElementById('music-toggle');
-            if (music.paused) {
+            const select = document.getElementById('sound-mode-select');
+            if (select) select.value = this.state.soundEnabled ? 'on' : 'off';
+            if (!music) return;
+            if (this.state.soundEnabled) {
                 music.volume = 0.2;
                 music.play().catch(e => console.error("Audio play failed:", e));
-                button.textContent = '🔊';
             } else {
                 music.pause();
-                button.textContent = '🔇';
             }
         },
 
@@ -2740,3 +2817,6 @@
 </script>
 </body>
 </html>
+
+
+
