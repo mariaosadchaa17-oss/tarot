@@ -51,13 +51,43 @@ async function POST(request) {
                 ? `Сфера: ${sphere || 'не указана'}\nИсходный вопрос: ${question}`
                 : `Сфера: ${sphere || 'не вказана'}\nПочаткове питання: ${question}`;
         } else if (requestData.type === 'spread') {
-            const { mode, theme, spreadType, question, cards, positions, targetPerson, client } = requestData;
+            const { mode, theme, spreadType, question, cards, positions, targetPerson, client, tone, answerLength, focus, moodBefore, allowReversals } = requestData;
             if (!cards || Object.keys(cards).length === 0) return { json: async () => ({ error: 'Не обрано жодної карти.' }), status: 400, ok: false };
             if (!Array.isArray(positions) || positions.length === 0) return { json: async () => ({ error: 'Не передано позиції розкладу.' }), status: 400, ok: false };
 
             systemPrompt = SYSTEM_PROMPTS[lang][mode] || SYSTEM_PROMPTS[lang].psychologist;
+            const isRu = lang === 'ru';
+            const lowerTheme = String(theme || '').toLowerCase();
+            const isYesNo = String(spreadType || '').toLowerCase().includes(isRu ? 'да/нет' : 'так/ні');
+            const isHealth = lowerTheme.includes('здоров') || lowerTheme.includes('health');
+            const isFinance = lowerTheme.includes('финанс') || lowerTheme.includes('фінанс');
+            const toneLabels = isRu
+                ? { soft: 'мягкий', honest: 'честный', short: 'лаконичный', deep: 'глубокий', practical: 'практичный' }
+                : { soft: "м'який", honest: 'чесний', short: 'лаконічний', deep: 'глибокий', practical: 'практичний' };
+            const focusLabels = isRu
+                ? { feelings: 'чувства', actions: 'действия', risks: 'риски', advice: 'совет', forecast: 'прогноз' }
+                : { feelings: 'почуття', actions: 'дії', risks: 'ризики', advice: 'порада', forecast: 'прогноз' };
+            const lengthLabels = isRu
+                ? { short: 'короткий ответ до 900 знаков', standard: 'стандартный ответ без лишних повторов', detailed: 'подробный, но без воды' }
+                : { short: 'коротка відповідь до 900 знаків', standard: 'стандартна відповідь без зайвих повторів', detailed: 'детально, але без води' };
+
+            systemPrompt += isRu
+                ? ` Не повторяй название одной и той же карты в каждом абзаце: назови ее один раз в заголовке/первой строке, дальше используй "эта карта", "аркан", "сигнал". Структура обязательна: 1) короткий вердикт, 2) смысл, 3) что делать, 4) главный посыл одной фразой, 5) практический шаг на 24 часа. Тон: ${toneLabels[tone] || toneLabels.soft}. Длина: ${lengthLabels[answerLength] || lengthLabels.standard}. Фокус: ${focusLabels[focus] || focusLabels.advice}. Настроение клиента перед раскладом: ${moodBefore || 'neutral'}.`
+                : ` Не повторюй назву однієї й тієї самої карти в кожному абзаці: назви її один раз у заголовку/першому рядку, далі використовуй "ця карта", "аркан", "сигнал". Обов'язкова структура: 1) короткий вердикт, 2) сенс, 3) що робити, 4) головний посил однією фразою, 5) практичний крок на 24 години. Тон: ${toneLabels[tone] || toneLabels.soft}. Довжина: ${lengthLabels[answerLength] || lengthLabels.standard}. Фокус: ${focusLabels[focus] || focusLabels.advice}. Настрій клієнта перед розкладом: ${moodBefore || 'neutral'}.`;
+            if (isYesNo) {
+                systemPrompt += isRu
+                    ? ' Для расклада Да/Нет начни с отдельной строки "Вердикт: скорее да / скорее нет / не сейчас" и дай короткое объяснение без растекания.'
+                    : ' Для розкладу Так/Ні почни з окремого рядка "Вердикт: скоріше так / скоріше ні / не зараз" і дай коротке пояснення без розтікання.';
+            }
+            if (isHealth || isFinance) {
+                systemPrompt += isRu
+                    ? ' Добавь мягкую фразу, что расклад подсвечивает направление и не заменяет профильного специалиста.'
+                    : ' Додай мʼяку фразу, що розклад підсвічує напрям і не замінює профільного спеціаліста.';
+            }
             if (positions.length > 1) {
-                systemPrompt += " Відповідь має бути строго структурована по пунктах для кожної позиції, без загальної вступної та заключної 'води'.";
+                systemPrompt += isRu
+                    ? " Ответ должен быть строго структурирован по пунктам для каждой позиции, без общей вступительной и заключительной воды."
+                    : " Відповідь має бути строго структурована по пунктах для кожної позиції, без загальної вступної та заключної води.";
             }
 
             let targetInfo = targetPerson ? ` для іншої людини (${targetPerson})` : '';
@@ -68,6 +98,9 @@ async function POST(request) {
                 if (client.notes) userPrompt += lang === 'ru' ? `Заметки таролога о клиенте: ${client.notes}\n` : `Нотатки таролога про клієнта: ${client.notes}\n`;
             }
             if (question) userPrompt += `Питання: "${question}"\n`;
+            userPrompt += lang === 'ru'
+                ? `Настройки чтения: перевернутые карты ${allowReversals === false ? 'не используются' : 'используются'}.\n`
+                : `Налаштування читання: перевернуті карти ${allowReversals === false ? 'не використовуються' : 'використовуються'}.\n`;
             userPrompt += `\nКарти:\n`;
             positions.forEach(pos => {
                 const card = cards[pos];

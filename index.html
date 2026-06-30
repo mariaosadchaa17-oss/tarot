@@ -348,6 +348,40 @@
         .client-delete-btn { flex: 0 0 auto; color: #f87171; font-size: 0.82rem; padding: 0 0.2rem; }
         .client-empty { color: rgba(255,255,255,0.62); font-size: 0.82rem; text-align: center; padding: 0.75rem; border: 1px dashed var(--border-color); border-radius: 0.8rem; }
         .active-client-pill { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.65rem; padding: 0.4rem 0.65rem; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-gold); background: rgba(255,255,255,0.045); font-size: 0.78rem; font-weight: 800; }
+        .account-panel { margin-top: 1rem; text-align: left; border: 1px solid var(--border-color); border-radius: 1rem; background: rgba(255,255,255,0.035); padding: 1rem; }
+        .auth-mode-tabs { display: inline-flex; gap: 0.35rem; padding: 0.25rem; margin-bottom: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.8rem; background: rgba(16,10,31,0.7); }
+        .auth-mode-btn { border: 0; border-radius: 0.55rem; padding: 0.45rem 0.8rem; color: rgba(255,255,255,0.75); background: transparent; font-size: 0.82rem; font-weight: 700; transition: all 0.2s ease; }
+        .auth-mode-btn.active { color: white; background: linear-gradient(135deg, var(--purple), var(--gold)); box-shadow: 0 8px 18px rgba(123, 44, 191, 0.26); }
+        .auth-grid { display: grid; grid-template-columns: 1fr; gap: 0.65rem; }
+        .auth-message { margin-top: 0.65rem; min-height: 1.1rem; color: rgba(255,255,255,0.72); font-size: 0.78rem; }
+        .auth-message.error { color: #ffb4c8; }
+        @media (min-width: 768px) { .auth-grid { grid-template-columns: 1fr 1fr auto; align-items: end; } .auth-grid.register-mode { grid-template-columns: 1fr 1fr 1fr auto; } }
+        .account-dashboard-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.9rem; }
+        .account-title { color: var(--text-gold); font-weight: 900; line-height: 1.2; }
+        .account-subtitle { color: rgba(255,255,255,0.68); font-size: 0.78rem; margin-top: 0.18rem; }
+        .account-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.9rem; }
+        .account-tab { border: 1px solid var(--border-color); border-radius: 999px; padding: 0.48rem 0.8rem; color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.04); font-size: 0.78rem; font-weight: 800; }
+        .account-tab.active { color: var(--text-gold); border-color: var(--text-gold); box-shadow: 0 0 12px var(--secondary-glow-color); }
+        .account-view[hidden], .account-tab-panel[hidden] { display: none; }
+        .history-toolbar { display: grid; grid-template-columns: 1fr; gap: 0.65rem; margin-bottom: 0.8rem; }
+        @media (min-width: 768px) { .history-toolbar { grid-template-columns: 1fr auto auto; } }
+        .history-list { display: grid; gap: 0.65rem; }
+        .history-card { border: 1px solid var(--border-color); border-radius: 0.9rem; background: rgba(0,0,0,0.18); padding: 0.8rem; }
+        .history-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.65rem; }
+        .history-title { color: var(--text-gold); font-weight: 900; line-height: 1.25; }
+        .history-meta, .history-note, .history-tags { color: rgba(255,255,255,0.68); font-size: 0.76rem; line-height: 1.35; margin-top: 0.3rem; }
+        .history-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.65rem; }
+        .history-action { border: 1px solid var(--border-color); border-radius: 999px; padding: 0.35rem 0.6rem; color: var(--text-gold); background: rgba(255,255,255,0.045); font-size: 0.72rem; font-weight: 800; }
+        .reading-options-grid { display: grid; grid-template-columns: 1fr; gap: 0.65rem; margin-top: 0.85rem; }
+        @media (min-width: 768px) { .reading-options-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+        .option-select { width: 100%; background: rgba(16,10,31,0.82); border: 1px solid var(--border-color); border-radius: 0.7rem; padding: 0.62rem 0.7rem; color: white; font-size: 0.84rem; }
+        .question-tips { margin-top: 0.65rem; display: grid; gap: 0.45rem; }
+        .question-tip { border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.55rem 0.65rem; background: rgba(255,255,255,0.035); color: rgba(255,255,255,0.8); font-size: 0.78rem; text-align: left; }
+        .quick-panel, .daily-panel { margin-top: 0.85rem; border: 1px solid var(--border-color); border-radius: 0.95rem; padding: 0.85rem; background: rgba(255,255,255,0.035); }
+        .deck-preview-strip { display: flex; gap: 0.25rem; justify-content: center; margin-top: 0.35rem; }
+        .deck-preview-strip img { width: 24px; height: 36px; object-fit: cover; border-radius: 0.25rem; border: 1px solid rgba(255,255,255,0.25); }
+        .shuffle-pulse { animation: shuffle-pulse 0.42s ease; }
+        @keyframes shuffle-pulse { 0% { transform: translateY(0) rotate(0deg); } 40% { transform: translateY(-5px) rotate(-1deg); } 75% { transform: translateY(3px) rotate(1deg); } 100% { transform: translateY(0) rotate(0deg); } }
 
         /* Reading preview + full-screen interpretation modal */
         .reading-preview { width: 100%; text-align: left; }
@@ -442,11 +476,18 @@
                     <div id="card-back-selector" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
                 </div>
             </div>
+            <div class="reading-options-grid">
+                <select id="tone-select" class="option-select"></select>
+                <select id="length-select" class="option-select"></select>
+                <select id="focus-select" class="option-select"></select>
+                <select id="mood-before-select" class="option-select"></select>
+                <select id="reversal-mode-select" class="option-select"></select>
+            </div>
         </div>
 
         <!-- Rules Accordion -->
         <div class="mt-6">
-            <button id="rules-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="rules_toggle">📜 Звід правил таролога</button>
+            <button id="rules-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="rules_toggle">📜 Правила таролога</button>
             <div id="rules-wrapper" class="accordion-wrapper">
                 <div class="text-left bg-surface border border-color rounded-xl p-4">
                     <ol class="list-decimal list-inside space-y-2 text-sm" id="rules-list"></ol>
@@ -455,17 +496,54 @@
         </div>
 
         <div class="mt-4">
-            <button id="clients-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="clients_toggle"></button>
-            <div id="clients-wrapper" class="accordion-wrapper">
-                <div class="client-panel">
-                    <div class="client-form">
-                        <input id="client-name-input" class="client-input" type="text" data-placeholder-key="client_name_placeholder">
-                        <input id="client-contact-input" class="client-input" type="text" data-placeholder-key="client_contact_placeholder">
-                        <button id="client-add-btn" type="button" class="client-add-btn" data-translate-key="client_add_btn"></button>
-                        <textarea id="client-notes-input" class="client-input client-form-notes" rows="2" data-placeholder-key="client_notes_placeholder"></textarea>
+            <button id="account-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="account_toggle"></button>
+            <div id="account-wrapper" class="accordion-wrapper">
+                <div class="account-panel">
+                    <div id="auth-view" class="account-view">
+                        <div class="auth-mode-tabs" role="tablist" aria-label="Account mode">
+                            <button id="account-login-mode-btn" type="button" class="auth-mode-btn" data-auth-mode="login" data-translate-key="account_login_mode"></button>
+                            <button id="account-register-mode-btn" type="button" class="auth-mode-btn" data-auth-mode="register" data-translate-key="account_register_mode"></button>
+                        </div>
+                        <div id="auth-grid" class="auth-grid">
+                            <input id="account-name-input" class="client-input" type="text" data-placeholder-key="account_name_placeholder">
+                            <input id="account-email-input" class="client-input" type="email" data-placeholder-key="account_email_placeholder">
+                            <input id="account-password-input" class="client-input" type="password" data-placeholder-key="account_password_placeholder">
+                            <button id="account-login-btn" type="button" class="client-add-btn" data-translate-key="account_login_btn"></button>
+                        </div>
+                        <div id="account-auth-message" class="auth-message"></div>
                     </div>
-                    <div id="active-client-pill" class="active-client-pill" style="display:none;"></div>
-                    <div id="client-list" class="client-list"></div>
+                    <div id="account-dashboard" class="account-view" hidden>
+                        <div class="account-dashboard-head">
+                            <div>
+                                <div id="account-title" class="account-title"></div>
+                                <div id="account-subtitle" class="account-subtitle"></div>
+                            </div>
+                            <button id="account-logout-btn" type="button" class="reading-action-secondary" data-translate-key="account_logout_btn"></button>
+                        </div>
+                        <div class="account-tabs">
+                            <button type="button" class="account-tab active" data-account-tab="clients" data-translate-key="account_tab_clients"></button>
+                            <button type="button" class="account-tab" data-account-tab="history" data-translate-key="account_tab_history"></button>
+                        </div>
+                        <div id="account-clients-panel" class="account-tab-panel">
+                            <div class="client-form">
+                                <input id="client-name-input" class="client-input" type="text" data-placeholder-key="client_name_placeholder">
+                                <input id="client-contact-input" class="client-input" type="text" data-placeholder-key="client_contact_placeholder">
+                                <button id="client-add-btn" type="button" class="client-add-btn" data-translate-key="client_add_btn"></button>
+                                <textarea id="client-notes-input" class="client-input client-form-notes" rows="2" data-placeholder-key="client_notes_placeholder"></textarea>
+                            </div>
+                            <div id="active-client-pill" class="active-client-pill" style="display:none;"></div>
+                            <div id="client-list" class="client-list"></div>
+                        </div>
+                        <div id="account-history-panel" class="account-tab-panel" hidden>
+                            <div class="history-toolbar">
+                                <input id="history-search-input" class="client-input" type="text" data-placeholder-key="history_search_placeholder">
+                                <button id="history-export-btn" type="button" class="client-add-btn" data-translate-key="history_export_btn"></button>
+                                <button id="history-stats-btn" type="button" class="reading-action-secondary" data-translate-key="history_stats_btn"></button>
+                            </div>
+                            <div id="history-stats" class="client-empty" style="display:none;"></div>
+                            <div id="history-list" class="history-list"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -475,6 +553,23 @@
             <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                 <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_sphere"></h2>
                 <div><label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_sphere"></label><div id="sphere-selector" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div><p id="recommendation-text" class="text-xs text-purple mt-2 text-center"></p></div>
+                <div class="daily-panel">
+                    <div class="flex items-center justify-between gap-3">
+                        <div>
+                            <div class="text-gold font-bold" data-translate-key="daily_card_title"></div>
+                            <div class="text-xs text-gray-300" data-translate-key="daily_card_subtitle"></div>
+                        </div>
+                        <button id="daily-card-btn" type="button" class="reading-action-secondary" data-translate-key="daily_card_btn"></button>
+                    </div>
+                    <div id="daily-card-result" class="text-sm text-gray-200 mt-3"></div>
+                </div>
+                <div class="quick-panel">
+                    <div class="text-gold font-bold mb-2" data-translate-key="quick_title"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-2">
+                        <input id="quick-question-input" class="client-input" type="text" data-placeholder-key="quick_question_placeholder">
+                        <button id="quick-reading-btn" type="button" class="client-add-btn" data-translate-key="quick_btn"></button>
+                    </div>
+                </div>
             </div>
             <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
                 <h2 class="text-lg font-semibold mb-4 text-gold" data-translate-key="section_title_context_spread"></h2>
@@ -493,6 +588,7 @@
                         <button id="refine-question-btn" class="text-xs text-gold hover:brightness-125 transition" title="Сформулювати питання правильно">✍️</button>
                     </div>
                     <textarea id="question" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" rows="2" data-placeholder-ua="Ваше питання (необов'язково)" data-placeholder-ru="Ваш вопрос (необязательно)"></textarea>
+                    <div id="question-tips" class="question-tips"></div>
                 </div>
 
                 <!-- Spread type with categories -->
@@ -564,6 +660,7 @@
         <div id="result-modal-body" class="result-modal-body"></div>
         <div class="result-modal-footer">
             <button type="button" class="reading-action-secondary" onclick="App.copyResultToClipboard()" data-translate-key="btn_copy_result"></button>
+            <button type="button" class="reading-action-secondary" onclick="App.exportCurrentResult()" data-translate-key="btn_export_result"></button>
             <button type="button" class="reading-action-secondary" onclick="App.closeResultModal()" data-translate-key="btn_close_result"></button>
         </div>
     </div>
@@ -575,13 +672,30 @@
             lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self', theme: 'neon',
             spreadKey: 'cross', activeSuit: null, selectedCards: {}, activePositionIndex: 0,
             selectedDeck: 'retro', cardBackStyle: 'standard', previewReversed: false, selectedCardForAdd: null,
-            clients: [], activeClientId: null
+            clients: [], activeClientId: null, account: null, registeredAccount: null, authMode: 'login', readings: [], activeAccountTab: 'clients',
+            answerTone: 'soft', answerLength: 'standard', answerFocus: 'advice', moodBefore: 'neutral', allowReversals: true
         },
         translations: {
             ua: {
                 page_title: "Таро AI Компаньйон", main_title: "🔮 Таро AI Компаньйон",
-                rules_toggle: "📜 Звід правил таролога",
-                clients_toggle: "👥 База клієнтів",
+                rules_toggle: "📜 Правила таролога",
+                account_toggle: "👤 Увійти / Кабінет",
+                account_login_mode: "Вхід",
+                account_register_mode: "Реєстрація",
+                account_name_placeholder: "Ваше ім'я",
+                account_email_placeholder: "Email",
+                account_password_placeholder: "Пароль",
+                account_login_btn: "Увійти",
+                account_register_btn: "Створити акаунт",
+                account_auth_login_hint: "Увійдіть за email і паролем, які вказали під час реєстрації.",
+                account_auth_register_hint: "Створіть локальний акаунт для кабінету, клієнтів та історії.",
+                account_auth_no_account: "Спочатку створіть акаунт на цьому пристрої.",
+                account_auth_wrong: "Email або пароль не збігаються.",
+                account_auth_fill_all: "Заповніть усі поля.",
+                account_logout_btn: "Вийти",
+                account_tab_clients: "Клієнти",
+                account_tab_history: "Історія",
+                account_local_note: "Локальний акаунт на цьому пристрої",
                 client_name_placeholder: "Ім'я клієнта",
                 client_contact_placeholder: "Контакт або нік",
                 client_notes_placeholder: "Нотатки про клієнта, запит, контекст",
@@ -589,6 +703,43 @@
                 client_empty: "Клієнтів поки немає. Додайте першого клієнта для персональних розкладів.",
                 active_client_label: "Активний клієнт",
                 client_selected: "Обрано для розкладу",
+                history_search_placeholder: "Пошук по історії, карті, клієнту або тегу",
+                history_export_btn: "Експорт",
+                history_stats_btn: "Статистика",
+                history_empty: "Історія поки порожня. Отримайте тлумачення, і воно збережеться тут.",
+                history_favorite: "В обране",
+                history_unfavorite: "Прибрати з обраного",
+                history_open: "Відкрити",
+                history_note_prompt: "Нотатка до розкладу",
+                history_tags_prompt: "Теги через кому",
+                history_note_btn: "Нотатка",
+                history_tags_btn: "Теги",
+                daily_card_title: "Карта дня",
+                daily_card_subtitle: "Одна карта як м'який фокус на день.",
+                daily_card_btn: "Відкрити",
+                quick_title: "Швидке гадання",
+                quick_question_placeholder: "Коротке питання для однієї карти",
+                quick_btn: "Швидко",
+                tone_soft: "Тон: м'яко",
+                tone_honest: "Тон: чесно",
+                tone_short: "Тон: лаконічно",
+                tone_deep: "Тон: глибоко",
+                tone_practical: "Тон: практично",
+                length_short: "Довжина: коротко",
+                length_standard: "Довжина: стандартно",
+                length_detailed: "Довжина: детально",
+                focus_feelings: "Фокус: почуття",
+                focus_actions: "Фокус: дії",
+                focus_risks: "Фокус: ризики",
+                focus_advice: "Фокус: порада",
+                focus_forecast: "Фокус: прогноз",
+                mood_neutral: "Настрій: нейтральний",
+                mood_anxious: "Настрій: тривога",
+                mood_hopeful: "Настрій: надія",
+                mood_doubtful: "Настрій: сумнів",
+                mood_calm: "Настрій: спокій",
+                reversals_on: "Перевернуті: увімкнено",
+                reversals_off: "Перевернуті: вимкнено",
                 rules_list: ["Формулюйте запит чітко та екологічно (без злого умислу).", "Не дублюйте один і той же запит картам декілька разів на день.", "Підходьте до розкладу у спокійному, медитативному стані.", "Пам'ятайте: карти показують найбільш вірогідний вектор, але фінальний вибір завжди за вами."],
                 section_title_settings: "⚙️ Налаштування",
                 section_title_sphere: "✨ 1. Сфера",
@@ -633,6 +784,7 @@
                 btn_open_interpretation: "Відкрити трактування",
                 btn_new_reading: "Новий розклад",
                 btn_copy_result: "Копіювати результат",
+                btn_export_result: "Зберегти PDF",
                 btn_close_result: "Закрити",
                 result_modal_title: "Трактування розкладу",
                 result_copied: "✅ Результат скопійовано!",
@@ -643,7 +795,23 @@
             ru: {
                 page_title: "Таро AI Компаньон", main_title: "🔮 Таро AI Компаньон",
                 rules_toggle: "📜 Свод правил таролога",
-                clients_toggle: "👥 База клиентов",
+                account_toggle: "👤 Войти / Кабинет",
+                account_login_mode: "Вход",
+                account_register_mode: "Регистрация",
+                account_name_placeholder: "Ваше имя",
+                account_email_placeholder: "Email",
+                account_password_placeholder: "Пароль",
+                account_login_btn: "Войти",
+                account_register_btn: "Создать аккаунт",
+                account_auth_login_hint: "Войдите по email и паролю, которые указали при регистрации.",
+                account_auth_register_hint: "Создайте локальный аккаунт для кабинета, клиентов и истории.",
+                account_auth_no_account: "Сначала создайте аккаунт на этом устройстве.",
+                account_auth_wrong: "Email или пароль не совпадают.",
+                account_auth_fill_all: "Заполните все поля.",
+                account_logout_btn: "Выйти",
+                account_tab_clients: "Клиенты",
+                account_tab_history: "История",
+                account_local_note: "Локальный аккаунт на этом устройстве",
                 client_name_placeholder: "Имя клиента",
                 client_contact_placeholder: "Контакт или ник",
                 client_notes_placeholder: "Заметки о клиенте, запрос, контекст",
@@ -651,6 +819,43 @@
                 client_empty: "Клиентов пока нет. Добавьте первого клиента для персональных раскладов.",
                 active_client_label: "Активный клиент",
                 client_selected: "Выбран для расклада",
+                history_search_placeholder: "Поиск по истории, карте, клиенту или тегу",
+                history_export_btn: "Экспорт",
+                history_stats_btn: "Статистика",
+                history_empty: "История пока пустая. Получите трактовку, и она сохранится здесь.",
+                history_favorite: "В избранное",
+                history_unfavorite: "Убрать из избранного",
+                history_open: "Открыть",
+                history_note_prompt: "Заметка к раскладу",
+                history_tags_prompt: "Теги через запятую",
+                history_note_btn: "Заметка",
+                history_tags_btn: "Теги",
+                daily_card_title: "Карта дня",
+                daily_card_subtitle: "Одна карта как мягкий фокус на день.",
+                daily_card_btn: "Открыть",
+                quick_title: "Быстрое гадание",
+                quick_question_placeholder: "Короткий вопрос для одной карты",
+                quick_btn: "Быстро",
+                tone_soft: "Тон: мягко",
+                tone_honest: "Тон: честно",
+                tone_short: "Тон: лаконично",
+                tone_deep: "Тон: глубоко",
+                tone_practical: "Тон: практично",
+                length_short: "Длина: коротко",
+                length_standard: "Длина: стандартно",
+                length_detailed: "Длина: подробно",
+                focus_feelings: "Фокус: чувства",
+                focus_actions: "Фокус: действия",
+                focus_risks: "Фокус: риски",
+                focus_advice: "Фокус: совет",
+                focus_forecast: "Фокус: прогноз",
+                mood_neutral: "Настроение: нейтральное",
+                mood_anxious: "Настроение: тревога",
+                mood_hopeful: "Настроение: надежда",
+                mood_doubtful: "Настроение: сомнение",
+                mood_calm: "Настроение: спокойствие",
+                reversals_on: "Перевернутые: включены",
+                reversals_off: "Перевернутые: выключены",
                 rules_list: ["Формулируйте запрос четко и экологично (без злого умысла).", "Не дублируйте один и тот же запрос картам несколько раз в день.", "Подходите к раскладу в спокойном, медитативном состоянии.", "Помните: карты показывают наиболее вероятный вектор, но финальный выбор всегда за вами."],
                 section_title_settings: "⚙️ Настройки",
                 section_title_sphere: "✨ 1. Сфера",
@@ -695,6 +900,7 @@
                 btn_open_interpretation: "Открыть трактовку",
                 btn_new_reading: "Новый расклад",
                 btn_copy_result: "Копировать результат",
+                btn_export_result: "Сохранить PDF",
                 btn_close_result: "Закрыть",
                 result_modal_title: "Трактовка расклада",
                 result_copied: "✅ Результат скопирован!",
@@ -714,8 +920,8 @@
                 { key: 'career', icon: '💼', ua: 'Кар\'єра', ru: 'Карьера', rec: 'three-cards', rec_key: 'recommendation_work' },
                 { key: 'finance', icon: '💰', ua: 'Фінанси', ru: 'Финансы', rec: 'three-cards', rec_key: 'recommendation_work' },
                 { key: 'health', icon: '🌿', ua: 'Здоров\'я', ru: 'Здоровье', rec: 'yes-no', rec_key: 'recommendation_health' },
-                { key: 'destiny', icon: '🌌', ua: 'Призначення', ru: 'Предназначение', rec: 'path', rec_key: 'recommendation_destiny' },
-                { key: 'general', icon: '🪐', ua: 'Загальний аналіз', ru: 'Общий анализ', rec: 'three-cards', rec_key: null },
+                { key: 'destiny', icon: '🧭', ua: 'Призначення', ru: 'Предназначение', rec: 'celtic-cross', rec_key: 'recommendation_destiny' },
+                { key: 'general', icon: '🃏', ua: 'Загальний аналіз', ru: 'Общий анализ', rec: 'three-cards', rec_key: null },
             ],
             targets: [
                 { key: 'self', ua: 'На себе', ru: 'На себя' }, { key: 'partner', ua: 'На партнера', ru: 'На партнера' },
@@ -999,15 +1205,48 @@
             const savedAiMode = localStorage.getItem('tarot_ai_mode');
             const savedClients = localStorage.getItem('tarot_clients');
             const savedActiveClient = localStorage.getItem('tarot_active_client');
+            const savedAccount = localStorage.getItem('tarot_account');
+            const savedRegisteredAccount = localStorage.getItem('tarot_registered_account');
+            const savedReadings = localStorage.getItem('tarot_readings');
+            const savedTone = localStorage.getItem('tarot_answer_tone');
+            const savedLength = localStorage.getItem('tarot_answer_length');
+            const savedFocus = localStorage.getItem('tarot_answer_focus');
+            const savedMood = localStorage.getItem('tarot_mood_before');
+            const savedReversals = localStorage.getItem('tarot_allow_reversals');
             if (savedLang) this.state.lang = savedLang;
             if (savedTheme) this.state.theme = savedTheme;
             if (savedAiMode) this.state.aiMode = savedAiMode;
             if (savedDeck && this.data.decks.some(deck => deck.key === savedDeck)) this.state.selectedDeck = savedDeck;
             if (savedBack) this.state.cardBackStyle = savedBack;
+            if (savedTone) this.state.answerTone = savedTone;
+            if (savedLength) this.state.answerLength = savedLength;
+            if (savedFocus) this.state.answerFocus = savedFocus;
+            if (savedMood) this.state.moodBefore = savedMood;
+            if (savedReversals) this.state.allowReversals = savedReversals !== 'false';
             try {
                 this.state.clients = savedClients ? JSON.parse(savedClients) : [];
             } catch (error) {
                 this.state.clients = [];
+            }
+            try {
+                this.state.account = savedAccount ? JSON.parse(savedAccount) : null;
+            } catch (error) {
+                this.state.account = null;
+            }
+            try {
+                this.state.registeredAccount = savedRegisteredAccount ? JSON.parse(savedRegisteredAccount) : null;
+            } catch (error) {
+                this.state.registeredAccount = null;
+            }
+            if (!this.state.registeredAccount && this.state.account?.email) {
+                this.state.registeredAccount = { ...this.state.account, password: '' };
+                localStorage.setItem('tarot_registered_account', JSON.stringify(this.state.registeredAccount));
+            }
+            this.state.authMode = this.state.registeredAccount ? 'login' : 'register';
+            try {
+                this.state.readings = savedReadings ? JSON.parse(savedReadings) : [];
+            } catch (error) {
+                this.state.readings = [];
             }
             if (savedActiveClient && this.state.clients.some(client => client.id === savedActiveClient)) {
                 this.state.activeClientId = savedActiveClient;
@@ -1027,7 +1266,11 @@
         renderAllDynamicContent() {
             this.applyLanguage();
             this.renderAllSelectors();
+            this.renderReadingOptions();
+            this.renderQuestionTips();
+            this.renderAccount();
             this.renderClients();
+            this.renderHistory();
             this.updateUI();
             this.displayMoonPhase();
         },
@@ -1040,7 +1283,7 @@
             createButtons('mode-selector', [{key: 'mystical', icon: '🔮', ua: this.translations.ua.mode_mystical, ru: this.translations.ru.mode_mystical}, {key: 'psychologist', icon: '🧠', ua: this.translations.ua.mode_psychologist, ru: this.translations.ru.mode_psychologist}], 'mode', this.state.lang);
             createButtons('sphere-selector', this.data.spheres, 'sphere', this.state.lang);
             createButtons('target-selector', this.data.targets, 'target', this.state.lang);
-            createButtons('deck-selector', this.data.decks, 'deck', this.state.lang);
+            this.renderDeckSelector();
             this.renderCardBackSelector();
 
             // Spread selector with categories
@@ -1054,6 +1297,22 @@
             if (personInput) {
                 personInput.placeholder = personInput.dataset[`placeholder${this.state.lang === 'ua' ? 'Ua' : 'Ru'}`];
             }
+        },
+
+        renderDeckSelector() {
+            const container = document.getElementById('deck-selector');
+            if (!container) return;
+            container.innerHTML = this.data.decks.map(deck => `
+                <button class="control-card" data-group="deck" data-key="${deck.key}">
+                    <span>${this.escapeHTML(deck[this.state.lang])}</span>
+                    <div class="deck-preview-strip">
+                        <img src="${this.DECKS_DIR}/${deck.dir}/major-0.jpg" alt="" loading="lazy">
+                        <img src="${this.DECKS_DIR}/${deck.dir}/cups-1.jpg" alt="" loading="lazy">
+                        <img src="${this.DECKS_DIR}/${deck.dir}/swords-1.jpg" alt="" loading="lazy">
+                        <img src="${this.DECKS_DIR}/${deck.dir}/back.jpg" alt="" loading="lazy">
+                    </div>
+                </button>
+            `).join('');
         },
 
         renderCardBackSelector() {
@@ -1154,7 +1413,7 @@
             this.state.selectedCards[posName] = {
                 id: cardId,
                 name: cardName,
-                isReversed: this.state.previewReversed
+                isReversed: this.state.allowReversals && this.state.previewReversed
             };
 
             // Play sound
@@ -1171,6 +1430,7 @@
         },
 
         toggleReversedPreview() {
+            if (!this.state.allowReversals) return;
             this.state.previewReversed = !this.state.previewReversed;
             document.getElementById('reversed-checkbox').checked = this.state.previewReversed;
         },
@@ -1189,9 +1449,30 @@
             document.getElementById('ai-btn').addEventListener('click', () => this.getSpreadInterpretation());
             document.getElementById('music-toggle').addEventListener('click', () => this.toggleMusic());
             document.getElementById('rules-toggle').addEventListener('click', () => this.toggleRules());
-            document.getElementById('clients-toggle').addEventListener('click', () => this.toggleAccordion('clients-wrapper', 'rules-wrapper'));
+            document.getElementById('account-toggle').addEventListener('click', () => this.toggleAccordion('account-wrapper', 'rules-wrapper'));
+            document.querySelectorAll('[data-auth-mode]').forEach(button => {
+                button.addEventListener('click', () => this.setAuthMode(button.dataset.authMode));
+            });
+            document.getElementById('account-login-btn').addEventListener('click', () => this.loginAccount());
+            ['account-name-input', 'account-email-input', 'account-password-input'].forEach(id => {
+                document.getElementById(id).addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter') this.loginAccount();
+                });
+            });
+            document.getElementById('account-logout-btn').addEventListener('click', () => this.logoutAccount());
             document.getElementById('client-add-btn').addEventListener('click', () => this.addClient());
+            document.getElementById('history-search-input').addEventListener('input', () => this.renderHistory());
+            document.getElementById('history-export-btn').addEventListener('click', () => this.exportHistory());
+            document.getElementById('history-stats-btn').addEventListener('click', () => this.toggleHistoryStats());
+            document.getElementById('daily-card-btn').addEventListener('click', () => this.showDailyCard());
+            document.getElementById('quick-reading-btn').addEventListener('click', () => this.quickReading());
             document.getElementById('refine-question-btn').addEventListener('click', () => this.refineQuestion());
+            document.querySelectorAll('[data-account-tab]').forEach(button => {
+                button.addEventListener('click', () => this.setAccountTab(button.dataset.accountTab));
+            });
+            ['tone-select', 'length-select', 'focus-select', 'mood-before-select', 'reversal-mode-select'].forEach(id => {
+                document.getElementById(id).addEventListener('change', e => this.handleReadingOptionChange(id, e.target.value));
+            });
             document.getElementById('client-list').addEventListener('click', e => {
                 const deleteButton = e.target.closest('[data-client-delete]');
                 if (deleteButton) {
@@ -1200,6 +1481,11 @@
                 }
                 const card = e.target.closest('[data-client-id]');
                 if (card) this.selectClient(card.dataset.clientId);
+            });
+            document.getElementById('history-list').addEventListener('click', e => {
+                const action = e.target.closest('[data-history-action]');
+                if (!action) return;
+                this.handleHistoryAction(action.dataset.historyAction, action.dataset.historyId);
             });
             const resultModal = document.getElementById('result-modal');
             if (resultModal) {
@@ -1245,6 +1531,7 @@
                 }
                 case 'sphere':
                     this.state.sphere = key;
+                    this.renderQuestionTips();
                     const sphereData = this.data.spheres.find(s => s.key === key);
                     if (sphereData && sphereData.rec) {
                         document.getElementById('recommendation-text').textContent = sphereData.rec_key ? this.translations[this.state.lang][sphereData.rec_key] : '';
@@ -1260,7 +1547,11 @@
                     if (personWrapper) personWrapper.classList.toggle('active', key === 'partner');
                     if (doUpdate) this.resetSpread();
                     break;
-                case 'spread': this.state.spreadKey = key; if (doUpdate) this.resetSpread(); break;
+                case 'spread':
+                    if (!this.data.spreads[key]) return;
+                    this.state.spreadKey = key;
+                    if (doUpdate) this.resetSpread();
+                    break;
                 case 'cardBack':
                     this.state.cardBackStyle = key;
                     localStorage.setItem('tarot_card_back', key);
@@ -1295,7 +1586,11 @@
         },
 
         renderSchema() {
-            const schema = this.data.spreads[this.state.spreadKey];
+            let schema = this.data.spreads[this.state.spreadKey];
+            if (!schema) {
+                this.state.spreadKey = 'cross';
+                schema = this.data.spreads[this.state.spreadKey];
+            }
             const container = document.getElementById('spread-schema-container');
             container.innerHTML = '';
             container.className = `schema-container ${schema.gridClass || ''}`;
@@ -1416,7 +1711,7 @@
         },
 
         updateHint() {
-            const schema = this.data.spreads[this.state.spreadKey];
+            const schema = this.data.spreads[this.state.spreadKey] || this.data.spreads.cross;
             const hint = document.getElementById('current-position-hint');
             if (this.state.activePositionIndex < schema.cards) {
                 hint.innerHTML = `${this.translations[this.state.lang].hint_select_card_for} <strong class="text-gold">"${schema.positions[this.state.lang][this.state.activePositionIndex]}"</strong>`;
@@ -1453,7 +1748,11 @@
             // Re-render text content, keep active states and suit selection
             this.applyLanguage();
             this.renderAllSelectors();
+            this.renderReadingOptions();
+            this.renderQuestionTips();
+            this.renderAccount();
             this.renderClients();
+            this.renderHistory();
             this.restoreActiveStates();
             this.displayMoonPhase();
 
@@ -1525,7 +1824,260 @@
         },
 
         toggleRules() {
-            this.toggleAccordion('rules-wrapper', 'clients-wrapper');
+            this.toggleAccordion('rules-wrapper', 'account-wrapper');
+        },
+
+        saveAccount() {
+            if (this.state.account) localStorage.setItem('tarot_account', JSON.stringify(this.state.account));
+            else localStorage.removeItem('tarot_account');
+        },
+
+        saveRegisteredAccount() {
+            if (this.state.registeredAccount) localStorage.setItem('tarot_registered_account', JSON.stringify(this.state.registeredAccount));
+            else localStorage.removeItem('tarot_registered_account');
+        },
+
+        setAuthMode(mode, clearMessage = true) {
+            this.state.authMode = mode === 'register' ? 'register' : 'login';
+            const isRegister = this.state.authMode === 'register';
+            const t = this.translations[this.state.lang];
+            const grid = document.getElementById('auth-grid');
+            const nameInput = document.getElementById('account-name-input');
+            const submitBtn = document.getElementById('account-login-btn');
+            const message = document.getElementById('account-auth-message');
+
+            document.querySelectorAll('[data-auth-mode]').forEach(button => {
+                button.classList.toggle('active', button.dataset.authMode === this.state.authMode);
+            });
+            if (grid) grid.classList.toggle('register-mode', isRegister);
+            if (nameInput) nameInput.hidden = !isRegister;
+            if (submitBtn) submitBtn.textContent = isRegister ? t.account_register_btn : t.account_login_btn;
+            if (message) {
+                message.classList.remove('error');
+                message.textContent = isRegister ? t.account_auth_register_hint : t.account_auth_login_hint;
+                if (!clearMessage) message.textContent = message.dataset.currentMessage || message.textContent;
+            }
+        },
+
+        showAuthMessage(key, isError = false) {
+            const message = document.getElementById('account-auth-message');
+            if (!message) return;
+            message.classList.toggle('error', isError);
+            message.textContent = this.translations[this.state.lang][key] || key;
+            message.dataset.currentMessage = message.textContent;
+        },
+
+        loginAccount() {
+            const nameInput = document.getElementById('account-name-input');
+            const emailInput = document.getElementById('account-email-input');
+            const passwordInput = document.getElementById('account-password-input');
+            const email = emailInput.value.trim();
+            const password = passwordInput.value;
+            const isRegister = this.state.authMode === 'register';
+            const name = nameInput.value.trim();
+
+            if (isRegister) {
+                if (!name || !email || !password) {
+                    this.showAuthMessage('account_auth_fill_all', true);
+                    (!name ? nameInput : !email ? emailInput : passwordInput).focus();
+                    return;
+                }
+                const account = { name, email, password, createdAt: new Date().toISOString() };
+                this.state.registeredAccount = account;
+                this.state.account = { name, email, createdAt: account.createdAt };
+                this.saveRegisteredAccount();
+                this.saveAccount();
+                nameInput.value = '';
+                emailInput.value = '';
+                passwordInput.value = '';
+                this.setAuthMode('login');
+                this.renderAccount();
+                this.renderHistory();
+                return;
+            }
+
+            if (!email || !password) {
+                this.showAuthMessage('account_auth_fill_all', true);
+                (!email ? emailInput : passwordInput).focus();
+                return;
+            }
+            if (!this.state.registeredAccount?.password) {
+                this.setAuthMode('register');
+                this.showAuthMessage('account_auth_no_account', true);
+                return;
+            }
+            if (email !== this.state.registeredAccount.email || password !== this.state.registeredAccount.password) {
+                this.showAuthMessage('account_auth_wrong', true);
+                passwordInput.focus();
+                return;
+            }
+
+            this.state.account = {
+                name: this.state.registeredAccount.name,
+                email: this.state.registeredAccount.email,
+                createdAt: this.state.registeredAccount.createdAt
+            };
+            this.saveAccount();
+            emailInput.value = '';
+            passwordInput.value = '';
+            this.renderAccount();
+            this.renderHistory();
+        },
+
+        logoutAccount() {
+            this.state.account = null;
+            this.state.activeClientId = null;
+            this.saveAccount();
+            this.saveClients();
+            this.renderAccount();
+            this.renderClients();
+        },
+
+        renderAccount() {
+            const authView = document.getElementById('auth-view');
+            const dashboard = document.getElementById('account-dashboard');
+            const title = document.getElementById('account-title');
+            const subtitle = document.getElementById('account-subtitle');
+            if (!authView || !dashboard) return;
+            const loggedIn = Boolean(this.state.account);
+            authView.hidden = loggedIn;
+            dashboard.hidden = !loggedIn;
+            if (loggedIn) {
+                title.textContent = this.state.account.name;
+                subtitle.textContent = `${this.state.account.email} · ${this.translations[this.state.lang].account_local_note}`;
+            } else {
+                this.setAuthMode(this.state.authMode || (this.state.registeredAccount ? 'login' : 'register'));
+            }
+            this.setAccountTab(this.state.activeAccountTab || 'clients', false);
+        },
+
+        setAccountTab(tab, doRender = true) {
+            this.state.activeAccountTab = tab;
+            document.querySelectorAll('[data-account-tab]').forEach(button => button.classList.toggle('active', button.dataset.accountTab === tab));
+            document.getElementById('account-clients-panel').hidden = tab !== 'clients';
+            document.getElementById('account-history-panel').hidden = tab !== 'history';
+            if (doRender && tab === 'history') this.renderHistory();
+        },
+
+        saveReadings() {
+            localStorage.setItem('tarot_readings', JSON.stringify(this.state.readings.slice(0, 80)));
+        },
+
+        saveCurrentReading(snapshot) {
+            if (!snapshot) return;
+            const entry = {
+                ...snapshot,
+                id: `reading-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                createdAt: new Date().toISOString(),
+                favorite: false,
+                note: '',
+                tags: [snapshot.theme, snapshot.client?.name].filter(Boolean)
+            };
+            this.state.readings.unshift(entry);
+            this.state.readings = this.state.readings.slice(0, 80);
+            this.saveReadings();
+            this.renderHistory();
+        },
+
+        renderHistory() {
+            const list = document.getElementById('history-list');
+            if (!list) return;
+            const t = this.translations[this.state.lang];
+            const query = (document.getElementById('history-search-input')?.value || '').trim().toLowerCase();
+            const readings = this.state.readings.filter(entry => {
+                const haystack = [
+                    entry.question, entry.spreadType, entry.theme, entry.client?.name,
+                    ...(entry.cards || []).map(card => `${card.position} ${card.name}`),
+                    ...(entry.tags || [])
+                ].join(' ').toLowerCase();
+                return !query || haystack.includes(query);
+            });
+
+            if (!this.state.account) {
+                list.innerHTML = `<div class="client-empty">${this.escapeHTML(t.account_local_note)}</div>`;
+                return;
+            }
+            if (!readings.length) {
+                list.innerHTML = `<div class="client-empty">${this.escapeHTML(t.history_empty)}</div>`;
+                return;
+            }
+
+            list.innerHTML = readings.map(entry => {
+                const date = new Date(entry.createdAt).toLocaleString(this.state.lang === 'ua' ? 'uk-UA' : 'ru-RU');
+                const cards = (entry.cards || []).map(card => card.name + (card.isReversed ? ' ↻' : '')).join(', ');
+                const tags = (entry.tags || []).filter(Boolean).join(', ');
+                return `
+                    <div class="history-card">
+                        <div class="history-card-head">
+                            <div>
+                                <div class="history-title">${entry.favorite ? '★ ' : ''}${this.escapeHTML(entry.spreadType || t.result_modal_title)}</div>
+                                <div class="history-meta">${this.escapeHTML(date)} · ${this.escapeHTML(entry.theme || '')}${entry.client?.name ? ` · ${this.escapeHTML(entry.client.name)}` : ''}</div>
+                            </div>
+                        </div>
+                        <div class="history-meta">${this.escapeHTML(entry.question || t.reading_no_question)}</div>
+                        <div class="history-meta">${this.escapeHTML(cards)}</div>
+                        ${entry.note ? `<div class="history-note">${this.escapeHTML(entry.note)}</div>` : ''}
+                        ${tags ? `<div class="history-tags"># ${this.escapeHTML(tags).replace(/, /g, ' #')}</div>` : ''}
+                        <div class="history-actions">
+                            <button class="history-action" data-history-action="open" data-history-id="${entry.id}">${this.escapeHTML(t.history_open)}</button>
+                            <button class="history-action" data-history-action="favorite" data-history-id="${entry.id}">${this.escapeHTML(entry.favorite ? t.history_unfavorite : t.history_favorite)}</button>
+                            <button class="history-action" data-history-action="note" data-history-id="${entry.id}">${this.escapeHTML(t.history_note_btn)}</button>
+                            <button class="history-action" data-history-action="tags" data-history-id="${entry.id}">${this.escapeHTML(t.history_tags_btn)}</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            this.renderHistoryStats();
+        },
+
+        handleHistoryAction(action, id) {
+            const entry = this.state.readings.find(item => item.id === id);
+            if (!entry) return;
+            if (action === 'open') {
+                this._lastReadingSnapshot = entry;
+                this.openResultModal();
+            } else if (action === 'favorite') {
+                entry.favorite = !entry.favorite;
+            } else if (action === 'note') {
+                entry.note = prompt(this.translations[this.state.lang].history_note_prompt, entry.note || '') || '';
+            } else if (action === 'tags') {
+                const value = prompt(this.translations[this.state.lang].history_tags_prompt, (entry.tags || []).join(', '));
+                if (value !== null) entry.tags = value.split(',').map(tag => tag.trim()).filter(Boolean);
+            }
+            this.saveReadings();
+            this.renderHistory();
+        },
+
+        exportHistory() {
+            const data = JSON.stringify(this.state.readings, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'tarot-history.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        },
+
+        toggleHistoryStats() {
+            const stats = document.getElementById('history-stats');
+            if (!stats) return;
+            stats.style.display = stats.style.display === 'none' ? 'block' : 'none';
+            this.renderHistoryStats();
+        },
+
+        renderHistoryStats() {
+            const stats = document.getElementById('history-stats');
+            if (!stats || stats.style.display === 'none') return;
+            const allCards = this.state.readings.flatMap(entry => entry.cards || []);
+            const reversed = allCards.filter(card => card.isReversed).length;
+            const counts = allCards.reduce((acc, card) => {
+                acc[card.name] = (acc[card.name] || 0) + 1;
+                return acc;
+            }, {});
+            const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([name, count]) => `${name}: ${count}`).join(' · ');
+            const percent = allCards.length ? Math.round((reversed / allCards.length) * 100) : 0;
+            stats.textContent = `${allCards.length} cards · ${percent}% reversed${top ? ' · ' + top : ''}`;
         },
 
         saveClients() {
@@ -1614,6 +2166,115 @@
             }).join('');
         },
 
+        renderReadingOptions() {
+            const t = this.translations[this.state.lang];
+            const fill = (id, options, value) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.innerHTML = options.map(opt => `<option value="${opt.value}">${this.escapeHTML(t[opt.label])}</option>`).join('');
+                el.value = value;
+            };
+            fill('tone-select', [
+                { value: 'soft', label: 'tone_soft' }, { value: 'honest', label: 'tone_honest' },
+                { value: 'short', label: 'tone_short' }, { value: 'deep', label: 'tone_deep' },
+                { value: 'practical', label: 'tone_practical' }
+            ], this.state.answerTone);
+            fill('length-select', [
+                { value: 'short', label: 'length_short' }, { value: 'standard', label: 'length_standard' },
+                { value: 'detailed', label: 'length_detailed' }
+            ], this.state.answerLength);
+            fill('focus-select', [
+                { value: 'feelings', label: 'focus_feelings' }, { value: 'actions', label: 'focus_actions' },
+                { value: 'risks', label: 'focus_risks' }, { value: 'advice', label: 'focus_advice' },
+                { value: 'forecast', label: 'focus_forecast' }
+            ], this.state.answerFocus);
+            fill('mood-before-select', [
+                { value: 'neutral', label: 'mood_neutral' }, { value: 'anxious', label: 'mood_anxious' },
+                { value: 'hopeful', label: 'mood_hopeful' }, { value: 'doubtful', label: 'mood_doubtful' },
+                { value: 'calm', label: 'mood_calm' }
+            ], this.state.moodBefore);
+            fill('reversal-mode-select', [
+                { value: 'on', label: 'reversals_on' }, { value: 'off', label: 'reversals_off' }
+            ], this.state.allowReversals ? 'on' : 'off');
+        },
+
+        handleReadingOptionChange(id, value) {
+            if (id === 'tone-select') {
+                this.state.answerTone = value;
+                localStorage.setItem('tarot_answer_tone', value);
+            } else if (id === 'length-select') {
+                this.state.answerLength = value;
+                localStorage.setItem('tarot_answer_length', value);
+            } else if (id === 'focus-select') {
+                this.state.answerFocus = value;
+                localStorage.setItem('tarot_answer_focus', value);
+            } else if (id === 'mood-before-select') {
+                this.state.moodBefore = value;
+                localStorage.setItem('tarot_mood_before', value);
+            } else if (id === 'reversal-mode-select') {
+                this.state.allowReversals = value !== 'off';
+                localStorage.setItem('tarot_allow_reversals', String(this.state.allowReversals));
+            }
+        },
+
+        renderQuestionTips() {
+            const box = document.getElementById('question-tips');
+            if (!box) return;
+            const isUa = this.state.lang === 'ua';
+            const tipsBySphere = {
+                love: isUa ? ['Що мені важливо зрозуміти про ці стосунки?', 'Який крок допоможе мені діяти чесно?'] : ['Что мне важно понять об этих отношениях?', 'Какой шаг поможет мне действовать честно?'],
+                career: isUa ? ['Який напрям роботи зараз найперспективніший?', 'Що заважає моєму професійному росту?'] : ['Какое направление работы сейчас перспективнее?', 'Что мешает моему профессиональному росту?'],
+                finance: isUa ? ['Яке рішення допоможе стабілізувати фінанси?', 'На який ризик варто звернути увагу?'] : ['Какое решение поможет стабилизировать финансы?', 'На какой риск стоит обратить внимание?'],
+                health: isUa ? ['Що підтримає моє відновлення найближчим часом?', 'Який ресурс допоможе мені берегти себе?'] : ['Что поддержит мое восстановление в ближайшее время?', 'Какой ресурс поможет мне беречь себя?'],
+                destiny: isUa ? ['Який урок зараз веде мене вперед?', 'На що мені варто спиратися у виборі шляху?'] : ['Какой урок сейчас ведет меня вперед?', 'На что мне стоит опираться в выборе пути?'],
+                general: isUa ? ['Що мені важливо побачити в цій ситуації?', 'Який наступний крок буде наймудрішим?'] : ['Что мне важно увидеть в этой ситуации?', 'Какой следующий шаг будет самым мудрым?']
+            };
+            box.innerHTML = (tipsBySphere[this.state.sphere] || tipsBySphere.general)
+                .map(tip => `<button type="button" class="question-tip" onclick="App.useQuestionTip('${this.escapeAttr(tip)}')">${this.escapeHTML(tip)}</button>`)
+                .join('');
+        },
+
+        useQuestionTip(tip) {
+            document.getElementById('question').value = tip;
+        },
+
+        getAllCardIds() {
+            const ids = [];
+            for (let i = 0; i < 22; i++) ids.push(`major_${i}`);
+            ['wands', 'cups', 'swords', 'pentacles'].forEach(suit => {
+                for (let i = 0; i < 14; i++) ids.push(`${suit}_${i}`);
+            });
+            return ids;
+        },
+
+        showDailyCard() {
+            const today = new Date();
+            const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+            const ids = this.getAllCardIds();
+            const id = ids[seed % ids.length];
+            const name = this.translateCardName(id);
+            const result = document.getElementById('daily-card-result');
+            result.classList.remove('shuffle-pulse');
+            void result.offsetWidth;
+            result.classList.add('shuffle-pulse');
+            result.innerHTML = `<strong class="text-gold">${this.escapeHTML(name)}</strong><div>${this.state.lang === 'ua' ? 'Фокус дня: помітьте головний знак і зробіть один спокійний крок.' : 'Фокус дня: заметьте главный знак и сделайте один спокойный шаг.'}</div>`;
+        },
+
+        quickReading() {
+            const input = document.getElementById('quick-question-input');
+            const question = input.value.trim();
+            if (question) document.getElementById('question').value = question;
+            this.handleSelection('spread', 'yes-no', true);
+            const ids = this.getAllCardIds();
+            const available = ids.filter(id => !Object.values(this.state.selectedCards).some(card => card.id === id));
+            const randomId = available[Math.floor(Math.random() * available.length)];
+            this.state.selectedCards = {};
+            this.state.activePositionIndex = 0;
+            this.state.previewReversed = this.state.allowReversals && Math.random() < 0.35;
+            this.selectCardFromCarousel(randomId, false);
+            this.getSpreadInterpretation();
+        },
+
         async refineQuestion() {
             const question = document.getElementById('question').value.trim();
             if (!question) return;
@@ -1643,7 +2304,7 @@
         },
 
         async getSpreadInterpretation() {
-            const schema = this.data.spreads[this.state.spreadKey];
+            const schema = this.data.spreads[this.state.spreadKey] || this.data.spreads.cross;
             if (Object.keys(this.state.selectedCards).length < schema.cards) {
                 alert(this.translations[this.state.lang].alert_spread_not_filled);
                 return;
@@ -1661,6 +2322,11 @@
                 cards: this.state.selectedCards,
                 positions: this.data.spreads[this.state.spreadKey].positions[this.state.lang],
                 targetPerson: this.state.target === 'partner' ? (document.getElementById('other-person-input')?.value.trim() || null) : null,
+                tone: this.state.answerTone,
+                answerLength: this.state.answerLength,
+                focus: this.state.answerFocus,
+                moodBefore: this.state.moodBefore,
+                allowReversals: this.state.allowReversals,
                 client: activeClient ? {
                     name: activeClient.name,
                     contact: activeClient.contact,
@@ -1687,6 +2353,7 @@
                 this._lastInterpretation = text;
                 this._lastReadingSnapshot = this.buildReadingSnapshot(requestData, text);
                 this.renderReadingPreview(this._lastReadingSnapshot);
+                if (this.state.account) this.saveCurrentReading(this._lastReadingSnapshot);
                 document.getElementById('ai-response-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             } catch (error) {
                 const label = this.state.lang === 'ua' ? 'Критична помилка' : 'Критическая ошибка';
@@ -1701,6 +2368,10 @@
             return String(value ?? '').replace(/[&<>"']/g, ch => ({
                 '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'
             }[ch]));
+        },
+
+        escapeAttr(value) {
+            return String(value ?? '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, ' ');
         },
 
         formatAIText(text) {
@@ -1778,6 +2449,10 @@
                 spreadType: requestData.spreadType,
                 theme: requestData.theme,
                 client: requestData.client || null,
+                tone: requestData.tone,
+                answerLength: requestData.answerLength,
+                focus: requestData.focus,
+                moodBefore: requestData.moodBefore,
                 cards,
                 interpretation
             };
@@ -1889,6 +2564,11 @@
                 cardLines.join('\n'),
                 snapshot.interpretation
             ].filter(Boolean).join('\n\n');
+        },
+
+        exportCurrentResult() {
+            if (!this._lastReadingSnapshot) return;
+            window.print();
         },
 
         async copyResultToClipboard() {
