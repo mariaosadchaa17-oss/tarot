@@ -365,9 +365,25 @@
         .result-modal-title { color: var(--text-gold); font-weight: 900; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.08em; }
         .result-modal-close { width: 2.2rem; height: 2.2rem; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-gold); background: rgba(255,255,255,0.05); font-weight: 900; }
         .result-modal-body { padding: 1rem; overflow-y: auto; }
-        .result-modal-cards { display: flex; gap: 0.55rem; overflow-x: auto; padding-bottom: 0.75rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
-        .result-modal-card-chip { flex: 0 0 auto; max-width: 170px; border: 1px solid var(--border-color); border-radius: 999px; padding: 0.45rem 0.7rem; background: rgba(255,255,255,0.05); font-size: 0.75rem; color: rgba(255,255,255,0.86); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .result-modal-text { color: rgba(255,255,255,0.92); line-height: 1.75; font-size: 0.98rem; }
+        .result-summary { border: 1px solid var(--border-color); border-radius: 1rem; padding: 0.9rem; background: linear-gradient(135deg, rgba(157,78,223,0.16), rgba(243,198,111,0.07)); margin-bottom: 0.9rem; }
+        .result-summary-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.75rem; }
+        .result-summary-kicker { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-purple); font-weight: 900; }
+        .result-summary-title { margin-top: 0.2rem; color: var(--text-gold); font-size: 1.05rem; font-weight: 900; line-height: 1.2; }
+        .result-summary-count { flex: 0 0 auto; min-width: 2.35rem; height: 2.35rem; border-radius: 999px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,0.18); background: rgba(0,0,0,0.24); color: var(--text-gold); font-weight: 900; }
+        .result-modal-cards { display: grid; grid-template-columns: repeat(1, minmax(0, 1fr)); gap: 0.55rem; margin: 0.75rem 0 1rem; }
+        @media (min-width: 640px) { .result-modal-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        .result-modal-card-chip { min-width: 0; border: 1px solid var(--border-color); border-radius: 0.85rem; padding: 0.6rem 0.7rem; background: rgba(255,255,255,0.045); display: grid; grid-template-columns: auto 1fr; gap: 0.55rem; align-items: center; }
+        .result-card-number { width: 1.7rem; height: 1.7rem; border-radius: 999px; display: grid; place-items: center; background: rgba(243,198,111,0.12); color: var(--text-gold); font-size: 0.72rem; font-weight: 900; }
+        .result-card-position { color: var(--text-purple); font-size: 0.66rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .result-card-name { color: rgba(255,255,255,0.9); font-size: 0.82rem; font-weight: 800; line-height: 1.2; overflow-wrap: break-word; word-break: break-word; }
+        .result-modal-text { display: grid; gap: 0.8rem; color: rgba(255,255,255,0.92); line-height: 1.7; font-size: 0.95rem; }
+        .interpretation-section { border: 1px solid var(--border-color); border-radius: 1rem; padding: 0.95rem; background: rgba(255,255,255,0.04); box-shadow: inset 0 0 18px rgba(0,0,0,0.14); }
+        .interpretation-section-title { color: var(--text-gold); font-weight: 900; line-height: 1.25; margin-bottom: 0.7rem; }
+        .interpretation-section-body { display: grid; gap: 0.55rem; }
+        .interpretation-paragraph { margin: 0; }
+        .interpretation-label { color: var(--text-purple); font-weight: 900; }
+        .interpretation-section strong { color: var(--text-gold); font-weight: 900; }
+        .interpretation-section em { color: rgba(255,255,255,0.98); font-style: normal; }
         .result-modal-footer { padding: 0.9rem 1.1rem; border-top: 1px solid var(--border-color); display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: flex-end; }
         .body-modal-open { overflow: hidden; }
 
@@ -381,7 +397,7 @@
             <div class="flex items-center gap-4">
                 <!-- Theme Switcher -->
                 <div id="theme-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer">
-                    <span class="text-gray-400">🔮 Neon</span>
+                    <span class="text-gray-400">✨ Neon</span>
                     <div class="w-12 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300">
                         <div id="theme-pill" class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300"></div>
                     </div>
@@ -443,7 +459,7 @@
                 <div class="mb-4">
                     <div class="flex items-center justify-between mb-2">
                         <label class="block text-sm font-bold text-purple" data-translate-key="label_question">Ваше питання</label>
-                        <button id="refine-question-btn" class="text-xs text-gold hover:brightness-125 transition" title="Сформулювати питання правильно">✨🪄</button>
+                        <button id="refine-question-btn" class="text-xs text-gold hover:brightness-125 transition" title="Сформулювати питання правильно">✍️</button>
                     </div>
                     <textarea id="question" class="w-full bg-mystic-900 border border-color rounded-lg px-3 py-2 text-sm text-white" rows="2" data-placeholder-ua="Ваше питання (необов'язково)" data-placeholder-ru="Ваш вопрос (необязательно)"></textarea>
                 </div>
@@ -563,7 +579,7 @@
                 recommendation_work: "💡 Аналізуємо перспективи та варіанти розвитку.",
                 recommendation_health: "💡 Для швидкої оцінки стану достатньо однієї карти.",
                 recommendation_destiny: "💡 Глибокий розклад 'Шлях' покаже ваш вектор.",
-                suit_major: "🔮 Старші Аркани", suit_wands: "🪄 Жезли", suit_cups: "🌙 Кубки", suit_swords: "👁️ Мечі", suit_pentacles: "🪬 Пентаклі",
+                suit_major: "✨ Старші Аркани", suit_wands: "🪄 Жезли", suit_cups: "🏆 Кубки", suit_swords: "⚔️ Мечі", suit_pentacles: "🪙 Пентаклі",
                 moon_phases: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'],
                 loading_text: "Зчитуємо інформацію з простору...",
                 btn_reverse: "⤾ Перевернути",
@@ -616,7 +632,7 @@
                 recommendation_work: "💡 Анализируем перспективы и варианты развития.",
                 recommendation_health: "💡 Для быстрой оценки состояния достаточно одной карты.",
                 recommendation_destiny: "💡 Глубокий расклад 'Путь' покажет ваш вектор.",
-                suit_major: "🔮 Старшие Арканы", suit_wands: "🪄 Жезлы", suit_cups: "🌙 Кубки", suit_swords: "👁️ Мечи", suit_pentacles: "🪬 Пентакли",
+                suit_major: "✨ Старшие Арканы", suit_wands: "🪄 Жезлы", suit_cups: "🏆 Кубки", suit_swords: "⚔️ Мечи", suit_pentacles: "🪙 Пентакли",
                 moon_phases: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна'],
                 loading_text: "Считываем информацию из пространства...",
                 btn_reverse: "⤾ Перевернуть",
@@ -800,9 +816,9 @@
 
         suitTheme: {
             wands:     { c1: '#3a1d0d', c2: '#c2691d', accent: '#ffb066', icon: '🪄' },
-            cups:      { c1: '#0d2438', c2: '#1d7fb0', accent: '#7fd4ff', icon: '🌙' },
-            swords:    { c1: '#1c1f26', c2: '#5b6b7a', accent: '#cfe3ef', icon: '👁️' },
-            pentacles: { c1: '#241b06', c2: '#a87f23', accent: '#ffd76b', icon: '🪬' }
+            cups:      { c1: '#0d2438', c2: '#1d7fb0', accent: '#7fd4ff', icon: '🏆' },
+            swords:    { c1: '#1c1f26', c2: '#5b6b7a', accent: '#cfe3ef', icon: '⚔️' },
+            pentacles: { c1: '#241b06', c2: '#a87f23', accent: '#ffd76b', icon: '🪙' }
         },
 
         courtSymbols: ['🃏', '✨', '🌙', '👑'], // page, knight, queen, king
@@ -1018,11 +1034,11 @@
 
         renderSuitSelector() {
             const suits = [
-                { key: 'major', icon: '🔮', name: this.translations[this.state.lang].suit_major },
+                { key: 'major', icon: '✨', name: this.translations[this.state.lang].suit_major },
                 { key: 'wands', icon: '🪄', name: this.translations[this.state.lang].suit_wands },
-                { key: 'cups', icon: '🌙', name: this.translations[this.state.lang].suit_cups },
-                { key: 'swords', icon: '👁️', name: this.translations[this.state.lang].suit_swords },
-                { key: 'pentacles', icon: '🪬', name: this.translations[this.state.lang].suit_pentacles }
+                { key: 'cups', icon: '🏆', name: this.translations[this.state.lang].suit_cups },
+                { key: 'swords', icon: '⚔️', name: this.translations[this.state.lang].suit_swords },
+                { key: 'pentacles', icon: '🪙', name: this.translations[this.state.lang].suit_pentacles }
             ];
 
             const container = document.getElementById('suit-grid');
@@ -1478,7 +1494,6 @@
 
         async handleAIRequest(requestData) {
             document.getElementById('loading-overlay').classList.add('active');
-            console.log("Данные для отправки:", JSON.stringify(requestData));
             try {
                 const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(requestData) });
                 const data = await response.json();
@@ -1511,7 +1526,51 @@
         },
 
         formatAIText(text) {
-            return this.escapeHTML(text).replace(/\n\n+/g, '<br><br>').replace(/\n/g, '<br>');
+            const escaped = this.escapeHTML(text || '').trim();
+            if (!escaped) return '';
+
+            const formatInline = value => value
+                .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+            const formatParagraph = value => {
+                const line = formatInline(value.trim());
+                const emphasizedLabelMatch = line.match(/^<em>([^:<]{2,42}:)<\/em>\s*(.+)$/);
+                if (emphasizedLabelMatch) {
+                    return `<p class="interpretation-paragraph"><span class="interpretation-label">${emphasizedLabelMatch[1]}</span> ${emphasizedLabelMatch[2]}</p>`;
+                }
+                const labelMatch = line.match(/^([^:<]{2,42}):\s*(.+)$/);
+                if (labelMatch) {
+                    return `<p class="interpretation-paragraph"><span class="interpretation-label">${labelMatch[1]}:</span> ${labelMatch[2]}</p>`;
+                }
+                return `<p class="interpretation-paragraph">${line}</p>`;
+            };
+
+            return escaped
+                .split(/\n\s*\n+/)
+                .map(block => {
+                    const lines = block.split('\n').map(line => line.trim()).filter(Boolean);
+                    if (!lines.length) return '';
+
+                    const titleMatch = lines[0].match(/^\d+\.\s*(?:<strong>)?(.+?)(?:<\/strong>)?\s*$/);
+                    if (titleMatch) {
+                        const title = formatInline(titleMatch[1].replace(/\*\*/g, ''));
+                        const body = lines.slice(1).map(formatParagraph).join('');
+                        return `
+                            <section class="interpretation-section">
+                                <div class="interpretation-section-title">${title}</div>
+                                <div class="interpretation-section-body">${body}</div>
+                            </section>
+                        `;
+                    }
+
+                    return `
+                        <section class="interpretation-section">
+                            <div class="interpretation-section-body">${lines.map(formatParagraph).join('')}</div>
+                        </section>
+                    `;
+                })
+                .join('');
         },
 
         getOrientationLabel(isReversed) {
@@ -1592,16 +1651,29 @@
 
             titleEl.textContent = t.result_modal_title;
             const question = snapshot.question ? this.escapeHTML(snapshot.question) : this.escapeHTML(t.reading_no_question);
-            const chips = snapshot.cards.map(card => `
-                <div class="result-modal-card-chip" title="${this.escapeHTML(card.position)} — ${this.escapeHTML(card.name)}">
-                    ${this.escapeHTML(card.position)}: ${this.escapeHTML(card.name)}${card.isReversed ? ' ↻' : ''}
+            const chips = snapshot.cards.map((card, index) => `
+                <div class="result-modal-card-chip" title="${this.escapeHTML(card.position)} - ${this.escapeHTML(card.name)}">
+                    <div class="result-card-number">${index + 1}</div>
+                    <div>
+                        <div class="result-card-position">${this.escapeHTML(card.position)}</div>
+                        <div class="result-card-name">${this.escapeHTML(card.name)}${card.isReversed ? ' ↻' : ''}</div>
+                    </div>
                 </div>
             `).join('');
 
             bodyEl.innerHTML = `
-                <div class="reading-question-box">
-                    <div class="reading-question-label">${this.escapeHTML(t.reading_question_label)}</div>
-                    <div class="reading-question-text">${question}</div>
+                <div class="result-summary">
+                    <div class="result-summary-top">
+                        <div>
+                            <div class="result-summary-kicker">${this.escapeHTML(snapshot.theme || snapshot.spreadType || '')}</div>
+                            <div class="result-summary-title">${this.escapeHTML(snapshot.spreadType || t.result_modal_title)}</div>
+                        </div>
+                        <div class="result-summary-count">${snapshot.cards.length}</div>
+                    </div>
+                    <div class="reading-question-box">
+                        <div class="reading-question-label">${this.escapeHTML(t.reading_question_label)}</div>
+                        <div class="reading-question-text">${question}</div>
+                    </div>
                 </div>
                 <div class="result-modal-cards">${chips}</div>
                 <div class="result-modal-text">${this.formatAIText(snapshot.interpretation)}</div>
