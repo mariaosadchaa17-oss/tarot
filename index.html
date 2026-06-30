@@ -10,6 +10,8 @@
             --bg-main: #06020c; --bg-surface: #100a1f; --border-color: #342956;
             --primary-glow-color: rgba(157, 78, 223, 0.5); --secondary-glow-color: rgba(157, 78, 223, 0.3);
             --text-gold: #f3c66f; --text-purple: #9d4edf;
+            --text-main: #f6f0ff; --text-muted: rgba(246,240,255,0.74); --field-bg: rgba(16,10,31,0.88);
+            --panel-soft: rgba(255,255,255,0.06); --panel-strong: rgba(0,0,0,0.24);
         }
         body.theme-psychologist {
             --primary-glow-color: rgba(20, 184, 166, 0.5); --secondary-glow-color: rgba(20, 184, 166, 0.2);
@@ -20,11 +22,18 @@
             --primary-glow-color: rgba(168, 85, 247, 0.5); --secondary-glow-color: rgba(217, 70, 239, 0.3);
             --text-gold: #e9d5ff; --text-purple: #c084fc;
         }
+        body.theme-light {
+            --bg-main: #f7f1e8; --bg-surface: #fffaf2; --border-color: #d8c2a4;
+            --primary-glow-color: rgba(185, 125, 63, 0.26); --secondary-glow-color: rgba(113, 75, 45, 0.14);
+            --text-gold: #8f5f24; --text-purple: #6d4c91;
+            --text-main: #241a2f; --text-muted: rgba(36,26,47,0.72); --field-bg: rgba(255,250,242,0.94);
+            --panel-soft: rgba(109,76,145,0.08); --panel-strong: rgba(255,255,255,0.62);
+        }
         html, body { height: 100%; }
         body {
             background-color: var(--bg-main);
             background-image: radial-gradient(ellipse at top, var(--bg-surface), var(--bg-main) 70%);
-            color: #e2e8f0; font-family: system-ui, -apple-system, sans-serif;
+            color: var(--text-main); font-family: system-ui, -apple-system, sans-serif; line-height: 1.55;
             transition: all 0.5s ease;
         }
 
@@ -33,15 +42,25 @@
         .text-purple { color: var(--text-purple); transition: color 0.5s; }
         .border-color { border-color: var(--border-color); transition: border-color 0.5s; }
         .bg-surface { background-color: var(--bg-surface); transition: background-color 0.5s; }
-        .bg-mystic-900 { background-color: rgba(16, 10, 31, 0.8); }
+        .bg-mystic-900 { background-color: var(--field-bg); }
+        body.theme-light .bg-purple-600 { background-color: #7b5ba7 !important; }
+        body.theme-light .text-white,
+        body.theme-light .text-gray-200,
+        body.theme-light .text-gray-300,
+        body.theme-light .text-gray-400 { color: var(--text-main) !important; }
+        body.theme-light input,
+        body.theme-light textarea,
+        body.theme-light select { color: var(--text-main); }
+        body.theme-light ::placeholder { color: rgba(36,26,47,0.5); }
 
-        .control-card { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.5rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60px; }
-        .control-card span { font-size: 0.8rem; line-height: 1.2; overflow-wrap: break-word; word-break: break-word; }
+        .control-card { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.65rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 66px; color: var(--text-main); }
+        .control-card span { font-size: 0.82rem; line-height: 1.3; overflow-wrap: break-word; word-break: break-word; }
         .control-card:hover { border-color: var(--text-purple); }
-        .control-card.active { border-color: var(--text-gold); background-color: rgba(243, 198, 111, 0.1); box-shadow: 0 0 10px var(--primary-glow-color); }
+        .control-card.active { border-color: var(--text-gold); background-color: var(--panel-soft); box-shadow: 0 0 10px var(--primary-glow-color); }
         .settings-panel { background-color: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem; text-align: left; }
-        .deck-selector-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        @media (min-width: 768px) { .deck-selector-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+        .deck-selector-grid { grid-template-columns: 1fr; }
+        @media (min-width: 640px) { .deck-selector-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        .deck-card { min-height: 124px; padding: 0.85rem; gap: 0.45rem; }
         .card-back-option { min-height: 92px; gap: 0.35rem; }
         .card-back-thumb { width: 38px; height: 58px; object-fit: cover; border-radius: 0.35rem; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 0 8px rgba(0,0,0,0.4); }
 
@@ -242,17 +261,17 @@
         .card-select-wrapper {
             margin-top: 1rem;
             padding: 1rem;
-            background: rgba(0, 0, 0, 0.3);
+            background: var(--panel-strong);
             border-radius: 0.75rem;
             border: 1px solid var(--border-color);
         }
 
-        /* HORIZONTAL CARD CAROUSEL */
+        /* Card picker: two readable rows instead of a long horizontal scroll */
         .card-carousel {
-            display: flex;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            gap: 0.75rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            overflow-x: hidden;
+            gap: 0.65rem;
             padding: 1rem 0.5rem;
             margin-top: 1rem;
         }
@@ -275,8 +294,6 @@
         }
 
         .card-item {
-            min-width: 108px;
-            max-width: 108px;
             min-height: 64px;
             background: var(--bg-surface);
             border: 2px solid var(--border-color);
@@ -285,10 +302,10 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
-            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--text-main);
         }
         .card-item:hover {
             border-color: var(--text-purple);
@@ -303,7 +320,7 @@
         .card-item-name {
             font-size: 0.75rem;
             font-weight: 600;
-            color: white;
+            color: var(--text-main);
             line-height: 1.25;
             overflow-wrap: break-word;
             word-break: break-word;
@@ -336,7 +353,7 @@
         .client-panel { margin-top: 1rem; text-align: left; border: 1px solid var(--border-color); border-radius: 1rem; background: rgba(255,255,255,0.035); padding: 1rem; }
         .client-form { display: grid; grid-template-columns: 1fr; gap: 0.65rem; }
         @media (min-width: 768px) { .client-form { grid-template-columns: 1fr 1fr auto; align-items: end; } .client-form-notes { grid-column: 1 / 3; } }
-        .client-input { width: 100%; background: rgba(16,10,31,0.82); border: 1px solid var(--border-color); border-radius: 0.7rem; padding: 0.65rem 0.75rem; color: white; font-size: 0.85rem; }
+        .client-input { width: 100%; background: var(--field-bg); border: 1px solid var(--border-color); border-radius: 0.7rem; padding: 0.65rem 0.75rem; color: var(--text-main); font-size: 0.85rem; }
         .client-add-btn { border-radius: 0.7rem; padding: 0.7rem 0.9rem; background: rgba(157,78,223,0.28); color: var(--text-gold); border: 1px solid var(--border-color); font-weight: 800; font-size: 0.82rem; }
         .client-list { display: grid; grid-template-columns: 1fr; gap: 0.55rem; margin-top: 0.9rem; }
         @media (min-width: 768px) { .client-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -344,23 +361,23 @@
         .client-card:hover, .client-card.active { border-color: var(--text-gold); box-shadow: 0 0 12px var(--secondary-glow-color); }
         .client-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.55rem; }
         .client-name { color: var(--text-gold); font-weight: 900; line-height: 1.2; overflow-wrap: break-word; word-break: break-word; }
-        .client-contact, .client-notes { color: rgba(255,255,255,0.7); font-size: 0.76rem; line-height: 1.35; margin-top: 0.25rem; overflow-wrap: break-word; word-break: break-word; }
+        .client-contact, .client-notes { color: var(--text-muted); font-size: 0.76rem; line-height: 1.35; margin-top: 0.25rem; overflow-wrap: break-word; word-break: break-word; }
         .client-delete-btn { flex: 0 0 auto; color: #f87171; font-size: 0.82rem; padding: 0 0.2rem; }
-        .client-empty { color: rgba(255,255,255,0.62); font-size: 0.82rem; text-align: center; padding: 0.75rem; border: 1px dashed var(--border-color); border-radius: 0.8rem; }
+        .client-empty { color: var(--text-muted); font-size: 0.82rem; text-align: center; padding: 0.75rem; border: 1px dashed var(--border-color); border-radius: 0.8rem; }
         .active-client-pill { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.65rem; padding: 0.4rem 0.65rem; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-gold); background: rgba(255,255,255,0.045); font-size: 0.78rem; font-weight: 800; }
         .account-panel { margin-top: 1rem; text-align: left; border: 1px solid var(--border-color); border-radius: 1rem; background: rgba(255,255,255,0.035); padding: 1rem; }
         .auth-mode-tabs { display: inline-flex; gap: 0.35rem; padding: 0.25rem; margin-bottom: 0.75rem; border: 1px solid var(--border-color); border-radius: 0.8rem; background: rgba(16,10,31,0.7); }
-        .auth-mode-btn { border: 0; border-radius: 0.55rem; padding: 0.45rem 0.8rem; color: rgba(255,255,255,0.75); background: transparent; font-size: 0.82rem; font-weight: 700; transition: all 0.2s ease; }
+        .auth-mode-btn { border: 0; border-radius: 0.55rem; padding: 0.45rem 0.8rem; color: var(--text-muted); background: transparent; font-size: 0.82rem; font-weight: 700; transition: all 0.2s ease; }
         .auth-mode-btn.active { color: white; background: linear-gradient(135deg, var(--purple), var(--gold)); box-shadow: 0 8px 18px rgba(123, 44, 191, 0.26); }
         .auth-grid { display: grid; grid-template-columns: 1fr; gap: 0.65rem; }
-        .auth-message { margin-top: 0.65rem; min-height: 1.1rem; color: rgba(255,255,255,0.72); font-size: 0.78rem; }
+        .auth-message { margin-top: 0.65rem; min-height: 1.1rem; color: var(--text-muted); font-size: 0.78rem; }
         .auth-message.error { color: #ffb4c8; }
         @media (min-width: 768px) { .auth-grid { grid-template-columns: 1fr 1fr auto; align-items: end; } .auth-grid.register-mode { grid-template-columns: 1fr 1fr 1fr auto; } }
         .account-dashboard-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem; margin-bottom: 0.9rem; }
         .account-title { color: var(--text-gold); font-weight: 900; line-height: 1.2; }
-        .account-subtitle { color: rgba(255,255,255,0.68); font-size: 0.78rem; margin-top: 0.18rem; }
+        .account-subtitle { color: var(--text-muted); font-size: 0.78rem; margin-top: 0.18rem; }
         .account-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.9rem; }
-        .account-tab { border: 1px solid var(--border-color); border-radius: 999px; padding: 0.48rem 0.8rem; color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.04); font-size: 0.78rem; font-weight: 800; }
+        .account-tab { border: 1px solid var(--border-color); border-radius: 999px; padding: 0.48rem 0.8rem; color: var(--text-main); background: var(--panel-soft); font-size: 0.78rem; font-weight: 800; }
         .account-tab.active { color: var(--text-gold); border-color: var(--text-gold); box-shadow: 0 0 12px var(--secondary-glow-color); }
         .account-view[hidden], .account-tab-panel[hidden] { display: none; }
         .history-toolbar { display: grid; grid-template-columns: 1fr; gap: 0.65rem; margin-bottom: 0.8rem; }
@@ -369,17 +386,17 @@
         .history-card { border: 1px solid var(--border-color); border-radius: 0.9rem; background: rgba(0,0,0,0.18); padding: 0.8rem; }
         .history-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.65rem; }
         .history-title { color: var(--text-gold); font-weight: 900; line-height: 1.25; }
-        .history-meta, .history-note, .history-tags { color: rgba(255,255,255,0.68); font-size: 0.76rem; line-height: 1.35; margin-top: 0.3rem; }
+        .history-meta, .history-note, .history-tags { color: var(--text-muted); font-size: 0.76rem; line-height: 1.35; margin-top: 0.3rem; }
         .history-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.65rem; }
         .history-action { border: 1px solid var(--border-color); border-radius: 999px; padding: 0.35rem 0.6rem; color: var(--text-gold); background: rgba(255,255,255,0.045); font-size: 0.72rem; font-weight: 800; }
         .reading-options-grid { display: grid; grid-template-columns: 1fr; gap: 0.65rem; margin-top: 0.85rem; }
         @media (min-width: 768px) { .reading-options-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-        .option-select { width: 100%; background: rgba(16,10,31,0.82); border: 1px solid var(--border-color); border-radius: 0.7rem; padding: 0.62rem 0.7rem; color: white; font-size: 0.84rem; }
+        .option-select { width: 100%; background: var(--field-bg); border: 1px solid var(--border-color); border-radius: 0.7rem; padding: 0.62rem 0.7rem; color: var(--text-main); font-size: 0.84rem; }
         .question-tips { margin-top: 0.65rem; display: grid; gap: 0.45rem; }
-        .question-tip { border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.55rem 0.65rem; background: rgba(255,255,255,0.035); color: rgba(255,255,255,0.8); font-size: 0.78rem; text-align: left; }
+        .question-tip { border: 1px solid var(--border-color); border-radius: 0.75rem; padding: 0.55rem 0.65rem; background: var(--panel-soft); color: var(--text-main); font-size: 0.78rem; text-align: left; }
         .quick-panel, .daily-panel { margin-top: 0.85rem; border: 1px solid var(--border-color); border-radius: 0.95rem; padding: 0.85rem; background: rgba(255,255,255,0.035); }
-        .deck-preview-strip { display: flex; gap: 0.25rem; justify-content: center; margin-top: 0.35rem; }
-        .deck-preview-strip img { width: 24px; height: 36px; object-fit: cover; border-radius: 0.25rem; border: 1px solid rgba(255,255,255,0.25); }
+        .deck-preview-strip { width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.35rem; justify-items: center; margin-top: 0.35rem; overflow: hidden; }
+        .deck-preview-strip img { width: min(100%, 38px); height: 56px; object-fit: cover; border-radius: 0.3rem; border: 1px solid rgba(255,255,255,0.25); }
         .shuffle-pulse { animation: shuffle-pulse 0.42s ease; }
         @keyframes shuffle-pulse { 0% { transform: translateY(0) rotate(0deg); } 40% { transform: translateY(-5px) rotate(-1deg); } 75% { transform: translateY(3px) rotate(1deg); } 100% { transform: translateY(0) rotate(0deg); } }
 
@@ -446,11 +463,11 @@
             <div class="flex items-center gap-4">
                 <!-- Theme Switcher -->
                 <div id="theme-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer">
-                    <span class="text-gray-400">✨ Neon</span>
-                    <div class="w-12 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300">
+                    <span id="theme-label-left" class="text-gray-400">✨ Neon</span>
+                    <div class="w-16 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300">
                         <div id="theme-pill" class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300"></div>
                     </div>
-                    <span class="text-white">🖤 Witchy</span>
+                    <span id="theme-label-right" class="text-white">🌙 Witchy</span>
                 </div>
                 <!-- Lang Switcher -->
                 <div id="lang-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">RU</span><div class="w-10 h-5 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="lang-pill" class="w-4 h-4 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">UA</span></div>
@@ -626,7 +643,13 @@
         </div>
         <div class="lg:col-span-5 space-y-6">
             <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
-                <div class="flex items-center justify-between mb-4"><h2 class="text-lg font-semibold text-gold" data-translate-key="section_title_schema"></h2><button id="reset-btn" class="text-xs text-red-400 hover:text-red-300 transition">🗑 <span data-translate-key="btn_reset"></span></button></div>
+                <div class="flex items-center justify-between gap-3 mb-4">
+                    <h2 class="text-lg font-semibold text-gold" data-translate-key="section_title_schema"></h2>
+                    <div class="flex items-center gap-3">
+                        <button id="random-btn" class="text-xs text-purple hover:text-gold transition">🎲 <span data-translate-key="btn_random_cards"></span></button>
+                        <button id="reset-btn" class="text-xs text-red-400 hover:text-red-300 transition">🗑 <span data-translate-key="btn_reset"></span></button>
+                    </div>
+                </div>
                 <div id="spread-schema-container" class="schema-container"></div>
             </div>
             <div id="ai-response-container" class="bg-surface p-5 rounded-2xl border border-purple-500/30 shadow-2xl neon-glow">
@@ -759,7 +782,7 @@
                 constructor_step1: "Крок 1: Оберіть групу/масть",
                 constructor_step2: "Крок 2: Оберіть карту",
                 constructor_reversed: "🔄 Зробити перевернутою",
-                section_title_schema: "🌙 4. Схема розкладу", btn_reset: "Скинути",
+                section_title_schema: "🌙 4. Схема розкладу", btn_reset: "Скинути", btn_random_cards: "Випадкові карти",
                 section_title_interpretation: "✨ 5. Тлумачення від ШІ", btn_get_interpretation: "Отримати тлумачення",
                 placeholder_ai_response: "Оберіть дію...",
                 hint_select_card_for: "👉 Оберіть карту для позиції:", hint_spread_filled: "✅ Розклад повністю заповнено!",
@@ -770,6 +793,8 @@
                 recommendation_work: "💡 Аналізуємо перспективи та варіанти розвитку.",
                 recommendation_health: "💡 Для швидкої оцінки стану достатньо однієї карти.",
                 recommendation_destiny: "💡 Глибокий розклад 'Шлях' покаже ваш вектор.",
+                recommendation_emotional: "💡 Сфокусуємося на внутрішньому стані, ресурсах та м'якому кроці вперед.",
+                recommendation_change: "💡 Добре підійде розклад на варіанти, ризики та наймудріший наступний крок.",
                 suit_major: "✨ Старші Аркани", suit_wands: "🪄 Жезли", suit_cups: "🏆 Кубки", suit_swords: "⚔️ Мечі", suit_pentacles: "🪙 Пентаклі",
                 moon_phases: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'],
                 loading_text: "Зчитуємо інформацію з простору...",
@@ -875,7 +900,7 @@
                 constructor_step1: "Шаг 1: Выберите группу/масть",
                 constructor_step2: "Шаг 2: Выберите карту",
                 constructor_reversed: "🔄 Сделать перевернутой",
-                section_title_schema: "🌙 4. Схема расклада", btn_reset: "Сбросить",
+                section_title_schema: "🌙 4. Схема расклада", btn_reset: "Сбросить", btn_random_cards: "Случайные карты",
                 section_title_interpretation: "✨ 5. Толкование от ИИ", btn_get_interpretation: "Получить толкование",
                 placeholder_ai_response: "Выберите действие...",
                 hint_select_card_for: "👉 Выберите карту для позиции:", hint_spread_filled: "✅ Расклад полностью заполнен!",
@@ -886,6 +911,8 @@
                 recommendation_work: "💡 Анализируем перспективы и варианты развития.",
                 recommendation_health: "💡 Для быстрой оценки состояния достаточно одной карты.",
                 recommendation_destiny: "💡 Глубокий расклад 'Путь' покажет ваш вектор.",
+                recommendation_emotional: "💡 Сфокусируемся на внутреннем состоянии, ресурсах и мягком шаге вперед.",
+                recommendation_change: "💡 Подойдет расклад на варианты, риски и самый мудрый следующий шаг.",
                 suit_major: "✨ Старшие Арканы", suit_wands: "🪄 Жезлы", suit_cups: "🏆 Кубки", suit_swords: "⚔️ Мечи", suit_pentacles: "🪙 Пентакли",
                 moon_phases: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна'],
                 loading_text: "Считываем информацию из пространства...",
@@ -917,9 +944,17 @@
             ],
             spheres: [
                 { key: 'love', icon: '❤️', ua: 'Кохання', ru: 'Любовь', rec: 'cross', rec_key: 'recommendation_love' },
+                { key: 'ex', icon: '💔', ua: 'Колишні стосунки', ru: 'Бывшие отношения', rec: 'venus-circle', rec_key: 'recommendation_love' },
+                { key: 'family', icon: '🏠', ua: 'Сім\'я', ru: 'Семья', rec: 'cross', rec_key: 'recommendation_emotional' },
                 { key: 'career', icon: '💼', ua: 'Кар\'єра', ru: 'Карьера', rec: 'three-cards', rec_key: 'recommendation_work' },
+                { key: 'study', icon: '📚', ua: 'Навчання', ru: 'Обучение', rec: 'three-cards', rec_key: 'recommendation_work' },
                 { key: 'finance', icon: '💰', ua: 'Фінанси', ru: 'Финансы', rec: 'three-cards', rec_key: 'recommendation_work' },
                 { key: 'health', icon: '🌿', ua: 'Здоров\'я', ru: 'Здоровье', rec: 'yes-no', rec_key: 'recommendation_health' },
+                { key: 'selfworth', icon: '🌸', ua: 'Самооцінка', ru: 'Самооценка', rec: 'three-cards', rec_key: 'recommendation_emotional' },
+                { key: 'spirituality', icon: '🕯️', ua: 'Духовність', ru: 'Духовность', rec: 'celtic-cross', rec_key: 'recommendation_destiny' },
+                { key: 'moving', icon: '🧳', ua: 'Переїзд', ru: 'Переезд', rec: 'choice', rec_key: 'recommendation_change' },
+                { key: 'crisis', icon: '🌘', ua: 'Кризис / зміни', ru: 'Кризис / перемены', rec: 'choice', rec_key: 'recommendation_change' },
+                { key: 'decision', icon: '⚖️', ua: 'Важливий вибір', ru: 'Важный выбор', rec: 'choice', rec_key: 'recommendation_change' },
                 { key: 'destiny', icon: '🧭', ua: 'Призначення', ru: 'Предназначение', rec: 'celtic-cross', rec_key: 'recommendation_destiny' },
                 { key: 'general', icon: '🃏', ua: 'Загальний аналіз', ru: 'Общий анализ', rec: 'three-cards', rec_key: null },
             ],
@@ -1303,7 +1338,7 @@
             const container = document.getElementById('deck-selector');
             if (!container) return;
             container.innerHTML = this.data.decks.map(deck => `
-                <button class="control-card" data-group="deck" data-key="${deck.key}">
+                <button class="control-card deck-card" data-group="deck" data-key="${deck.key}">
                     <span>${this.escapeHTML(deck[this.state.lang])}</span>
                     <div class="deck-preview-strip">
                         <img src="${this.DECKS_DIR}/${deck.dir}/major-0.jpg" alt="" loading="lazy">
@@ -1446,6 +1481,7 @@
             document.getElementById('lang-toggle').addEventListener('click', () => this.toggleLanguage());
             document.getElementById('theme-toggle').addEventListener('click', () => this.toggleTheme());
             document.getElementById('reset-btn').addEventListener('click', () => this.resetSpread());
+            document.getElementById('random-btn').addEventListener('click', () => this.randomizeSpread());
             document.getElementById('ai-btn').addEventListener('click', () => this.getSpreadInterpretation());
             document.getElementById('music-toggle').addEventListener('click', () => this.toggleMusic());
             document.getElementById('rules-toggle').addEventListener('click', () => this.toggleRules());
@@ -1575,6 +1611,42 @@
             }
             this.closeResultModal();
             this.updateUI();
+        },
+
+        randomizeSpread() {
+            const schema = this.data.spreads[this.state.spreadKey] || this.data.spreads.cross;
+            const positions = schema.positions[this.state.lang];
+            const deck = this.shuffleArray(this.getAllCardIds());
+            const selected = {};
+
+            positions.forEach((posName, index) => {
+                const cardId = deck[index];
+                selected[posName] = {
+                    id: cardId,
+                    name: this.translateCardName(cardId),
+                    isReversed: this.state.allowReversals && Math.random() < 0.35
+                };
+            });
+
+            this.state.selectedCards = selected;
+            this.state.activePositionIndex = positions.length;
+            this.state.previewReversed = false;
+            const reversedCheckbox = document.getElementById('reversed-checkbox');
+            if (reversedCheckbox) reversedCheckbox.checked = false;
+            this.playSound('card-select-sound');
+            this.updateUI();
+            const schemaContainer = document.getElementById('spread-schema-container');
+            schemaContainer?.classList.add('shuffle-pulse');
+            setTimeout(() => schemaContainer?.classList.remove('shuffle-pulse'), 450);
+        },
+
+        shuffleArray(items) {
+            const result = [...items];
+            for (let i = result.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [result[i], result[j]] = [result[j], result[i]];
+            }
+            return result;
         },
 
         updateUI() {
@@ -1764,19 +1836,33 @@
         },
 
         toggleTheme() {
-            this.state.theme = this.state.theme === 'neon' ? 'witchy' : 'neon';
+            const themes = ['neon', 'witchy', 'light'];
+            const currentIndex = themes.indexOf(this.state.theme);
+            this.state.theme = themes[(currentIndex + 1) % themes.length];
             localStorage.setItem('tarot_theme', this.state.theme);
             this.applyTheme(this.state.theme);
-            document.getElementById('theme-pill').style.transform = this.state.theme === 'neon' ? 'translateX(0px)' : 'translateX(26px)';
         },
 
         applyTheme(theme) {
-            document.body.classList.remove('theme-witchy', 'theme-psychologist');
+            document.body.classList.remove('theme-witchy', 'theme-psychologist', 'theme-light');
             if (theme === 'witchy') {
                 document.body.classList.add('theme-witchy');
+            } else if (theme === 'light') {
+                document.body.classList.add('theme-light');
             } else if (this.state.aiMode === 'psychologist') {
                 document.body.classList.add('theme-psychologist');
             }
+            this.updateThemeToggle();
+        },
+
+        updateThemeToggle() {
+            const pill = document.getElementById('theme-pill');
+            const left = document.getElementById('theme-label-left');
+            const right = document.getElementById('theme-label-right');
+            const index = ['neon', 'witchy', 'light'].indexOf(this.state.theme);
+            if (pill) pill.style.transform = `translateX(${Math.max(index, 0) * 20}px)`;
+            if (left) left.textContent = this.state.theme === 'light' ? '☀️ Light' : '✨ Neon';
+            if (right) right.textContent = this.state.theme === 'witchy' ? '🌙 Witchy' : this.state.theme === 'light' ? '✨ Neon' : '🌙 Witchy';
         },
 
         applyLanguage() {
@@ -2223,9 +2309,17 @@
             const isUa = this.state.lang === 'ua';
             const tipsBySphere = {
                 love: isUa ? ['Що мені важливо зрозуміти про ці стосунки?', 'Який крок допоможе мені діяти чесно?'] : ['Что мне важно понять об этих отношениях?', 'Какой шаг поможет мне действовать честно?'],
+                ex: isUa ? ['Що я досі тримаю з минулих стосунків?', 'Чи варто мені повертатися до цього контакту?'] : ['Что я все еще держу из прошлых отношений?', 'Стоит ли мне возвращаться к этому контакту?'],
+                family: isUa ? ['Що допоможе гармонізувати сімейну ситуацію?', 'Яку роль мені краще зайняти в родині зараз?'] : ['Что поможет гармонизировать семейную ситуацию?', 'Какую роль мне лучше занять в семье сейчас?'],
                 career: isUa ? ['Який напрям роботи зараз найперспективніший?', 'Що заважає моєму професійному росту?'] : ['Какое направление работы сейчас перспективнее?', 'Что мешает моему профессиональному росту?'],
+                study: isUa ? ['На що мені варто спиратися у навчанні?', 'Який підхід допоможе краще засвоїти матеріал?'] : ['На что мне стоит опираться в обучении?', 'Какой подход поможет лучше освоить материал?'],
                 finance: isUa ? ['Яке рішення допоможе стабілізувати фінанси?', 'На який ризик варто звернути увагу?'] : ['Какое решение поможет стабилизировать финансы?', 'На какой риск стоит обратить внимание?'],
                 health: isUa ? ['Що підтримає моє відновлення найближчим часом?', 'Який ресурс допоможе мені берегти себе?'] : ['Что поддержит мое восстановление в ближайшее время?', 'Какой ресурс поможет мне беречь себя?'],
+                selfworth: isUa ? ['Що допоможе мені відчути власну цінність?', 'Яку внутрішню опору варто зміцнити?'] : ['Что поможет мне почувствовать собственную ценность?', 'Какую внутреннюю опору стоит укрепить?'],
+                spirituality: isUa ? ['Який духовний урок зараз переді мною?', 'До якого внутрішнього знання варто прислухатися?'] : ['Какой духовный урок сейчас передо мной?', 'К какому внутреннему знанию стоит прислушаться?'],
+                moving: isUa ? ['Що покаже мені цей переїзд?', 'Які ризики важливо врахувати перед зміною місця?'] : ['Что покажет мне этот переезд?', 'Какие риски важно учесть перед сменой места?'],
+                crisis: isUa ? ['Який сенс має цей кризовий період?', 'Що допоможе мені пройти зміни мʼякше?'] : ['Какой смысл есть у этого кризисного периода?', 'Что поможет мне пройти перемены мягче?'],
+                decision: isUa ? ['Який вибір буде найчеснішим для мене?', 'Що я не бачу у цій ситуації вибору?'] : ['Какой выбор будет самым честным для меня?', 'Что я не вижу в этой ситуации выбора?'],
                 destiny: isUa ? ['Який урок зараз веде мене вперед?', 'На що мені варто спиратися у виборі шляху?'] : ['Какой урок сейчас ведет меня вперед?', 'На что мне стоит опираться в выборе пути?'],
                 general: isUa ? ['Що мені важливо побачити в цій ситуації?', 'Який наступний крок буде наймудрішим?'] : ['Что мне важно увидеть в этой ситуации?', 'Какой следующий шаг будет самым мудрым?']
             };
