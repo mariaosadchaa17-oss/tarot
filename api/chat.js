@@ -39,9 +39,21 @@ async function POST(request) {
             const randomCard = FULL_DECK[Math.floor(Math.random() * FULL_DECK.length)];
             systemPrompt = SYSTEM_PROMPTS[lang].card_of_the_day;
             userPrompt = `Карта дня: [${randomCard}]. Дай містичну мікро-пораду.`;
+        } else if (requestData.type === 'refine-question') {
+            const question = String(requestData.question || '').trim();
+            const sphere = String(requestData.sphere || '').trim();
+            if (!question) return { json: async () => ({ error: 'Питання порожнє.' }), status: 400, ok: false };
+
+            systemPrompt = lang === 'ru'
+                ? 'Ты помогаешь формулировать вопросы для расклада Таро. Отвечай строго на русском языке. Верни только один улучшенный вопрос без пояснений, вступлений и кавычек. Формулировка должна быть экологичной, конкретной, открытой и сфокусированной на действиях/понимании, а не на контроле другого человека.'
+                : 'Ти допомагаєш формулювати питання для розкладу Таро. Відповідай строго українською мовою. Поверни лише одне покращене питання без пояснень, вступів і лапок. Формулювання має бути екологічним, конкретним, відкритим і сфокусованим на діях/розумінні, а не на контролі іншої людини.';
+            userPrompt = lang === 'ru'
+                ? `Сфера: ${sphere || 'не указана'}\nИсходный вопрос: ${question}`
+                : `Сфера: ${sphere || 'не вказана'}\nПочаткове питання: ${question}`;
         } else if (requestData.type === 'spread') {
-            const { mode, theme, spreadType, question, cards, positions, targetPerson } = requestData;
+            const { mode, theme, spreadType, question, cards, positions, targetPerson, client } = requestData;
             if (!cards || Object.keys(cards).length === 0) return { json: async () => ({ error: 'Не обрано жодної карти.' }), status: 400, ok: false };
+            if (!Array.isArray(positions) || positions.length === 0) return { json: async () => ({ error: 'Не передано позиції розкладу.' }), status: 400, ok: false };
 
             systemPrompt = SYSTEM_PROMPTS[lang][mode] || SYSTEM_PROMPTS[lang].psychologist;
             if (positions.length > 1) {
@@ -50,11 +62,16 @@ async function POST(request) {
 
             let targetInfo = targetPerson ? ` для іншої людини (${targetPerson})` : '';
             userPrompt = `Проведи розбір розкладу Таро${targetInfo}.\nТема: ${theme}\nРозклад: ${spreadType}\n`;
+            if (client?.name) {
+                userPrompt += lang === 'ru' ? `Клиент: ${client.name}\n` : `Клієнт: ${client.name}\n`;
+                if (client.contact) userPrompt += lang === 'ru' ? `Контакт/ник: ${client.contact}\n` : `Контакт/нік: ${client.contact}\n`;
+                if (client.notes) userPrompt += lang === 'ru' ? `Заметки таролога о клиенте: ${client.notes}\n` : `Нотатки таролога про клієнта: ${client.notes}\n`;
+            }
             if (question) userPrompt += `Питання: "${question}"\n`;
             userPrompt += `\nКарти:\n`;
             positions.forEach(pos => {
                 const card = cards[pos];
-                if (card) userPrompt += `- ${pos}: ${card.name} (${card.isInverted ? "Перевернута" : "Пряма"})\n`;
+                if (card) userPrompt += `- ${pos}: ${card.name} (${card.isReversed ? "Перевернута" : "Пряма"})\n`;
             });
         } else {
             return { json: async () => ({ error: 'Невірний тип запиту.' }), status: 400, ok: false };

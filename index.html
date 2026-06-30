@@ -333,6 +333,21 @@
 
         .target-person-wrapper { display: none; margin-top: 0.75rem; }
         .target-person-wrapper.active { display: block; }
+        .client-panel { margin-top: 1rem; text-align: left; border: 1px solid var(--border-color); border-radius: 1rem; background: rgba(255,255,255,0.035); padding: 1rem; }
+        .client-form { display: grid; grid-template-columns: 1fr; gap: 0.65rem; }
+        @media (min-width: 768px) { .client-form { grid-template-columns: 1fr 1fr auto; align-items: end; } .client-form-notes { grid-column: 1 / 3; } }
+        .client-input { width: 100%; background: rgba(16,10,31,0.82); border: 1px solid var(--border-color); border-radius: 0.7rem; padding: 0.65rem 0.75rem; color: white; font-size: 0.85rem; }
+        .client-add-btn { border-radius: 0.7rem; padding: 0.7rem 0.9rem; background: rgba(157,78,223,0.28); color: var(--text-gold); border: 1px solid var(--border-color); font-weight: 800; font-size: 0.82rem; }
+        .client-list { display: grid; grid-template-columns: 1fr; gap: 0.55rem; margin-top: 0.9rem; }
+        @media (min-width: 768px) { .client-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        .client-card { border: 1px solid var(--border-color); border-radius: 0.85rem; padding: 0.75rem; background: rgba(0,0,0,0.18); cursor: pointer; transition: all 0.2s ease; min-width: 0; }
+        .client-card:hover, .client-card.active { border-color: var(--text-gold); box-shadow: 0 0 12px var(--secondary-glow-color); }
+        .client-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.55rem; }
+        .client-name { color: var(--text-gold); font-weight: 900; line-height: 1.2; overflow-wrap: break-word; word-break: break-word; }
+        .client-contact, .client-notes { color: rgba(255,255,255,0.7); font-size: 0.76rem; line-height: 1.35; margin-top: 0.25rem; overflow-wrap: break-word; word-break: break-word; }
+        .client-delete-btn { flex: 0 0 auto; color: #f87171; font-size: 0.82rem; padding: 0 0.2rem; }
+        .client-empty { color: rgba(255,255,255,0.62); font-size: 0.82rem; text-align: center; padding: 0.75rem; border: 1px dashed var(--border-color); border-radius: 0.8rem; }
+        .active-client-pill { display: inline-flex; align-items: center; gap: 0.35rem; margin-top: 0.65rem; padding: 0.4rem 0.65rem; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-gold); background: rgba(255,255,255,0.045); font-size: 0.78rem; font-weight: 800; }
 
         /* Reading preview + full-screen interpretation modal */
         .reading-preview { width: 100%; text-align: left; }
@@ -435,6 +450,22 @@
             <div id="rules-wrapper" class="accordion-wrapper">
                 <div class="text-left bg-surface border border-color rounded-xl p-4">
                     <ol class="list-decimal list-inside space-y-2 text-sm" id="rules-list"></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <button id="clients-toggle" class="text-sm text-purple hover:text-gold transition" data-translate-key="clients_toggle"></button>
+            <div id="clients-wrapper" class="accordion-wrapper">
+                <div class="client-panel">
+                    <div class="client-form">
+                        <input id="client-name-input" class="client-input" type="text" data-placeholder-key="client_name_placeholder">
+                        <input id="client-contact-input" class="client-input" type="text" data-placeholder-key="client_contact_placeholder">
+                        <button id="client-add-btn" type="button" class="client-add-btn" data-translate-key="client_add_btn"></button>
+                        <textarea id="client-notes-input" class="client-input client-form-notes" rows="2" data-placeholder-key="client_notes_placeholder"></textarea>
+                    </div>
+                    <div id="active-client-pill" class="active-client-pill" style="display:none;"></div>
+                    <div id="client-list" class="client-list"></div>
                 </div>
             </div>
         </div>
@@ -543,12 +574,21 @@
         state: {
             lang: 'ua', aiMode: 'mystical', sphere: 'love', target: 'self', theme: 'neon',
             spreadKey: 'cross', activeSuit: null, selectedCards: {}, activePositionIndex: 0,
-            selectedDeck: 'retro', cardBackStyle: 'standard', previewReversed: false, selectedCardForAdd: null
+            selectedDeck: 'retro', cardBackStyle: 'standard', previewReversed: false, selectedCardForAdd: null,
+            clients: [], activeClientId: null
         },
         translations: {
             ua: {
                 page_title: "Таро AI Компаньйон", main_title: "🔮 Таро AI Компаньйон",
                 rules_toggle: "📜 Звід правил таролога",
+                clients_toggle: "👥 База клієнтів",
+                client_name_placeholder: "Ім'я клієнта",
+                client_contact_placeholder: "Контакт або нік",
+                client_notes_placeholder: "Нотатки про клієнта, запит, контекст",
+                client_add_btn: "Додати",
+                client_empty: "Клієнтів поки немає. Додайте першого клієнта для персональних розкладів.",
+                active_client_label: "Активний клієнт",
+                client_selected: "Обрано для розкладу",
                 rules_list: ["Формулюйте запит чітко та екологічно (без злого умислу).", "Не дублюйте один і той же запит картам декілька разів на день.", "Підходьте до розкладу у спокійному, медитативному стані.", "Пам'ятайте: карти показують найбільш вірогідний вектор, але фінальний вибір завжди за вами."],
                 section_title_settings: "⚙️ Налаштування",
                 section_title_sphere: "✨ 1. Сфера",
@@ -586,6 +626,7 @@
                 reading_cards_title: "Ваш розклад готовий",
                 reading_cards_subtitle: "Подивіться на карти перед тлумаченням — перше відчуття теж важливе.",
                 reading_question_label: "Питання",
+                reading_client_label: "Клієнт",
                 reading_no_question: "Питання не вказано",
                 orientation_upright: "Пряме положення",
                 orientation_reversed: "Перевернуте положення",
@@ -602,6 +643,14 @@
             ru: {
                 page_title: "Таро AI Компаньон", main_title: "🔮 Таро AI Компаньон",
                 rules_toggle: "📜 Свод правил таролога",
+                clients_toggle: "👥 База клиентов",
+                client_name_placeholder: "Имя клиента",
+                client_contact_placeholder: "Контакт или ник",
+                client_notes_placeholder: "Заметки о клиенте, запрос, контекст",
+                client_add_btn: "Добавить",
+                client_empty: "Клиентов пока нет. Добавьте первого клиента для персональных раскладов.",
+                active_client_label: "Активный клиент",
+                client_selected: "Выбран для расклада",
                 rules_list: ["Формулируйте запрос четко и экологично (без злого умысла).", "Не дублируйте один и тот же запрос картам несколько раз в день.", "Подходите к раскладу в спокойном, медитативном состоянии.", "Помните: карты показывают наиболее вероятный вектор, но финальный выбор всегда за вами."],
                 section_title_settings: "⚙️ Настройки",
                 section_title_sphere: "✨ 1. Сфера",
@@ -639,6 +688,7 @@
                 reading_cards_title: "Ваш расклад готов",
                 reading_cards_subtitle: "Посмотрите на карты перед трактовкой — первое ощущение тоже важно.",
                 reading_question_label: "Вопрос",
+                reading_client_label: "Клиент",
                 reading_no_question: "Вопрос не указан",
                 orientation_upright: "Прямое положение",
                 orientation_reversed: "Перевёрнутое положение",
@@ -947,11 +997,21 @@
             const savedDeck = localStorage.getItem('tarot_deck');
             const savedBack = localStorage.getItem('tarot_card_back');
             const savedAiMode = localStorage.getItem('tarot_ai_mode');
+            const savedClients = localStorage.getItem('tarot_clients');
+            const savedActiveClient = localStorage.getItem('tarot_active_client');
             if (savedLang) this.state.lang = savedLang;
             if (savedTheme) this.state.theme = savedTheme;
             if (savedAiMode) this.state.aiMode = savedAiMode;
             if (savedDeck && this.data.decks.some(deck => deck.key === savedDeck)) this.state.selectedDeck = savedDeck;
             if (savedBack) this.state.cardBackStyle = savedBack;
+            try {
+                this.state.clients = savedClients ? JSON.parse(savedClients) : [];
+            } catch (error) {
+                this.state.clients = [];
+            }
+            if (savedActiveClient && this.state.clients.some(client => client.id === savedActiveClient)) {
+                this.state.activeClientId = savedActiveClient;
+            }
         },
 
         restoreActiveStates() {
@@ -967,6 +1027,7 @@
         renderAllDynamicContent() {
             this.applyLanguage();
             this.renderAllSelectors();
+            this.renderClients();
             this.updateUI();
             this.displayMoonPhase();
         },
@@ -1128,7 +1189,18 @@
             document.getElementById('ai-btn').addEventListener('click', () => this.getSpreadInterpretation());
             document.getElementById('music-toggle').addEventListener('click', () => this.toggleMusic());
             document.getElementById('rules-toggle').addEventListener('click', () => this.toggleRules());
+            document.getElementById('clients-toggle').addEventListener('click', () => this.toggleAccordion('clients-wrapper', 'rules-wrapper'));
+            document.getElementById('client-add-btn').addEventListener('click', () => this.addClient());
             document.getElementById('refine-question-btn').addEventListener('click', () => this.refineQuestion());
+            document.getElementById('client-list').addEventListener('click', e => {
+                const deleteButton = e.target.closest('[data-client-delete]');
+                if (deleteButton) {
+                    this.deleteClient(deleteButton.dataset.clientDelete);
+                    return;
+                }
+                const card = e.target.closest('[data-client-id]');
+                if (card) this.selectClient(card.dataset.clientId);
+            });
             const resultModal = document.getElementById('result-modal');
             if (resultModal) {
                 resultModal.addEventListener('click', e => {
@@ -1381,6 +1453,7 @@
             // Re-render text content, keep active states and suit selection
             this.applyLanguage();
             this.renderAllSelectors();
+            this.renderClients();
             this.restoreActiveStates();
             this.displayMoonPhase();
 
@@ -1435,11 +1508,110 @@
             if (personInput) {
                 personInput.placeholder = personInput.dataset[`placeholder${this.state.lang === 'ua' ? 'Ua' : 'Ru'}`];
             }
+
+            document.querySelectorAll('[data-placeholder-key]').forEach(el => {
+                const value = this.translations[this.state.lang][el.dataset.placeholderKey];
+                if (value) el.placeholder = value;
+            });
+        },
+
+        toggleAccordion(showId, hideId = null) {
+            const showEl = document.getElementById(showId);
+            const hideEl = hideId ? document.getElementById(hideId) : null;
+            if (!showEl) return;
+            const wasActive = showEl.classList.contains('active');
+            if (hideEl) hideEl.classList.remove('active');
+            showEl.classList.toggle('active', !wasActive);
         },
 
         toggleRules() {
-            const wrapper = document.getElementById('rules-wrapper');
-            wrapper.classList.toggle('active');
+            this.toggleAccordion('rules-wrapper', 'clients-wrapper');
+        },
+
+        saveClients() {
+            localStorage.setItem('tarot_clients', JSON.stringify(this.state.clients));
+            if (this.state.activeClientId) {
+                localStorage.setItem('tarot_active_client', this.state.activeClientId);
+            } else {
+                localStorage.removeItem('tarot_active_client');
+            }
+        },
+
+        getActiveClient() {
+            return this.state.clients.find(client => client.id === this.state.activeClientId) || null;
+        },
+
+        addClient() {
+            const nameInput = document.getElementById('client-name-input');
+            const contactInput = document.getElementById('client-contact-input');
+            const notesInput = document.getElementById('client-notes-input');
+            const name = nameInput.value.trim();
+            if (!name) {
+                nameInput.focus();
+                return;
+            }
+
+            const client = {
+                id: `client-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+                name,
+                contact: contactInput.value.trim(),
+                notes: notesInput.value.trim(),
+                createdAt: new Date().toISOString()
+            };
+            this.state.clients.unshift(client);
+            this.state.activeClientId = client.id;
+            this.saveClients();
+            nameInput.value = '';
+            contactInput.value = '';
+            notesInput.value = '';
+            this.renderClients();
+        },
+
+        selectClient(clientId) {
+            this.state.activeClientId = this.state.activeClientId === clientId ? null : clientId;
+            this.saveClients();
+            this.renderClients();
+        },
+
+        deleteClient(clientId) {
+            this.state.clients = this.state.clients.filter(client => client.id !== clientId);
+            if (this.state.activeClientId === clientId) this.state.activeClientId = null;
+            this.saveClients();
+            this.renderClients();
+        },
+
+        renderClients() {
+            const list = document.getElementById('client-list');
+            const pill = document.getElementById('active-client-pill');
+            if (!list || !pill) return;
+            const t = this.translations[this.state.lang];
+            const activeClient = this.getActiveClient();
+
+            pill.style.display = activeClient ? 'inline-flex' : 'none';
+            pill.textContent = activeClient ? `${t.active_client_label}: ${activeClient.name}` : '';
+
+            if (!this.state.clients.length) {
+                list.innerHTML = `<div class="client-empty">${this.escapeHTML(t.client_empty)}</div>`;
+                return;
+            }
+
+            list.innerHTML = this.state.clients.map(client => {
+                const activeClass = client.id === this.state.activeClientId ? ' active' : '';
+                const contact = client.contact ? `<div class="client-contact">${this.escapeHTML(client.contact)}</div>` : '';
+                const notes = client.notes ? `<div class="client-notes">${this.escapeHTML(client.notes)}</div>` : '';
+                const selected = client.id === this.state.activeClientId ? `<div class="client-contact">${this.escapeHTML(t.client_selected)}</div>` : '';
+                return `
+                    <div class="client-card${activeClass}" data-client-id="${client.id}">
+                        <div class="client-card-head">
+                            <div class="client-name">${this.escapeHTML(client.name)}</div>
+                            <button type="button" class="client-delete-btn" data-client-delete="${client.id}" aria-label="Delete">x</button>
+                        </div>
+                        ${contact}
+                        ${notes}
+                        ${selected}
+                    </div>
+                `;
+            }).join('');
         },
 
         async refineQuestion() {
@@ -1478,6 +1650,7 @@
             }
 
             this.playSound('mystical-chime');
+            const activeClient = this.getActiveClient();
 
             const requestData = {
                 lang: this.state.lang, type: 'spread', mode: this.state.aiMode,
@@ -1487,7 +1660,12 @@
                 question: document.getElementById('question').value.trim(),
                 cards: this.state.selectedCards,
                 positions: this.data.spreads[this.state.spreadKey].positions[this.state.lang],
-                targetPerson: this.state.target === 'partner' ? (document.getElementById('other-person-input')?.value.trim() || null) : null
+                targetPerson: this.state.target === 'partner' ? (document.getElementById('other-person-input')?.value.trim() || null) : null,
+                client: activeClient ? {
+                    name: activeClient.name,
+                    contact: activeClient.contact,
+                    notes: activeClient.notes
+                } : null
             };
             await this.handleAIRequest(requestData);
         },
@@ -1599,6 +1777,7 @@
                 question: requestData.question || '',
                 spreadType: requestData.spreadType,
                 theme: requestData.theme,
+                client: requestData.client || null,
                 cards,
                 interpretation
             };
@@ -1651,6 +1830,12 @@
 
             titleEl.textContent = t.result_modal_title;
             const question = snapshot.question ? this.escapeHTML(snapshot.question) : this.escapeHTML(t.reading_no_question);
+            const clientLine = snapshot.client?.name ? `
+                <div class="reading-question-box">
+                    <div class="reading-question-label">${this.escapeHTML(t.reading_client_label)}</div>
+                    <div class="reading-question-text">${this.escapeHTML(snapshot.client.name)}${snapshot.client.contact ? ` · ${this.escapeHTML(snapshot.client.contact)}` : ''}</div>
+                </div>
+            ` : '';
             const chips = snapshot.cards.map((card, index) => `
                 <div class="result-modal-card-chip" title="${this.escapeHTML(card.position)} - ${this.escapeHTML(card.name)}">
                     <div class="result-card-number">${index + 1}</div>
@@ -1674,6 +1859,7 @@
                         <div class="reading-question-label">${this.escapeHTML(t.reading_question_label)}</div>
                         <div class="reading-question-text">${question}</div>
                     </div>
+                    ${clientLine}
                 </div>
                 <div class="result-modal-cards">${chips}</div>
                 <div class="result-modal-text">${this.formatAIText(snapshot.interpretation)}</div>
