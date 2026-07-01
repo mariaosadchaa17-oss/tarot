@@ -59,6 +59,7 @@
         .control-card span { font-size: 0.82rem; line-height: 1.3; overflow-wrap: break-word; word-break: break-word; }
         .control-card:hover { border-color: var(--text-purple); }
         .control-card.active { border-color: var(--text-purple); background-color: var(--panel-soft); box-shadow: 0 0 10px var(--secondary-glow-color); }
+        .app-header { position: relative; }
         .settings-panel { background-color: var(--panel-readable); border: 1px solid var(--border-color); border-radius: 1rem; padding: 1rem; text-align: left; }
         .top-service-row { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 1.1rem; }
         @media (min-width: 768px) { .top-service-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
@@ -73,10 +74,12 @@
         .top-focus-row { display: grid; grid-template-columns: 1fr; gap: 0.85rem; margin-top: 1.1rem; text-align: left; }
         @media (min-width: 768px) { .top-focus-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; } }
         .top-focus-row .quick-panel, .top-focus-row .daily-panel { margin-top: 0; }
-        .top-settings-panel { display: none; margin-top: 0.9rem; }
-        .top-settings-panel.open { display: block; }
-        .side-settings-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; color: var(--text-gold); font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.82rem; }
-        .top-settings-panel .accordion-wrapper { margin-top: 0.9rem; }
+        .top-settings-panel { display: none; position: absolute; top: 2.85rem; right: 0; z-index: 60; width: min(760px, 100%); max-height: min(78vh, 720px); overflow-y: auto; margin-top: 0; box-shadow: 0 18px 48px rgba(0,0,0,0.38); }
+        .top-settings-panel.open { display: block; animation: dropdown-pop 0.16s ease-out; }
+        .settings-popover-head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; color: var(--text-gold); font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.82rem; margin-bottom: 0.9rem; }
+        .settings-close-btn { width: 1.8rem; height: 1.8rem; display: grid; place-items: center; border-radius: 999px; border: 1px solid var(--border-color); background: var(--button-soft); color: var(--text-gold); font-weight: 900; line-height: 1; }
+        @keyframes dropdown-pop { from { opacity: 0; transform: translateY(-6px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @media (max-width: 640px) { .top-settings-panel { left: 0; right: 0; top: 3.2rem; width: 100%; } }
         .top-settings-grid { display: grid; grid-template-columns: 1fr; gap: 0.9rem; }
         @media (min-width: 1024px) { .top-settings-grid { grid-template-columns: 0.8fr 1.4fr 1fr; align-items: start; } }
         .deck-selector-grid { grid-template-columns: 1fr; }
@@ -559,6 +562,10 @@
         .matrix-summary-name { color: var(--text-color); font-weight: 800; font-size: 0.86rem; line-height: 1.2; }
         .matrix-summary-desc { color: var(--text-muted); font-size: 0.76rem; line-height: 1.35; margin-top: 0.12rem; }
         .matrix-summary-value { color: var(--text-gold); font-size: 1.35rem; font-weight: 900; }
+        .matrix-interpretation { grid-column: 1 / -1; display: grid; gap: 0.35rem; margin-top: 0.1rem; padding: 0.65rem; border-radius: 0.75rem; background: var(--panel-soft); }
+        .matrix-energy-title { color: var(--text-gold); font-size: 0.78rem; font-weight: 900; }
+        .matrix-energy-line { color: var(--text-muted); font-size: 0.75rem; line-height: 1.38; }
+        .matrix-energy-line strong { color: var(--text-color); }
         @media (max-width: 640px) { .matrix-chart { min-height: 560px; } .matrix-node-label { display: none; } .matrix-node { width: 50px; min-height: 50px; } .matrix-node.primary { width: 62px; min-height: 62px; } .matrix-node.core { width: 74px; min-height: 74px; } }
         .matrix-back-btn { border-radius: 0.75rem; padding: 0.6rem 0.8rem; border: 1px solid var(--border-color); background: var(--button-soft); color: var(--text-gold); font-weight: 800; font-size: 0.78rem; }
 
@@ -566,7 +573,7 @@
 </head>
 <body class="p-3 md:p-8 min-h-screen">
 <div class="max-w-7xl mx-auto">
-    <header class="text-center mb-8 border-b pb-5 border-color">
+    <header class="text-center mb-8 border-b pb-5 border-color app-header">
         <div class="header-top-row">
             <div class="moon-matrix-wrap">
                 <div id="moon-widget"></div>
@@ -660,7 +667,10 @@
             </div></div>
         <div class="settings-panel top-settings-panel neon-glow">
             <div id="settings-wrapper" class="accordion-wrapper">
-                <div class="side-settings-toggle"><span data-translate-key="section_title_settings"></span><span>▾</span></div>
+                <div class="settings-popover-head">
+                    <span data-translate-key="section_title_settings"></span>
+                    <button id="settings-close-btn" type="button" class="settings-close-btn" aria-label="Close">×</button>
+                </div>
                 <div class="top-settings-grid">
                     <div>
                         <label class="block text-sm font-bold text-purple mb-2" data-translate-key="label_ai_mode"></label>
@@ -960,6 +970,10 @@
                 matrix_group_base: "Основні точки",
                 matrix_group_family: "Родові лінії",
                 matrix_group_channels: "Канали та блоки",
+                matrix_position_label: "Позиція",
+                matrix_plus_label: "У плюсі",
+                matrix_minus_label: "У мінусі",
+                matrix_action_label: "Перевід у плюс",
                 loading_text: "Зчитуємо інформацію з простору...",
                 btn_reverse: "⤾ Перевернути",
                 reading_cards_title: "Ваш розклад готовий",
@@ -1103,6 +1117,10 @@
                 matrix_group_base: "Основные точки",
                 matrix_group_family: "Родовые линии",
                 matrix_group_channels: "Каналы и блоки",
+                matrix_position_label: "Позиция",
+                matrix_plus_label: "В плюсе",
+                matrix_minus_label: "В минусе",
+                matrix_action_label: "Перевод в плюс",
                 loading_text: "Считываем информацию из пространства...",
                 btn_reverse: "⤾ Перевернуть",
                 reading_cards_title: "Ваш расклад готов",
@@ -1860,8 +1878,23 @@
             document.getElementById('random-btn').addEventListener('click', () => this.randomizeSpread());
             document.getElementById('ai-btn').addEventListener('click', () => this.getSpreadInterpretation());
             document.getElementById('rules-toggle').addEventListener('click', () => this.toggleRules());
-            document.getElementById('account-toggle').addEventListener('click', () => this.toggleAccordion('account-wrapper', 'rules-wrapper'));
-            document.getElementById('settings-toggle').addEventListener('click', () => this.toggleSettings());
+            document.getElementById('account-toggle').addEventListener('click', () => {
+                this.closeSettings();
+                this.toggleAccordion('account-wrapper', 'rules-wrapper');
+            });
+            document.getElementById('settings-toggle').addEventListener('click', (event) => {
+                event.stopPropagation();
+                this.toggleSettings();
+            });
+            document.getElementById('settings-close-btn').addEventListener('click', () => this.closeSettings());
+            document.querySelector('.top-settings-panel').addEventListener('click', (event) => event.stopPropagation());
+            document.addEventListener('click', (event) => {
+                const panel = document.querySelector('.top-settings-panel');
+                const button = document.getElementById('settings-toggle');
+                if (panel?.classList.contains('open') && !panel.contains(event.target) && !button?.contains(event.target)) {
+                    this.closeSettings();
+                }
+            });
             document.querySelectorAll('[data-auth-mode]').forEach(button => {
                 button.addEventListener('click', () => this.setAuthMode(button.dataset.authMode));
             });
@@ -2343,10 +2376,78 @@
             return `<div class="matrix-line ${type}" style="left:${from.x}%;top:${from.y}%;width:${length}%;transform:rotate(${angle}deg);"></div>`;
         },
 
+        getMatrixEnergyMeaning(value) {
+            const meanings = {
+                1: { ua: ['Маг', 'ініціатива, слово, здатність запускати процеси', 'контроль, маніпуляції, бажання все тягнути самостійно', 'говоріть прямо, дійте малими кроками і доводьте почате до форми'], ru: ['Маг', 'инициатива, слово, способность запускать процессы', 'контроль, манипуляции, желание всё тащить самостоятельно', 'говорите прямо, действуйте малыми шагами и доводите начатое до формы'] },
+                2: { ua: ['Жриця', 'інтуїція, тиша, глибина, вміння чути підтекст', 'закритість, пасивність, таємниці, недовіра до себе', 'ведіть щоденник спостережень і перевіряйте інтуїцію фактами'], ru: ['Жрица', 'интуиция, тишина, глубина, умение слышать подтекст', 'закрытость, пассивность, тайны, недоверие себе', 'ведите дневник наблюдений и сверяйте интуицию с фактами'] },
+                3: { ua: ['Імператриця', 'творчість, турбота, краса, матеріальний ріст', 'лінь, надмірність, залежність від комфорту', 'створюйте красу в побуті й завершуйте хоча б один творчий процес'], ru: ['Императрица', 'творчество, забота, красота, материальный рост', 'лень, излишества, зависимость от комфорта', 'создавайте красоту в быту и завершайте хотя бы один творческий процесс'] },
+                4: { ua: ['Імператор', 'структура, опора, відповідальність, межі', 'жорсткість, тиск, страх втратити контроль', 'пропишіть правила, план і межі без диктату'], ru: ['Император', 'структура, опора, ответственность, границы', 'жёсткость, давление, страх потерять контроль', 'пропишите правила, план и границы без диктата'] },
+                5: { ua: ['Ієрофант', 'мудрість, навчання, традиції, наставництво', 'моралізаторство, догми, страх бути не таким', 'вчіться або навчайте, але залишайте місце живому досвіду'], ru: ['Иерофант', 'мудрость, обучение, традиции, наставничество', 'морализаторство, догмы, страх быть не таким', 'учитесь или обучайте, но оставляйте место живому опыту'] },
+                6: { ua: ['Закохані', 'вибір серцем, партнерство, дипломатія', 'залежність, метання, бажання подобатися всім', 'оберіть одну цінність і прийміть рішення з неї'], ru: ['Влюблённые', 'выбор сердцем, партнёрство, дипломатия', 'зависимость, метания, желание нравиться всем', 'выберите одну ценность и примите решение из неё'] },
+                7: { ua: ['Колісниця', 'рух, перемога, дисципліна, лідерство', 'агресія, трудоголізм, рух по головах або застій', 'задайте напрям і темп, де сила не руйнує вас та інших'], ru: ['Колесница', 'движение, победа, дисциплина, лидерство', 'агрессия, трудоголизм, движение по головам или застой', 'задайте направление и темп, где сила не разрушает вас и других'] },
+                8: { ua: ['Справедливість', 'чесність, закон, баланс, кармічна відповідальність', 'осуд, холодність, борги, перекоси в обміні', 'вирівняйте домовленості, документи, борги й особисту чесність'], ru: ['Справедливость', 'честность, закон, баланс, кармическая ответственность', 'осуждение, холодность, долги, перекосы в обмене', 'выровняйте договорённости, документы, долги и личную честность'] },
+                9: { ua: ['Відлюдник', 'мудрість, самостійність, дослідження, концентрація', 'ізоляція, холод, відчуття самотності', 'виділіть час на себе, але не зникайте з контакту повністю'], ru: ['Отшельник', 'мудрость, самостоятельность, исследование, концентрация', 'изоляция, холод, ощущение одиночества', 'выделите время на себя, но не исчезайте из контакта полностью'] },
+                10: { ua: ['Колесо Фортуни', 'цикли, удача, гнучкість, відчуття моменту', 'хаос, азарт, залежність від випадку', 'помічайте повторювані сценарії і входьте в зміни свідомо'], ru: ['Колесо Фортуны', 'циклы, удача, гибкость, чувство момента', 'хаос, азарт, зависимость от случая', 'замечайте повторяющиеся сценарии и входите в перемены осознанно'] },
+                11: { ua: ['Сила', 'харизма, внутрішній стрижень, м’яка влада', 'тиск, гординя, придушені бажання', 'працюйте з тілом, гнівом і бажаннями без сорому'], ru: ['Сила', 'харизма, внутренний стержень, мягкая власть', 'давление, гордыня, подавленные желания', 'работайте с телом, гневом и желаниями без стыда'] },
+                12: { ua: ['Повішений', 'новий погляд, служіння, пауза, прийняття', 'жертовність, зависання, безсилля', 'змініть кут зору і припиніть рятувати там, де вас не просять'], ru: ['Повешенный', 'новый взгляд, служение, пауза, принятие', 'жертвенность, зависание, бессилие', 'смените угол зрения и перестаньте спасать там, где вас не просят'] },
+                13: { ua: ['Трансформація', 'оновлення, завершення старого, сміливість змін', 'страх втрат, різкість, чіпляння за минуле', 'закрийте один застарілий процес і звільніть місце новому'], ru: ['Трансформация', 'обновление, завершение старого, смелость перемен', 'страх потерь, резкость, цепляние за прошлое', 'закройте один устаревший процесс и освободите место новому'] },
+                14: { ua: ['Помірність', 'гармонія, лікування, терпіння, міра', 'затягування, розмитість, крайнощі під виглядом балансу', 'налаштуйте режим, ритм і помірність у навантаженні'], ru: ['Умеренность', 'гармония, исцеление, терпение, мера', 'затягивание, размытость, крайности под видом баланса', 'настройте режим, ритм и умеренность в нагрузке'] },
+                15: { ua: ['Диявол', 'потужний ресурс, гроші, пристрасть, магнетизм', 'залежності, ревнощі, спокуси, влада через страх', 'назвіть свою залежність чесно і поверніть собі право вибору'], ru: ['Дьявол', 'мощный ресурс, деньги, страсть, магнетизм', 'зависимости, ревность, соблазны, власть через страх', 'назовите свою зависимость честно и верните себе право выбора'] },
+                16: { ua: ['Вежа', 'очищення, правда, демонтаж слабких конструкцій', 'кризи, руйнування, конфлікти, різкі обриви', 'будуйте заново на фактах, а не на ілюзіях'], ru: ['Башня', 'очищение, правда, демонтаж слабых конструкций', 'кризисы, разрушения, конфликты, резкие обрывы', 'стройте заново на фактах, а не на иллюзиях'] },
+                17: { ua: ['Зірка', 'натхнення, публічність, талант, віра', 'мрійливість без дій, ідеалізація, втеча у фантазії', 'покажіть талант людям і зробіть один видимий крок'], ru: ['Звезда', 'вдохновение, публичность, талант, вера', 'мечтательность без действий, идеализация, уход в фантазии', 'покажите талант людям и сделайте один видимый шаг'] },
+                18: { ua: ['Місяць', 'чутливість, сни, підсвідомість, емпатія', 'страхи, самообман, тривожні сценарії', 'перевіряйте страхи фактами і бережіть нервову систему'], ru: ['Луна', 'чувствительность, сны, подсознание, эмпатия', 'страхи, самообман, тревожные сценарии', 'проверяйте страхи фактами и берегите нервную систему'] },
+                19: { ua: ['Сонце', 'радість, діти, ясність, щедрість, успіх', 'егоцентризм, вигорання від демонстрації сили', 'робіть щедро, але не доводьте свою цінність кожному'], ru: ['Солнце', 'радость, дети, ясность, щедрость, успех', 'эгоцентризм, выгорание от демонстрации силы', 'делайте щедро, но не доказывайте свою ценность каждому'] },
+                20: { ua: ['Суд', 'поклик, рід, пробудження, голос правди', 'вина, осуд роду, страх заявити про себе', 'прийміть свій досвід і скажіть правду без самопокарання'], ru: ['Суд', 'призвание, род, пробуждение, голос правды', 'вина, осуждение рода, страх заявить о себе', 'примите свой опыт и скажите правду без самонаказания'] },
+                21: { ua: ['Світ', 'цілісність, масштаб, завершення, подорожі', 'розпорошення, незавершеність, страх великого масштабу', 'завершіть цикл і дозвольте собі вийти ширше'], ru: ['Мир', 'целостность, масштаб, завершение, путешествия', 'распыление, незавершённость, страх большого масштаба', 'завершите цикл и разрешите себе выйти шире'] },
+                22: { ua: ['Блазень', 'свобода, легкість, новий шлях, довіра', 'інфантильність, хаос, втеча від відповідальності', 'почніть нове, але задайте прості правила безпеки'], ru: ['Шут', 'свобода, лёгкость, новый путь, доверие', 'инфантильность, хаос, бегство от ответственности', 'начните новое, но задайте простые правила безопасности'] }
+            };
+            const item = meanings[value] || meanings[22];
+            const [name, plus, minus, action] = item[this.state.lang] || item.ru;
+            return { name, plus, minus, action };
+        },
+
+        getMatrixZoneHint(key) {
+            const hints = {
+                ua: {
+                    A: 'Візитка: перше враження, базові таланти і те, як вас зчитує соціум.',
+                    B: 'Верхня точка: інтуїція, творчість, духовна підтримка й контакт з Ангелом-Хранителем.',
+                    C: 'Права точка: здоров’я, матерія, побут, тіло і спосіб взаємодії з ресурсами.',
+                    G: 'Кармічний хвіст: слабке місце, повторювані сценарії і головний урок.',
+                    E: 'Центр: комфорт душі, істинне Я, стан ресурсу і внутрішнього балансу.',
+                    FT: 'Рід батька по духовній лінії: успадковані дари мислення, віри і принципів.',
+                    MT: 'Рід матері по духовній лінії: інтуїтивні, емоційні та творчі родові дари.',
+                    FK: 'Рід батька по матеріальній лінії: задачі дії, дисципліни, безпеки і реалізації.',
+                    MK: 'Рід матері по матеріальній лінії: задачі тіла, дому, грошей і земної опори.',
+                    RB: 'Блок стосунків: що може заважати близькості та чесному обміну почуттями.',
+                    MB: 'Блок грошей: що може закривати фінансовий потік і відчуття цінності.',
+                    BAL: 'Баланс: як поєднати любов, гроші, ресурс і особисту відповідальність.',
+                    P: 'Партнер: які якості важливі у парі та що ви несвідомо шукаєте в іншому.',
+                    R: 'Реалізація: через яку енергію легше проявлятися в справі та соціумі.'
+                },
+                ru: {
+                    A: 'Визитка: первое впечатление, базовые таланты и то, как вас считывает социум.',
+                    B: 'Верхняя точка: интуиция, творчество, духовная поддержка и контакт с Ангелом-Хранителем.',
+                    C: 'Правая точка: здоровье, материя, быт, тело и способ взаимодействия с ресурсами.',
+                    G: 'Кармический хвост: слабое место, повторяющиеся сценарии и главный урок.',
+                    E: 'Центр: комфорт души, истинное Я, состояние ресурса и внутреннего баланса.',
+                    FT: 'Род отца по духовной линии: унаследованные дары мышления, веры и принципов.',
+                    MT: 'Род матери по духовной линии: интуитивные, эмоциональные и творческие родовые дары.',
+                    FK: 'Род отца по материальной линии: задачи действия, дисциплины, безопасности и реализации.',
+                    MK: 'Род матери по материальной линии: задачи тела, дома, денег и земной опоры.',
+                    RB: 'Блок отношений: что может мешать близости и честному обмену чувствами.',
+                    MB: 'Блок денег: что может закрывать финансовый поток и ощущение ценности.',
+                    BAL: 'Баланс: как соединить любовь, деньги, ресурс и личную ответственность.',
+                    P: 'Партнёр: какие качества важны в паре и что вы бессознательно ищете в другом.',
+                    R: 'Реализация: через какую энергию легче проявляться в деле и социуме.'
+                }
+            };
+            return hints[this.state.lang][key] || '';
+        },
+
         renderMatrixSummary(points, dateValue) {
             const labels = {
-                ua: { A: 'Хто я в базі', B: 'Дар і натхнення', C: 'Матеріальне опрацювання', G: 'Карма душі', E: 'Ресурс і соціум', FT: 'Талант роду батька', MT: 'Талант роду матері', FK: 'Задача роду батька', MK: 'Задача роду матері', RB: 'Блок стосунків', MB: 'Блок грошей', BAL: 'Баланс сфер', P: 'Якості партнера', R: 'Сфера реалізації' },
-                ru: { A: 'Кто я в базе', B: 'Дар и вдохновение', C: 'Материальная проработка', G: 'Карма души', E: 'Ресурс и социум', FT: 'Талант рода отца', MT: 'Талант рода матери', FK: 'Задача рода отца', MK: 'Задача рода матери', RB: 'Блок отношений', MB: 'Блок денег', BAL: 'Баланс сфер', P: 'Качества партнера', R: 'Сфера реализации' }
+                ua: { A: 'Візитка', B: 'Ангел-Хранитель', C: 'Здоров’я і матерія', G: 'Кармічний хвіст', E: 'Комфорт душі', FT: 'Рід батька: дух', MT: 'Рід матері: дух', FK: 'Рід батька: матерія', MK: 'Рід матері: матерія', RB: 'Блок стосунків', MB: 'Блок грошей', BAL: 'Баланс сфер', P: 'Партнер', R: 'Реалізація' },
+                ru: { A: 'Визитка', B: 'Ангел-Хранитель', C: 'Здоровье и материя', G: 'Кармический хвост', E: 'Комфорт души', FT: 'Род отца: дух', MT: 'Род матери: дух', FK: 'Род отца: материя', MK: 'Род матери: материя', RB: 'Блок отношений', MB: 'Блок денег', BAL: 'Баланс сфер', P: 'Партнёр', R: 'Реализация' }
             };
             const langLabels = labels[this.state.lang];
             const name = document.getElementById('matrix-name-input').value.trim();
@@ -2369,14 +2470,22 @@
                         <div class="matrix-summary-title">${group.title}</div>
                         ${group.keys.map(key => {
                             const point = byKey[key];
+                            const meaning = this.getMatrixEnergyMeaning(point.value);
+                            const zoneHint = this.getMatrixZoneHint(point.key);
                             return `
                                 <div class="matrix-summary-row">
                                     <div class="matrix-summary-key">${point.key}</div>
                                     <div>
                                         <div class="matrix-summary-name">${langLabels[point.key] || point[this.state.lang]}</div>
-                                        <div class="matrix-summary-desc">${point[this.state.lang]}</div>
+                                        <div class="matrix-summary-desc">${zoneHint || point[this.state.lang]}</div>
                                     </div>
                                     <div class="matrix-summary-value">${point.value}</div>
+                                    <div class="matrix-interpretation">
+                                        <div class="matrix-energy-title">${this.escapeHTML(meaning.name)} · ${this.escapeHTML(point[this.state.lang])}</div>
+                                        <div class="matrix-energy-line"><strong>${t.matrix_plus_label}:</strong> ${this.escapeHTML(meaning.plus)}.</div>
+                                        <div class="matrix-energy-line"><strong>${t.matrix_minus_label}:</strong> ${this.escapeHTML(meaning.minus)}.</div>
+                                        <div class="matrix-energy-line"><strong>${t.matrix_action_label}:</strong> ${this.escapeHTML(meaning.action)}.</div>
+                                    </div>
                                 </div>
                             `;
                         }).join('')}
@@ -2474,13 +2583,27 @@
             const button = document.getElementById('settings-toggle');
             if (!panel || !wrapper) return;
             const open = !wrapper.classList.contains('active');
+            if (open) {
+                document.getElementById('rules-wrapper')?.classList.remove('active');
+                document.getElementById('account-wrapper')?.classList.remove('active');
+            }
             panel.classList.toggle('open', open);
             wrapper.classList.toggle('active', open);
             button?.classList.toggle('active', open);
         },
 
         toggleRules() {
+            this.closeSettings();
             this.toggleAccordion('rules-wrapper', 'account-wrapper');
+        },
+
+        closeSettings() {
+            const panel = document.querySelector('.top-settings-panel');
+            const wrapper = document.getElementById('settings-wrapper');
+            const button = document.getElementById('settings-toggle');
+            panel?.classList.remove('open');
+            wrapper?.classList.remove('active');
+            button?.classList.remove('active');
         },
 
         saveAccount() {
