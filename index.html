@@ -63,7 +63,12 @@
         .top-service-row { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin-top: 1.1rem; }
         @media (min-width: 768px) { .top-service-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; } }
         .top-service-card { border: 1px solid var(--border-color); border-radius: 1rem; background: var(--panel-readable); padding: 0.85rem; text-align: left; }
-        .header-icon-btn { width: 2rem; height: 2rem; display: grid; place-items: center; border: 1px solid var(--border-color); border-radius: 999px; color: var(--text-gold); background: var(--button-soft); transition: all 0.2s ease; }
+        .header-top-row { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; width: 100%; margin-bottom: 0.85rem; }
+        .header-controls { display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; justify-content: flex-end; }
+        .compact-toggle { display: inline-flex; align-items: center; gap: 0.35rem; border: 1px solid var(--border-color); border-radius: 999px; background: var(--button-soft); padding: 0.28rem 0.45rem; color: var(--text-main); font-size: 0.72rem; font-weight: 800; line-height: 1; cursor: pointer; }
+        .compact-switch { width: 2rem; height: 1rem; border-radius: 999px; background: rgba(255,255,255,0.16); padding: 0.12rem; display: flex; align-items: center; transition: all 0.25s ease; }
+        .compact-switch-dot { width: 0.76rem; height: 0.76rem; border-radius: 999px; background: #fff; transition: transform 0.25s ease; }
+        .header-icon-btn { width: 1.8rem; height: 1.8rem; display: grid; place-items: center; border: 1px solid var(--border-color); border-radius: 999px; color: var(--text-gold); background: var(--button-soft); transition: all 0.2s ease; font-size: 0.9rem; }
         .header-icon-btn:hover, .header-icon-btn.active { border-color: var(--text-gold); box-shadow: 0 0 12px var(--secondary-glow-color); }
         .top-focus-row { display: grid; grid-template-columns: 1fr; gap: 0.85rem; margin-top: 1.1rem; text-align: left; }
         @media (min-width: 768px) { .top-focus-row { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: stretch; } }
@@ -512,8 +517,11 @@
         @keyframes recommended-pulse { 0%, 100% { box-shadow: 0 0 12px var(--secondary-glow-color); } 50% { box-shadow: 0 0 18px var(--primary-glow-color), 0 0 28px var(--secondary-glow-color); } }
         @keyframes recommended-sweep { 0% { transform: translateX(-120%); } 55%, 100% { transform: translateX(120%); } }
         @keyframes recommended-badge { 0%, 100% { opacity: 0.82; } 50% { opacity: 1; } }
-        .moon-matrix-wrap { display: flex; align-items: center; gap: 0.65rem; }
-        .matrix-toggle-btn { width: 2.35rem; height: 2.35rem; display: grid; place-items: center; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-gold); background: var(--button-soft); font-size: 1.1rem; transition: all 0.2s ease; }
+        .moon-matrix-wrap { display: flex; align-items: center; gap: 0.45rem; }
+        #moon-widget { text-align: left; font-size: 0.64rem; line-height: 1.15; color: var(--text-muted); min-width: 5.4rem; }
+        #moon-widget .moon-icon { font-size: 1.15rem; line-height: 1; }
+        #moon-widget .moon-details { font-size: 0.58rem; color: var(--text-muted); opacity: 0.78; }
+        .matrix-toggle-btn { width: 1.85rem; height: 1.85rem; display: grid; place-items: center; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-gold); background: var(--button-soft); font-size: 0.9rem; transition: all 0.2s ease; }
         .matrix-toggle-btn:hover, .matrix-toggle-btn.active { border-color: var(--text-gold); box-shadow: 0 0 14px var(--primary-glow-color); transform: translateY(-1px); }
         .app-view[hidden] { display: none !important; }
         .matrix-view { text-align: left; }
@@ -559,17 +567,17 @@
 <body class="p-3 md:p-8 min-h-screen">
 <div class="max-w-7xl mx-auto">
     <header class="text-center mb-8 border-b pb-5 border-color">
-        <div class="flex justify-between items-center w-full mb-4">
+        <div class="header-top-row">
             <div class="moon-matrix-wrap">
-                <div id="moon-widget" class="text-left text-xs"></div>
+                <div id="moon-widget"></div>
                 <button id="matrix-toggle" type="button" class="matrix-toggle-btn" data-title-key="matrix_toggle_title">✦</button>
             </div>
-            <div class="flex items-center gap-4">
+            <div class="header-controls">
                 <!-- Theme Switcher -->
-                <div id="theme-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span id="theme-label-left" class="text-gray-400">Темна</span><div class="w-12 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="theme-pill" class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300"></div></div><span id="theme-label-right" class="text-white">Світла</span></div>
-                <button id="settings-toggle" type="button" class="header-icon-btn" aria-label="Settings">⚙️</button>
+                <div id="theme-toggle" class="compact-toggle"><span>◐</span><span id="theme-label-left">Темна</span><div class="compact-switch"><div id="theme-pill" class="compact-switch-dot"></div></div><span id="theme-label-right">Світла</span></div>
                 <!-- Lang Switcher -->
-                <div id="lang-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span class="text-gray-400">RU</span><div class="w-10 h-5 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="lang-pill" class="w-4 h-4 bg-white rounded-full transform transition-transform duration-300"></div></div><span class="text-white">UA</span></div>
+                <div id="lang-toggle" class="compact-toggle"><span>🌐</span><span>RU</span><div class="compact-switch"><div id="lang-pill" class="compact-switch-dot"></div></div><span>UA</span></div>
+                <button id="settings-toggle" type="button" class="header-icon-btn" aria-label="Settings">⚙️</button>
             </div>
         </div>
         <h1 class="text-3xl md:text-4xl font-extrabold tracking-widest uppercase text-gold" style="filter: drop-shadow(0 0 10px var(--primary-glow-color));" data-translate-key="main_title"></h1>
@@ -1120,7 +1128,8 @@
             decks: [
                 { key: 'retro', dir: 'retro', ua: 'Ретро стиль', ru: 'Ретро стиль', backs: [{ key: 'standard', file: 'back.jpg', ua: 'Стандартна', ru: 'Стандартная' }] },
                 { key: 'mirror', dir: 'mirror', ua: 'Зеркало долі', ru: 'Зеркало судьбы', backs: [{ key: 'standard', file: 'back.jpg', ua: 'Стандартна', ru: 'Стандартная' }] },
-                { key: 'crow', dir: 'crow', ua: 'Магічний ворон', ru: 'Магический ворон', backs: [{ key: 'standard', file: 'back.jpg', ua: 'Стандартна', ru: 'Стандартная' }] }
+                { key: 'crow', dir: 'crow', ua: 'Магічний ворон', ru: 'Магический ворон', backs: [{ key: 'standard', file: 'back.jpg', ua: 'Стандартна', ru: 'Стандартная' }] },
+                { key: 'aurora', procedural: true, ua: 'Аврора Арканів', ru: 'Аврора Арканов', backs: [{ key: 'standard', file: 'procedural', ua: 'Північне сяйво', ru: 'Северное сияние' }] }
             ],
             spheres: [
                 { key: 'love', icon: '❤️', ua: 'Кохання', ru: 'Любовь', rec: 'venus-circle', rec_key: 'recommendation_love' },
@@ -1345,6 +1354,8 @@
         },
 
         getCardImagePath(cardId) {
+            const deck = this.getCurrentDeck();
+            if (deck.procedural) return this.svgDataUri(this.buildAuroraCardArt(cardId));
             const [suit, idxStr] = cardId.split('_');
             const idx = parseInt(idxStr, 10);
             if (suit === 'major') return `${this.getDeckPathBase()}/major-${idx}.jpg`;
@@ -1354,6 +1365,8 @@
         },
 
         getCardBackImagePath() {
+            const deck = this.getCurrentDeck();
+            if (deck.procedural) return this.svgDataUri(this.buildAuroraCardBack());
             return `${this.getDeckPathBase()}/${this.getCurrentBack().file}`;
         },
 
@@ -1373,6 +1386,87 @@
         },
 
         courtSymbols: ['🃏', '✨', '🌙', '👑'], // page, knight, queen, king
+
+        auroraMajorSymbols: [
+            '✦','☿','☾','♕','♔','⚚','♡','✧','∞','☼',
+            '◌','⚖','⌁','✺','△','◉','⚡','✩','☽','☀',
+            '◇','◎'
+        ],
+
+        auroraSuitTheme: {
+            wands:     { c1: '#36101b', c2: '#d9663f', accent: '#ffd1a3', icon: '✦' },
+            cups:      { c1: '#071d33', c2: '#2ab7ca', accent: '#b8f7ff', icon: '◌' },
+            swords:    { c1: '#111827', c2: '#8aa5ff', accent: '#e0e7ff', icon: '◇' },
+            pentacles: { c1: '#11251d', c2: '#7ec66b', accent: '#e4ffc7', icon: '◎' }
+        },
+
+        svgDataUri(svg) {
+            return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+        },
+
+        buildAuroraCardBack() {
+            return `
+            <svg viewBox="0 0 200 340" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="aurora-back" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#06142d"/>
+                        <stop offset="0.34" stop-color="#2b1a58"/>
+                        <stop offset="0.68" stop-color="#126c70"/>
+                        <stop offset="1" stop-color="#0a0618"/>
+                    </linearGradient>
+                    <radialGradient id="aurora-glow" cx="50%" cy="42%" r="70%">
+                        <stop offset="0" stop-color="#f3c66f" stop-opacity="0.42"/>
+                        <stop offset="0.45" stop-color="#c8a2ff" stop-opacity="0.18"/>
+                        <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <rect x="3" y="3" width="194" height="334" rx="16" fill="url(#aurora-back)" stroke="#f3c66f" stroke-width="3"/>
+                <path d="M21 95 C58 40 94 122 132 74 C156 43 175 52 190 31 L190 132 C154 160 116 108 80 146 C52 174 30 157 10 190 L10 103 Z" fill="#7fffd4" opacity="0.18"/>
+                <path d="M20 244 C55 210 93 284 130 230 C154 195 177 216 190 189" fill="none" stroke="#c8a2ff" stroke-width="7" opacity="0.34"/>
+                <circle cx="100" cy="170" r="78" fill="url(#aurora-glow)" stroke="#f3c66f" stroke-width="1.5" opacity="0.85"/>
+                <path d="M100 85 L117 151 L184 170 L117 189 L100 255 L83 189 L16 170 L83 151 Z" fill="none" stroke="#f3c66f" stroke-width="3"/>
+                <text x="100" y="180" font-family="Georgia, serif" font-size="44" fill="#fff9ff" text-anchor="middle">✦</text>
+            </svg>`;
+        },
+
+        buildAuroraCardArt(cardId) {
+            const [suit, idxStr] = cardId.split('_');
+            const idx = parseInt(idxStr, 10);
+            const uid = `aurora${this.uidCounter++}`;
+            const isMajor = suit === 'major';
+            const theme = isMajor ? { c1: '#09051d', c2: '#55318f', accent: '#f3c66f', icon: this.auroraMajorSymbols[idx] || '✦' } : (this.auroraSuitTheme[suit] || this.auroraSuitTheme.wands);
+            const title = isMajor ? (this.majorRoman[idx] || '') : (idx < 10 ? String(idx + 1) : ['P', 'N', 'Q', 'K'][idx - 10]);
+            const center = isMajor ? theme.icon : (idx < 10 ? theme.icon : ['♙', '♘', '♕', '♔'][idx - 10]);
+            const pipCount = !isMajor && idx < 10 ? idx + 1 : 0;
+            const pips = pipCount ? this.gridPoints(pipCount, { x: 42, y: 98, w: 116, h: 142 }).map(([px, py]) =>
+                `<text x="${px.toFixed(1)}" y="${py.toFixed(1)}" font-size="24" text-anchor="middle" dominant-baseline="middle" fill="${theme.accent}">${theme.icon}</text>`
+            ).join('') : '';
+            return `
+            <svg viewBox="0 0 200 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">
+                <defs>
+                    <linearGradient id="aurora-card-${uid}" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="${theme.c2}"/>
+                        <stop offset="42%" stop-color="#201047"/>
+                        <stop offset="100%" stop-color="${theme.c1}"/>
+                    </linearGradient>
+                    <radialGradient id="aurora-orb-${uid}" cx="50%" cy="45%" r="58%">
+                        <stop offset="0%" stop-color="${theme.accent}" stop-opacity="0.34"/>
+                        <stop offset="55%" stop-color="#c8a2ff" stop-opacity="0.13"/>
+                        <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+                    </radialGradient>
+                </defs>
+                <rect x="3" y="3" width="194" height="334" rx="16" fill="url(#aurora-card-${uid})" stroke="${theme.accent}" stroke-width="3"/>
+                <rect x="13" y="13" width="174" height="314" rx="10" fill="none" stroke="#fff9ff" stroke-width="1" opacity="0.22"/>
+                <path d="M16 111 C50 70 80 126 111 92 C143 57 167 84 188 49" fill="none" stroke="#7fffd4" stroke-width="6" opacity="0.18"/>
+                <path d="M12 244 C48 210 83 274 122 224 C150 189 173 213 190 185" fill="none" stroke="#f3c66f" stroke-width="5" opacity="0.2"/>
+                <circle cx="100" cy="170" r="74" fill="url(#aurora-orb-${uid})" stroke="${theme.accent}" stroke-width="1.4" opacity="0.82"/>
+                <text x="25" y="39" font-size="20" font-family="Georgia, serif" fill="${theme.accent}" font-weight="700">${title}</text>
+                <text x="175" y="313" font-size="20" font-family="Georgia, serif" fill="${theme.accent}" font-weight="700" text-anchor="end">${title}</text>
+                ${pips || `<text x="100" y="177" font-size="${isMajor ? 72 : 68}" text-anchor="middle" dominant-baseline="middle" fill="${theme.accent}" font-family="Georgia, serif">${center}</text>`}
+                ${!isMajor ? `<text x="100" y="272" font-size="26" text-anchor="middle" dominant-baseline="middle" fill="#fff9ff">${theme.icon}</text>` : ''}
+                <text x="100" y="306" font-size="10" text-anchor="middle" fill="#fff9ff" opacity="0.72" font-family="sans-serif" letter-spacing="3">AURORA</text>
+            </svg>`;
+        },
 
         // Compute a centered grid of (x,y) points inside a box for pip layouts
         gridPoints(count, box) {
@@ -1600,14 +1694,23 @@
         renderDeckSelector() {
             const container = document.getElementById('deck-selector');
             if (!container) return;
+            const previewImage = (deck, cardId) => {
+                if (deck.procedural) return this.svgDataUri(this.buildAuroraCardArt(cardId));
+                const [suit, idxStr] = cardId.split('_');
+                const idx = parseInt(idxStr, 10);
+                return `${this.DECKS_DIR}/${deck.dir}/${suit}-${suit === 'major' ? idx : idx + 1}.jpg`;
+            };
+            const backImage = (deck) => deck.procedural
+                ? this.svgDataUri(this.buildAuroraCardBack())
+                : `${this.DECKS_DIR}/${deck.dir}/back.jpg`;
             container.innerHTML = this.data.decks.map(deck => `
                 <button class="control-card deck-card" data-group="deck" data-key="${deck.key}">
                     <span>${this.escapeHTML(deck[this.state.lang])}</span>
                     <div class="deck-preview-strip">
-                        <img src="${this.DECKS_DIR}/${deck.dir}/major-0.jpg" alt="" loading="lazy">
-                        <img src="${this.DECKS_DIR}/${deck.dir}/cups-1.jpg" alt="" loading="lazy">
-                        <img src="${this.DECKS_DIR}/${deck.dir}/swords-1.jpg" alt="" loading="lazy">
-                        <img src="${this.DECKS_DIR}/${deck.dir}/back.jpg" alt="" loading="lazy">
+                        <img src="${previewImage(deck, 'major_0')}" alt="" loading="lazy">
+                        <img src="${previewImage(deck, 'cups_0')}" alt="" loading="lazy">
+                        <img src="${previewImage(deck, 'swords_0')}" alt="" loading="lazy">
+                        <img src="${backImage(deck)}" alt="" loading="lazy">
                     </div>
                 </button>
             `).join('');
@@ -1619,7 +1722,7 @@
             const deck = this.getCurrentDeck();
             container.innerHTML = deck.backs.map(item => `
                 <button class="control-card card-back-option" data-group="cardBack" data-key="${item.key}">
-                    <img class="card-back-thumb" src="${this.DECKS_DIR}/${deck.dir}/${item.file}" alt="${item[this.state.lang]}" loading="lazy">
+                    <img class="card-back-thumb" src="${deck.procedural ? this.svgDataUri(this.buildAuroraCardBack()) : `${this.DECKS_DIR}/${deck.dir}/${item.file}`}" alt="${item[this.state.lang]}" loading="lazy">
                     <span>${item[this.state.lang]}</span>
                 </button>
             `).join('');
@@ -2088,7 +2191,7 @@
             // Save to localStorage
             localStorage.setItem('tarot_lang', this.state.lang);
             document.documentElement.lang = this.state.lang;
-            document.getElementById('lang-pill').style.transform = this.state.lang === 'ua' ? 'translateX(0px)' : 'translateX(20px)';
+            document.getElementById('lang-pill').style.transform = this.state.lang === 'ua' ? 'translateX(0px)' : 'translateX(0.9rem)';
 
             // Update spread position names in selectedCards
             const schema = this.data.spreads[this.state.spreadKey];
@@ -2298,7 +2401,7 @@
             const pill = document.getElementById('theme-pill');
             const left = document.getElementById('theme-label-left');
             const right = document.getElementById('theme-label-right');
-            if (pill) pill.style.transform = this.state.theme === 'light' ? 'translateX(24px)' : 'translateX(0px)';
+            if (pill) pill.style.transform = this.state.theme === 'light' ? 'translateX(0.9rem)' : 'translateX(0px)';
             if (left) left.textContent = this.state.lang === 'ua' ? 'Темна' : 'Темная';
             if (right) right.textContent = this.state.lang === 'ua' ? 'Світла' : 'Светлая';
         },
@@ -3243,9 +3346,9 @@
             const ageText = age.toFixed(1);
             const t = this.translations[this.state.lang];
             document.getElementById('moon-widget').innerHTML = `
-                <div class="text-2xl">${icons[index]}</div>
+                <div class="moon-icon">${icons[index]}</div>
                 <div>${t.moon_phases[index]}</div>
-                <div class="text-[10px] text-gray-400">${ageText} ${t.moon_age_label} · ${illumination}% ${t.moon_illum_label}</div>
+                <div class="moon-details">${ageText} ${t.moon_age_label} · ${illumination}% ${t.moon_illum_label}</div>
             `;
         }
     };
@@ -3258,6 +3361,3 @@
 </script>
 </body>
 </html>
-
-
-
