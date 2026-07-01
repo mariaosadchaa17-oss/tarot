@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-translate-key="page_title">Таро AI Компаньйон v8.0 Ultimate</title>
+    <meta name="theme-color" content="#07030f">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Таро">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" href="./assets/app-icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./assets/app-icon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -504,6 +512,47 @@
         @keyframes recommended-pulse { 0%, 100% { box-shadow: 0 0 12px var(--secondary-glow-color); } 50% { box-shadow: 0 0 18px var(--primary-glow-color), 0 0 28px var(--secondary-glow-color); } }
         @keyframes recommended-sweep { 0% { transform: translateX(-120%); } 55%, 100% { transform: translateX(120%); } }
         @keyframes recommended-badge { 0%, 100% { opacity: 0.82; } 50% { opacity: 1; } }
+        .moon-matrix-wrap { display: flex; align-items: center; gap: 0.65rem; }
+        .matrix-toggle-btn { width: 2.35rem; height: 2.35rem; display: grid; place-items: center; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-gold); background: var(--button-soft); font-size: 1.1rem; transition: all 0.2s ease; }
+        .matrix-toggle-btn:hover, .matrix-toggle-btn.active { border-color: var(--text-gold); box-shadow: 0 0 14px var(--primary-glow-color); transform: translateY(-1px); }
+        .app-view[hidden] { display: none !important; }
+        .matrix-view { text-align: left; }
+        .matrix-hero { border: 1px solid var(--border-color); border-radius: 1.1rem; background: linear-gradient(135deg, var(--panel-readable), rgba(243,198,111,0.08)); padding: 1rem; margin-bottom: 1rem; }
+        .matrix-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; align-items: start; }
+        @media (min-width: 1024px) { .matrix-grid { grid-template-columns: minmax(360px, 0.92fr) minmax(0, 1.25fr); } }
+        .matrix-panel { border: 1px solid var(--border-color); border-radius: 1rem; background: var(--panel-readable); padding: 1rem; }
+        .matrix-form { display: grid; gap: 0.75rem; }
+        .matrix-actions { display: grid; grid-template-columns: 1fr; gap: 0.65rem; align-items: center; }
+        .matrix-chart { position: relative; min-height: 640px; border: 1px solid var(--border-color); border-radius: 1rem; overflow: hidden; background: radial-gradient(circle at 50% 50%, rgba(243,198,111,0.16), transparent 24%), radial-gradient(circle at 50% 50%, transparent 0 35%, rgba(157,78,223,0.10) 36% 37%, transparent 38%), linear-gradient(135deg, rgba(157,78,223,0.12), rgba(0,0,0,0.2)); }
+        .matrix-chart::before, .matrix-chart::after { content: ""; position: absolute; left: 50%; top: 50%; width: min(66%, 430px); aspect-ratio: 1; border: 1px solid rgba(243,198,111,0.16); transform: translate(-50%, -50%) rotate(45deg); pointer-events: none; }
+        .matrix-chart::after { width: min(48%, 310px); border-color: rgba(157,78,223,0.16); transform: translate(-50%, -50%) rotate(0deg); }
+        .matrix-line { position: absolute; height: 2px; background: linear-gradient(90deg, rgba(243,198,111,0.08), rgba(243,198,111,0.42), rgba(243,198,111,0.08)); transform-origin: left center; }
+        .matrix-line.soft { height: 1px; background: rgba(157,78,223,0.32); }
+        .matrix-node { position: absolute; transform: translate(-50%, -50%); width: clamp(56px, 6vw, 72px); min-height: clamp(56px, 6vw, 72px); border-radius: 999px; border: 1px solid rgba(243,198,111,0.48); background: rgba(16,10,31,0.9); display: grid; place-items: center; text-align: center; padding: 0.32rem; box-shadow: 0 0 14px rgba(157,78,223,0.2); }
+        .matrix-node.primary { width: clamp(72px, 7vw, 88px); min-height: clamp(72px, 7vw, 88px); border-width: 2px; box-shadow: 0 0 20px rgba(243,198,111,0.22); }
+        .matrix-node.core { width: clamp(82px, 8vw, 100px); min-height: clamp(82px, 8vw, 100px); border-width: 2px; background: radial-gradient(circle, rgba(243,198,111,0.2), rgba(16,10,31,0.94) 64%); }
+        .matrix-node.channel { width: clamp(54px, 5vw, 64px); min-height: clamp(54px, 5vw, 64px); }
+        body.theme-light .matrix-node { background: rgba(255,250,242,0.94); }
+        body.theme-light .matrix-node.core { background: radial-gradient(circle, rgba(243,198,111,0.24), rgba(255,250,242,0.96) 66%); }
+        .matrix-node-key { color: var(--text-muted); font-size: 0.58rem; font-weight: 900; line-height: 1; }
+        .matrix-node-value { color: var(--text-gold); font-weight: 900; font-size: 1.25rem; line-height: 1; margin-top: 0.12rem; }
+        .matrix-node.core .matrix-node-value { font-size: 1.55rem; }
+        .matrix-node-label { margin-top: 0.18rem; color: var(--text-color); font-size: 0.62rem; line-height: 1.05; overflow-wrap: break-word; }
+        .matrix-result-grid { display: grid; grid-template-columns: 1fr; gap: 0.65rem; margin-top: 0.9rem; }
+        .matrix-result-card { border: 1px solid var(--border-color); border-radius: 0.9rem; background: var(--panel-soft); padding: 0.75rem; }
+        .matrix-result-title { color: var(--text-purple); font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; }
+        .matrix-result-value { color: var(--text-gold); font-size: 1.25rem; font-weight: 900; margin-top: 0.15rem; }
+        .matrix-result-text { color: var(--text-muted); font-size: 0.78rem; line-height: 1.35; margin-top: 0.25rem; }
+        .matrix-summary-group { border: 1px solid var(--border-color); border-radius: 0.95rem; background: var(--panel-readable); padding: 0.85rem; display: grid; gap: 0.55rem; }
+        .matrix-summary-title { color: var(--text-gold); font-size: 0.78rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; }
+        .matrix-summary-row { display: grid; grid-template-columns: auto 1fr auto; gap: 0.6rem; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.55rem; }
+        body.theme-light .matrix-summary-row { border-top-color: rgba(70,40,100,0.12); }
+        .matrix-summary-key { width: 2.2rem; height: 2.2rem; border-radius: 999px; border: 1px solid rgba(243,198,111,0.42); color: var(--text-gold); display: grid; place-items: center; font-size: 0.68rem; font-weight: 900; }
+        .matrix-summary-name { color: var(--text-color); font-weight: 800; font-size: 0.86rem; line-height: 1.2; }
+        .matrix-summary-desc { color: var(--text-muted); font-size: 0.76rem; line-height: 1.35; margin-top: 0.12rem; }
+        .matrix-summary-value { color: var(--text-gold); font-size: 1.35rem; font-weight: 900; }
+        @media (max-width: 640px) { .matrix-chart { min-height: 560px; } .matrix-node-label { display: none; } .matrix-node { width: 50px; min-height: 50px; } .matrix-node.primary { width: 62px; min-height: 62px; } .matrix-node.core { width: 74px; min-height: 74px; } }
+        .matrix-back-btn { border-radius: 0.75rem; padding: 0.6rem 0.8rem; border: 1px solid var(--border-color); background: var(--button-soft); color: var(--text-gold); font-weight: 800; font-size: 0.78rem; }
 
     </style>
 </head>
@@ -511,7 +560,10 @@
 <div class="max-w-7xl mx-auto">
     <header class="text-center mb-8 border-b pb-5 border-color">
         <div class="flex justify-between items-center w-full mb-4">
-            <div id="moon-widget" class="text-left text-xs"></div>
+            <div class="moon-matrix-wrap">
+                <div id="moon-widget" class="text-left text-xs"></div>
+                <button id="matrix-toggle" type="button" class="matrix-toggle-btn" data-title-key="matrix_toggle_title">✦</button>
+            </div>
             <div class="flex items-center gap-4">
                 <!-- Theme Switcher -->
                 <div id="theme-toggle" class="flex items-center gap-2 text-sm font-medium cursor-pointer"><span id="theme-label-left" class="text-gray-400">Темна</span><div class="w-12 h-6 bg-gray-700 rounded-full p-0.5 flex items-center transition-all duration-300"><div id="theme-pill" class="w-5 h-5 bg-white rounded-full transform transition-transform duration-300"></div></div><span id="theme-label-right" class="text-white">Світла</span></div>
@@ -626,6 +678,7 @@
             </div>
         </div>
     </header>
+    <main id="tarot-view" class="app-view">
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div class="lg:col-span-6 space-y-6">
             <div class="bg-surface p-5 rounded-2xl border border-color neon-glow">
@@ -706,6 +759,35 @@
             </div>
         </div>
     </div>
+    </main>
+    <main id="matrix-view" class="app-view matrix-view" hidden>
+        <section class="matrix-hero">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                    <div class="text-purple text-xs font-bold uppercase tracking-wider" data-translate-key="matrix_kicker"></div>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-gold mt-1" data-translate-key="matrix_title"></h2>
+                    <p class="text-sm text-gray-300 mt-2 max-w-3xl" data-translate-key="matrix_intro"></p>
+                </div>
+                <button id="matrix-back-btn" type="button" class="matrix-back-btn" data-translate-key="matrix_back"></button>
+            </div>
+        </section>
+        <div class="matrix-grid">
+            <section class="matrix-panel">
+                <h3 class="text-lg font-bold text-gold mb-3" data-translate-key="matrix_form_title"></h3>
+                <div class="matrix-form">
+                    <input id="matrix-name-input" class="client-input" type="text" data-placeholder-key="matrix_name_placeholder">
+                    <input id="matrix-date-input" class="client-input" type="date">
+                    <div class="matrix-actions">
+                        <button id="matrix-calc-btn" type="button" class="client-add-btn" data-translate-key="matrix_calc_btn"></button>
+                    </div>
+                </div>
+                <div id="matrix-summary" class="matrix-result-grid"></div>
+            </section>
+            <section class="matrix-panel">
+                <div id="matrix-chart" class="matrix-chart"></div>
+            </section>
+        </div>
+    </main>
     <footer class="text-center py-8 mt-8 border-t border-color"><p class="text-sm text-gold" style="filter: drop-shadow(0 0 5px var(--primary-glow-color));">Made with 💜 by Mary • Support Engineer & Tarot Master</p></footer>
 </div>
 <!-- Audio Elements -->
@@ -743,7 +825,8 @@
             spreadKey: 'venus-circle', activeSuit: null, selectedCards: {}, activePositionIndex: 0,
             selectedDeck: 'retro', cardBackStyle: 'standard', previewReversed: false, selectedCardForAdd: null,
             clients: [], activeClientId: null, account: null, registeredAccount: null, authMode: 'login', readings: [], activeAccountTab: 'clients',
-            answerTone: 'soft', answerLength: 'standard', answerFocus: 'advice', moodBefore: 'neutral', allowReversals: true, soundEnabled: false
+            answerTone: 'soft', answerLength: 'standard', answerFocus: 'advice', moodBefore: 'neutral', allowReversals: true, soundEnabled: false,
+            activeView: 'tarot'
         },
         translations: {
             ua: {
@@ -817,6 +900,10 @@
                 btn_random_question: "Випадкове питання",
                 recommended_badge: "Рекомендовано",
                 rules_list: ["Формулюйте запит чітко та екологічно (без злого умислу).", "Не дублюйте один і той же запит картам декілька разів на день.", "Підходьте до розкладу у спокійному, медитативному стані.", "Пам'ятайте: карти показують найбільш вірогідний вектор, але фінальний вибір завжди за вами."],
+                matrix_rules_toggle: "📐 Правила матриці",
+                matrix_rules_list: ["Використовуйте повну дату народження: день, місяць і рік.", "Числа матриці — це енергії для самоаналізу, а не вирок.", "Дивіться не лише окремі точки, а й зв'язки між ними: ресурс, гроші, стосунки та рід.", "Повторний розрахунок має сенс тільки при виправленні дати або імені."],
+                moon_age_label: "день",
+                moon_illum_label: "світло",
                 section_title_settings: "⚙️ Налаштування",
                 section_title_sphere: "✨ 1. Сфера",
                 section_title_mode_sphere: "✨ 1. Режим та Сфера", label_ai_mode: "Режим ШІ",
@@ -852,6 +939,19 @@
                 recommendation_general: "💡 Для загального аналізу достатньо «Три карти»: минуле, теперішнє і найближчий розвиток.",
                 suit_major: "✨ Старші Аркани", suit_wands: "🪄 Жезли", suit_cups: "🏆 Кубки", suit_swords: "⚔️ Мечі", suit_pentacles: "🪙 Пентаклі",
                 moon_phases: ['Молодик', 'Молодий місяць', 'Перша чверть', 'Прибуваючий місяць', 'Повня', 'Спадаючий місяць', 'Остання чверть', 'Старий місяць'],
+                matrix_toggle_title: "Матриця долі",
+                matrix_kicker: "Нумерологія 22 енергій",
+                matrix_title: "Матриця долі",
+                matrix_intro: "Введіть дату народження, щоб побачити базові точки матриці: особистість, дар, матеріальну задачу, карму душі, ресурс, родові таланти, блоки грошей та стосунків.",
+                matrix_back: "← До Таро",
+                matrix_form_title: "Дані для розрахунку",
+                matrix_name_placeholder: "Ім'я або нік",
+                matrix_calc_btn: "Розрахувати",
+                matrix_empty: "Вкажіть дату народження.",
+                matrix_source_note: "Розрахунок використовує систему 22 енергій: числа понад 22 спрощуються сумою цифр.",
+                matrix_group_base: "Основні точки",
+                matrix_group_family: "Родові лінії",
+                matrix_group_channels: "Канали та блоки",
                 loading_text: "Зчитуємо інформацію з простору...",
                 btn_reverse: "⤾ Перевернути",
                 reading_cards_title: "Ваш розклад готовий",
@@ -943,6 +1043,10 @@
                 btn_random_question: "Случайный вопрос",
                 recommended_badge: "Рекомендовано",
                 rules_list: ["Формулируйте запрос четко и экологично (без злого умысла).", "Не дублируйте один и тот же запрос картам несколько раз в день.", "Подходите к раскладу в спокойном, медитативном состоянии.", "Помните: карты показывают наиболее вероятный вектор, но финальный выбор всегда за вами."],
+                matrix_rules_toggle: "📐 Правила матрицы",
+                matrix_rules_list: ["Используйте полную дату рождения: день, месяц и год.", "Числа матрицы — это энергии для самоанализа, а не приговор.", "Смотрите не только отдельные точки, но и связи между ними: ресурс, деньги, отношения и род.", "Повторный расчет имеет смысл только при исправлении даты или имени."],
+                moon_age_label: "день",
+                moon_illum_label: "свет",
                 section_title_settings: "⚙️ Настройки",
                 section_title_sphere: "✨ 1. Сфера",
                 section_title_mode_sphere: "✨ 1. Режим и Сфера", label_ai_mode: "Режим ИИ",
@@ -978,6 +1082,19 @@
                 recommendation_general: "💡 Для общего анализа достаточно «Три карты»: прошлое, настоящее и ближайшее развитие.",
                 suit_major: "✨ Старшие Арканы", suit_wands: "🪄 Жезлы", suit_cups: "🏆 Кубки", suit_swords: "⚔️ Мечи", suit_pentacles: "🪙 Пентакли",
                 moon_phases: ['Новолуние', 'Молодая луна', 'Первая четверть', 'Прибывающая луна', 'Полнолуние', 'Убывающая луна', 'Последняя четверть', 'Старая луна'],
+                matrix_toggle_title: "Матрица судьбы",
+                matrix_kicker: "Нумерология 22 энергий",
+                matrix_title: "Матрица судьбы",
+                matrix_intro: "Введите дату рождения, чтобы увидеть базовые точки матрицы: личность, дар, материальную задачу, карму души, ресурс, родовые таланты, блоки денег и отношений.",
+                matrix_back: "← К Таро",
+                matrix_form_title: "Данные для расчета",
+                matrix_name_placeholder: "Имя или ник",
+                matrix_calc_btn: "Рассчитать",
+                matrix_empty: "Укажите дату рождения.",
+                matrix_source_note: "Расчет использует систему 22 энергий: числа больше 22 упрощаются суммой цифр.",
+                matrix_group_base: "Основные точки",
+                matrix_group_family: "Родовые линии",
+                matrix_group_channels: "Каналы и блоки",
                 loading_text: "Считываем информацию из пространства...",
                 btn_reverse: "⤾ Перевернуть",
                 reading_cards_title: "Ваш расклад готов",
@@ -1630,6 +1747,12 @@
         addEventListeners() {
             document.getElementById('lang-toggle').addEventListener('click', () => this.toggleLanguage());
             document.getElementById('theme-toggle').addEventListener('click', () => this.toggleTheme());
+            document.getElementById('matrix-toggle').addEventListener('click', () => App.showMatrixView());
+            document.getElementById('matrix-back-btn').addEventListener('click', () => App.showTarotView());
+            document.getElementById('matrix-calc-btn').addEventListener('click', () => App.calculateMatrix());
+            document.getElementById('matrix-date-input').addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') App.calculateMatrix();
+            });
             document.getElementById('reset-btn').addEventListener('click', () => this.resetSpread());
             document.getElementById('random-btn').addEventListener('click', () => this.randomizeSpread());
             document.getElementById('ai-btn').addEventListener('click', () => this.getSpreadInterpretation());
@@ -1999,6 +2122,166 @@
                 this.renderCardCarousel();
             }
         },
+
+        showMatrixView() {
+            this.state.activeView = 'matrix';
+            document.getElementById('tarot-view').hidden = true;
+            document.getElementById('matrix-view').hidden = false;
+            document.getElementById('matrix-toggle')?.classList.add('active');
+            this.renderRules();
+            if (!document.getElementById('matrix-chart').children.length) this.renderMatrixPlaceholder();
+        },
+
+        showTarotView() {
+            this.state.activeView = 'tarot';
+            document.getElementById('matrix-view').hidden = true;
+            document.getElementById('tarot-view').hidden = false;
+            document.getElementById('matrix-toggle')?.classList.remove('active');
+            this.renderRules();
+        },
+
+        reduceMatrixNumber(value) {
+            let num = Math.abs(Number(value) || 0);
+            while (num > 22) {
+                num = String(num).split('').reduce((sum, digit) => sum + Number(digit), 0);
+            }
+            return num || 22;
+        },
+
+        sumDigits(value) {
+            return String(value).replace(/\D/g, '').split('').reduce((sum, digit) => sum + Number(digit), 0);
+        },
+
+        calculateMatrix() {
+            const dateValue = document.getElementById('matrix-date-input').value;
+            const summary = document.getElementById('matrix-summary');
+            if (!dateValue) {
+                summary.innerHTML = `<div class="matrix-result-card"><div class="matrix-result-text">${this.translations[this.state.lang].matrix_empty}</div></div>`;
+                this.renderMatrixPlaceholder();
+                return;
+            }
+
+            const [year, month, day] = dateValue.split('-').map(Number);
+            const a = this.reduceMatrixNumber(day);
+            const b = this.reduceMatrixNumber(month);
+            const c = this.reduceMatrixNumber(this.sumDigits(year));
+            const g = this.reduceMatrixNumber(a + b + c);
+            const e = this.reduceMatrixNumber(a + b + c + g);
+            const fatherTalent = this.reduceMatrixNumber(a + b);
+            const motherTalent = this.reduceMatrixNumber(b + c);
+            const fatherKarma = this.reduceMatrixNumber(a + g);
+            const motherKarma = this.reduceMatrixNumber(c + g);
+            const relationBlock = this.reduceMatrixNumber(g + e);
+            const moneyBlock = this.reduceMatrixNumber(c + e);
+            const balance = this.reduceMatrixNumber(relationBlock + moneyBlock);
+            const partner = this.reduceMatrixNumber(relationBlock + balance);
+            const realization = this.reduceMatrixNumber(moneyBlock + balance);
+
+            const points = [
+                { key: 'A', value: a, x: 12, y: 50, kind: 'primary', ua: 'Особистість', ru: 'Личность' },
+                { key: 'B', value: b, x: 50, y: 10, kind: 'primary', ua: 'Вищий дар', ru: 'Высший дар' },
+                { key: 'C', value: c, x: 88, y: 50, kind: 'primary', ua: 'Матеріальна задача', ru: 'Материальная задача' },
+                { key: 'G', value: g, x: 50, y: 90, kind: 'primary', ua: 'Карма душі', ru: 'Карма души' },
+                { key: 'E', value: e, x: 50, y: 50, kind: 'core', ua: 'Ресурс', ru: 'Ресурс' },
+                { key: 'FT', value: fatherTalent, x: 30, y: 30, kind: 'channel', ua: 'Талант батька', ru: 'Талант отца' },
+                { key: 'MT', value: motherTalent, x: 70, y: 30, kind: 'channel', ua: 'Талант матері', ru: 'Талант матери' },
+                { key: 'FK', value: fatherKarma, x: 30, y: 70, kind: 'channel', ua: 'Карма батька', ru: 'Карма отца' },
+                { key: 'MK', value: motherKarma, x: 70, y: 70, kind: 'channel', ua: 'Карма матері', ru: 'Карма матери' },
+                { key: 'RB', value: relationBlock, x: 39, y: 61, kind: 'channel', ua: 'Стосунки', ru: 'Отношения' },
+                { key: 'MB', value: moneyBlock, x: 61, y: 61, kind: 'channel', ua: 'Гроші', ru: 'Деньги' },
+                { key: 'BAL', value: balance, x: 50, y: 66, kind: 'channel', ua: 'Баланс', ru: 'Баланс' },
+                { key: 'P', value: partner, x: 39, y: 82, kind: 'channel', ua: 'Партнер', ru: 'Партнер' },
+                { key: 'R', value: realization, x: 61, y: 82, kind: 'channel', ua: 'Реалізація', ru: 'Реализация' }
+            ];
+
+            this.renderMatrixChart(points);
+            this.renderMatrixSummary(points, dateValue);
+        },
+
+        renderMatrixPlaceholder() {
+            const chart = document.getElementById('matrix-chart');
+            const placeholderPoints = [
+                { key: 'A', value: 'A', x: 12, y: 50, kind: 'primary', ua: 'День', ru: 'День' },
+                { key: 'B', value: 'B', x: 50, y: 10, kind: 'primary', ua: 'Місяць', ru: 'Месяц' },
+                { key: 'C', value: 'C', x: 88, y: 50, kind: 'primary', ua: 'Рік', ru: 'Год' },
+                { key: 'G', value: 'G', x: 50, y: 90, kind: 'primary', ua: 'Карма', ru: 'Карма' },
+                { key: 'E', value: '22', x: 50, y: 50, kind: 'core', ua: 'Центр', ru: 'Центр' }
+            ];
+            this.renderMatrixChart(placeholderPoints);
+            document.getElementById('matrix-summary').innerHTML = `<div class="matrix-result-card"><div class="matrix-result-title">${this.translations[this.state.lang].matrix_kicker}</div><div class="matrix-result-text">${this.translations[this.state.lang].matrix_source_note}</div></div>`;
+        },
+
+        renderMatrixChart(points) {
+            const chart = document.getElementById('matrix-chart');
+            const lines = [
+                ['A', 'B'], ['B', 'C'], ['C', 'G'], ['G', 'A'], ['A', 'C'], ['B', 'G'],
+                ['FT', 'E', 'soft'], ['E', 'MK', 'soft'], ['MT', 'E', 'soft'], ['E', 'FK', 'soft'],
+                ['RB', 'BAL', 'soft'], ['BAL', 'MB', 'soft'], ['P', 'BAL', 'soft'], ['BAL', 'R', 'soft']
+            ];
+            const byKey = Object.fromEntries(points.map(point => [point.key, point]));
+            chart.innerHTML = lines.map(([from, to, type]) => this.matrixLineHTML(byKey[from], byKey[to], type)).join('') +
+                points.map(point => `
+                    <div class="matrix-node ${point.kind || ''}" style="left:${point.x}%;top:${point.y}%;">
+                        <div>
+                            <div class="matrix-node-key">${point.key}</div>
+                            <div class="matrix-node-value">${point.value}</div>
+                            <div class="matrix-node-label">${point[this.state.lang]}</div>
+                        </div>
+                    </div>
+                `).join('');
+        },
+
+        matrixLineHTML(from, to, type = '') {
+            if (!from || !to) return '';
+            const dx = to.x - from.x;
+            const dy = to.y - from.y;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            return `<div class="matrix-line ${type}" style="left:${from.x}%;top:${from.y}%;width:${length}%;transform:rotate(${angle}deg);"></div>`;
+        },
+
+        renderMatrixSummary(points, dateValue) {
+            const labels = {
+                ua: { A: 'Хто я в базі', B: 'Дар і натхнення', C: 'Матеріальне опрацювання', G: 'Карма душі', E: 'Ресурс і соціум', FT: 'Талант роду батька', MT: 'Талант роду матері', FK: 'Задача роду батька', MK: 'Задача роду матері', RB: 'Блок стосунків', MB: 'Блок грошей', BAL: 'Баланс сфер', P: 'Якості партнера', R: 'Сфера реалізації' },
+                ru: { A: 'Кто я в базе', B: 'Дар и вдохновение', C: 'Материальная проработка', G: 'Карма души', E: 'Ресурс и социум', FT: 'Талант рода отца', MT: 'Талант рода матери', FK: 'Задача рода отца', MK: 'Задача рода матери', RB: 'Блок отношений', MB: 'Блок денег', BAL: 'Баланс сфер', P: 'Качества партнера', R: 'Сфера реализации' }
+            };
+            const langLabels = labels[this.state.lang];
+            const name = document.getElementById('matrix-name-input').value.trim();
+            const title = name ? `${this.escapeHTML(name)} · ${this.escapeHTML(dateValue)}` : this.escapeHTML(dateValue);
+            const byKey = Object.fromEntries(points.map(point => [point.key, point]));
+            const t = this.translations[this.state.lang];
+            const groups = [
+                { title: t.matrix_group_base, keys: ['A', 'B', 'C', 'G', 'E'] },
+                { title: t.matrix_group_family, keys: ['FT', 'MT', 'FK', 'MK'] },
+                { title: t.matrix_group_channels, keys: ['RB', 'MB', 'BAL', 'P', 'R'] }
+            ];
+            document.getElementById('matrix-summary').innerHTML = `
+                <div class="matrix-result-card">
+                    <div class="matrix-result-title">${t.matrix_title}</div>
+                    <div class="matrix-result-value">${title}</div>
+                    <div class="matrix-result-text">${t.matrix_source_note}</div>
+                </div>
+                ${groups.map(group => `
+                    <div class="matrix-summary-group">
+                        <div class="matrix-summary-title">${group.title}</div>
+                        ${group.keys.map(key => {
+                            const point = byKey[key];
+                            return `
+                                <div class="matrix-summary-row">
+                                    <div class="matrix-summary-key">${point.key}</div>
+                                    <div>
+                                        <div class="matrix-summary-name">${langLabels[point.key] || point[this.state.lang]}</div>
+                                        <div class="matrix-summary-desc">${point[this.state.lang]}</div>
+                                    </div>
+                                    <div class="matrix-summary-value">${point.value}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `).join('')}
+            `;
+        },
+
         toggleTheme() {
             this.state.theme = this.state.theme === 'light' ? 'dark' : 'light';
             localStorage.setItem('tarot_theme', this.state.theme);
@@ -2020,6 +2303,18 @@
             if (right) right.textContent = this.state.lang === 'ua' ? 'Світла' : 'Светлая';
         },
 
+        renderRules() {
+            const t = this.translations[this.state.lang];
+            const isMatrix = this.state.activeView === 'matrix';
+            const rulesList = document.getElementById('rules-list');
+            const rulesToggle = document.getElementById('rules-toggle');
+            if (rulesToggle) rulesToggle.textContent = isMatrix ? t.matrix_rules_toggle : t.rules_toggle;
+            if (rulesList) {
+                const rules = isMatrix ? t.matrix_rules_list : t.rules_list;
+                rulesList.innerHTML = rules.map(rule => `<li>${this.escapeHTML(rule)}</li>`).join('');
+            }
+        },
+
         applyLanguage() {
             document.querySelectorAll('[data-translate-key]').forEach(el => {
                 const key = el.dataset.translateKey;
@@ -2031,11 +2326,7 @@
                 }
             });
 
-            // Update rules list
-            const rulesList = document.getElementById('rules-list');
-            if (rulesList) {
-                rulesList.innerHTML = this.translations[this.state.lang].rules_list.map(rule => `<li>${rule}</li>`).join('');
-            }
+            this.renderRules();
 
             // Update textarea placeholder
             const questionField = document.getElementById('question');
@@ -2057,6 +2348,12 @@
                 const value = this.translations[this.state.lang][el.dataset.titleKey];
                 if (value) el.title = value;
             });
+            const matrixView = document.getElementById('matrix-view');
+            if (matrixView && !matrixView.hidden) {
+                const dateValue = document.getElementById('matrix-date-input').value;
+                if (dateValue) this.calculateMatrix();
+                else this.renderMatrixPlaceholder();
+            }
         },
 
         toggleAccordion(showId, hideId = null) {
@@ -2937,11 +3234,26 @@
 
         displayMoonPhase() {
             const icons = ['🌑', '🌒', '🌓', '🌔', '🌕', '🌖', '🌗', '🌘'];
-            const day = new Date().getDate();
-            const index = Math.floor((day % 30) / 3.75);
-            document.getElementById('moon-widget').innerHTML = `<div class="text-2xl">${icons[index]}</div><div>${this.translations[this.state.lang].moon_phases[index]}</div>`;
+            const synodicMonth = 29.530588853;
+            const knownNewMoonUTC = Date.UTC(2000, 0, 6, 18, 14);
+            const daysSinceKnownNewMoon = (Date.now() - knownNewMoonUTC) / 86400000;
+            const age = ((daysSinceKnownNewMoon % synodicMonth) + synodicMonth) % synodicMonth;
+            const index = Math.round((age / synodicMonth) * 8) % 8;
+            const illumination = Math.round(((1 - Math.cos((2 * Math.PI * age) / synodicMonth)) / 2) * 100);
+            const ageText = age.toFixed(1);
+            const t = this.translations[this.state.lang];
+            document.getElementById('moon-widget').innerHTML = `
+                <div class="text-2xl">${icons[index]}</div>
+                <div>${t.moon_phases[index]}</div>
+                <div class="text-[10px] text-gray-400">${ageText} ${t.moon_age_label} · ${illumination}% ${t.moon_illum_label}</div>
+            `;
         }
     };
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+        });
+    }
     document.addEventListener('DOMContentLoaded', () => App.init());
 </script>
 </body>

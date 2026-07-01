@@ -1,17 +1,22 @@
 {
-  "name": "Tarot AI Companion",
+  "id": "./index.html",
+  "name": "Таро AI Компаньйон",
   "short_name": "Таро",
-  "description": "Конструктор раскладов Таро с умным промптом для ИИ",
+  "description": "Конструктор розкладів Таро, карта дня, історія та матриця долі.",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#0b0813",
-  "theme_color": "#0b0813",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#07030f",
+  "theme_color": "#07030f",
   "orientation": "portrait",
+  "categories": ["lifestyle", "productivity"],
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%230b0813'/><text y='130' x='96' text-anchor='middle' font-size='120'>🔮</text></svg>",
-      "sizes": "192x192",
-      "type": "image/svg+xml"
+      "src": "./assets/app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
     }
   ]
 }
