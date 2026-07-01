@@ -563,9 +563,11 @@
         .matrix-summary-desc { color: var(--text-muted); font-size: 0.76rem; line-height: 1.35; margin-top: 0.12rem; }
         .matrix-summary-value { color: var(--text-gold); font-size: 1.35rem; font-weight: 900; }
         .matrix-interpretation { grid-column: 1 / -1; display: grid; gap: 0.55rem; margin-top: 0.1rem; padding: 0.78rem; border-radius: 0.75rem; background: var(--panel-soft); }
-        .matrix-energy-title { color: var(--text-gold); font-size: 0.82rem; font-weight: 900; }
+        .matrix-energy-title { color: var(--text-gold); font-size: 0.86rem; font-weight: 900; }
         .matrix-energy-line { color: var(--text-muted); font-size: 0.8rem; line-height: 1.55; }
         .matrix-energy-line strong { color: var(--text-color); }
+        .matrix-point-heading { color: var(--text-color); font-size: 0.9rem; font-weight: 900; line-height: 1.25; }
+        .matrix-synthesis-list { display: grid; gap: 0.45rem; padding-left: 1rem; list-style: disc; }
         @media (max-width: 640px) { .matrix-chart { min-height: 560px; } .matrix-node-label { display: none; } .matrix-node { width: 50px; min-height: 50px; } .matrix-node.primary { width: 62px; min-height: 62px; } .matrix-node.core { width: 74px; min-height: 74px; } }
         .matrix-back-btn { border-radius: 0.75rem; padding: 0.6rem 0.8rem; border: 1px solid var(--border-color); background: var(--button-soft); color: var(--text-gold); font-weight: 800; font-size: 0.78rem; }
 
@@ -966,14 +968,19 @@
                 matrix_name_placeholder: "Ім'я або нік",
                 matrix_calc_btn: "Розрахувати",
                 matrix_empty: "Вкажіть дату народження.",
-                matrix_source_note: "Розрахунок використовує систему 22 енергій: числа понад 22 спрощуються сумою цифр.",
-                matrix_group_base: "Основні точки",
+                matrix_source_note: "Матриця — езотерична практика для рефлексії, а не науковий факт про характер. Розрахунок використовує систему 22 енергій: числа понад 22 спрощуються сумою цифр.",
+                matrix_group_base: "Ядро особистості",
                 matrix_group_family: "Родові лінії",
-                matrix_group_channels: "Канали та блоки",
+                matrix_group_channels: "Стосунки, гроші та реалізація",
+                matrix_group_karmic: "Баланс і карма душі",
                 matrix_position_label: "Позиція",
                 matrix_plus_label: "У плюсі",
                 matrix_minus_label: "У мінусі",
                 matrix_action_label: "Перевід у плюс",
+                matrix_synthesis_title: "Короткий синтез",
+                matrix_repeat_theme: "Повторювана тема",
+                matrix_pair_theme: "Парні енергії",
+                matrix_deeper_question: "Що розібрати глибше далі: стосунки + партнер, гроші + реалізація чи центр + кармічний хвіст?",
                 loading_text: "Зчитуємо інформацію з простору...",
                 btn_reverse: "⤾ Перевернути",
                 reading_cards_title: "Ваш розклад готовий",
@@ -1113,14 +1120,19 @@
                 matrix_name_placeholder: "Имя или ник",
                 matrix_calc_btn: "Рассчитать",
                 matrix_empty: "Укажите дату рождения.",
-                matrix_source_note: "Расчет использует систему 22 энергий: числа больше 22 упрощаются суммой цифр.",
-                matrix_group_base: "Основные точки",
+                matrix_source_note: "Матрица — эзотерическая практика для рефлексии, а не научный факт о характере. Расчет использует систему 22 энергий: числа больше 22 упрощаются суммой цифр.",
+                matrix_group_base: "Ядро личности",
                 matrix_group_family: "Родовые линии",
-                matrix_group_channels: "Каналы и блоки",
+                matrix_group_channels: "Отношения, деньги и реализация",
+                matrix_group_karmic: "Баланс и карма души",
                 matrix_position_label: "Позиция",
                 matrix_plus_label: "В плюсе",
                 matrix_minus_label: "В минусе",
                 matrix_action_label: "Перевод в плюс",
+                matrix_synthesis_title: "Краткий синтез",
+                matrix_repeat_theme: "Повторяющаяся тема",
+                matrix_pair_theme: "Парные энергии",
+                matrix_deeper_question: "Что разобрать глубже дальше: отношения + партнёр, деньги + реализация или центр + кармический хвост?",
                 loading_text: "Считываем информацию из пространства...",
                 btn_reverse: "⤾ Перевернуть",
                 reading_cards_title: "Ваш расклад готов",
@@ -2447,53 +2459,55 @@
         buildMatrixInterpretation(point, label) {
             const meaning = this.getMatrixEnergyMeaning(point.value);
             const zoneHint = this.getMatrixZoneHint(point.key);
-            const t = this.translations[this.state.lang];
             const text = {
                 ua: {
-                    position: `У позиції «${label}» енергія ${point.value} (${meaning.name}) показує не просто рису характеру, а спосіб, через який ця зона життя просить уваги. ${zoneHint} Тут важливо дивитися, як саме людина проживає аркан: у ресурсі він відкриває силу, а в напрузі створює повторюваний сценарій.`,
-                    plus: `Коли ця енергія у плюсі, вона проявляється як ${meaning.plus}. У цій зоні це дає природний рух без внутрішнього спротиву: легше приймати рішення, бачити свої можливості і не витрачати сили на боротьбу із собою.`,
-                    minus: `У мінусі та сама енергія може переходити в ${meaning.minus}. Це не “погано” і не вирок, а сигнал, що зона перевантажена, проживається через страх або старий автоматичний сценарій.`,
-                    action: `Перевід у плюс: ${meaning.action}. Практично це означає: оберіть одну маленьку дію на найближчі дні і повторіть її кілька разів, щоб енергія почала закріплюватися не в думках, а в поведінці.`
+                    body: `Ця точка показує, як тема «${label}» проживається через аркан ${meaning.name}. ${zoneHint} У ресурсному стані тут проявляються ${meaning.plus}: людина діє природніше, краще бачить свої можливості й не витрачає сили на внутрішній спротив. У тіні ця сама енергія може давати ${meaning.minus}; це не вирок, а сигнал, що зона потребує уваги. Практичний крок: ${meaning.action}.`
                 },
                 ru: {
-                    position: `В позиции «${label}» энергия ${point.value} (${meaning.name}) показывает не просто черту характера, а способ, через который эта зона жизни просит внимания. ${zoneHint} Здесь важно смотреть, как именно человек проживает аркан: в ресурсе он открывает силу, а в напряжении создаёт повторяющийся сценарий.`,
-                    plus: `Когда эта энергия в плюсе, она проявляется как ${meaning.plus}. В этой зоне это даёт естественное движение без внутреннего сопротивления: проще принимать решения, видеть свои возможности и не тратить силы на борьбу с собой.`,
-                    minus: `В минусе та же энергия может переходить в ${meaning.minus}. Это не “плохо” и не приговор, а сигнал, что зона перегружена, проживается через страх или старый автоматический сценарий.`,
-                    action: `Перевод в плюс: ${meaning.action}. Практически это значит: выберите одно маленькое действие на ближайшие дни и повторите его несколько раз, чтобы энергия начала закрепляться не в мыслях, а в поведении.`
+                    body: `Эта точка показывает, как тема «${label}» проживается через аркан ${meaning.name}. ${zoneHint} В ресурсном состоянии здесь проявляются ${meaning.plus}: человеку проще действовать естественно, видеть свои возможности и не тратить силы на внутреннее сопротивление. В тени эта же энергия может давать ${meaning.minus}; это не приговор, а сигнал, что зона просит внимания. Практический шаг: ${meaning.action}.`
                 }
             }[this.state.lang];
 
             return `
                 <div class="matrix-interpretation">
-                    <div class="matrix-energy-title">${this.escapeHTML(meaning.name)} · ${this.escapeHTML(point[this.state.lang])}</div>
-                    <div class="matrix-energy-line"><strong>${t.matrix_position_label}:</strong> ${this.escapeHTML(text.position)}</div>
-                    <div class="matrix-energy-line"><strong>${t.matrix_plus_label}:</strong> ${this.escapeHTML(text.plus)}</div>
-                    <div class="matrix-energy-line"><strong>${t.matrix_minus_label}:</strong> ${this.escapeHTML(text.minus)}</div>
-                    <div class="matrix-energy-line"><strong>${t.matrix_action_label}:</strong> ${this.escapeHTML(text.action)}</div>
+                    <div class="matrix-point-heading">${this.escapeHTML(point.key)} = ${point.value} (${this.escapeHTML(label)}) — ${this.escapeHTML(meaning.name)}</div>
+                    <div class="matrix-energy-line">${this.escapeHTML(text.body)}</div>
                 </div>
             `;
         },
 
-        renderMatrixOverview(byKey) {
-            const center = this.getMatrixEnergyMeaning(byKey.E.value);
-            const karma = this.getMatrixEnergyMeaning(byKey.G.value);
-            const money = this.getMatrixEnergyMeaning(byKey.MB.value);
-            const relation = this.getMatrixEnergyMeaning(byKey.RB.value);
-            const copy = {
-                ua: {
-                    title: 'Головний малюнок матриці',
-                    text: `Центр матриці показує базовий ресурс душі: ${byKey.E.value} (${center.name}). Саме через цю енергію людині найпростіше повертатися до себе після виснаження. Кармічний хвіст ${byKey.G.value} (${karma.name}) показує головний урок: там можуть повторюватися ситуації, доки енергія не буде прожита доросло і чесно. У грошовому каналі активна енергія ${byKey.MB.value} (${money.name}), а у стосунках — ${byKey.RB.value} (${relation.name}). Якщо ці дві зони конфліктують, людина може або йти в контроль через гроші, або втрачати ресурс через емоційні прив’язки. Завдання матриці — не “передбачити долю”, а показати, де повернути собі силу.`
-                },
-                ru: {
-                    title: 'Главный рисунок матрицы',
-                    text: `Центр матрицы показывает базовый ресурс души: ${byKey.E.value} (${center.name}). Именно через эту энергию человеку проще всего возвращаться к себе после истощения. Кармический хвост ${byKey.G.value} (${karma.name}) показывает главный урок: там могут повторяться ситуации, пока энергия не будет прожита взросло и честно. В денежном канале активна энергия ${byKey.MB.value} (${money.name}), а в отношениях — ${byKey.RB.value} (${relation.name}). Если эти две зоны конфликтуют, человек может либо уходить в контроль через деньги, либо терять ресурс через эмоциональные привязки. Задача матрицы — не “предсказать судьбу”, а показать, где вернуть себе силу.`
-                }
-            }[this.state.lang];
-
+        renderMatrixSynthesis(points) {
+            const t = this.translations[this.state.lang];
+            const counts = points.reduce((acc, point) => {
+                acc[point.value] = (acc[point.value] || 0) + 1;
+                return acc;
+            }, {});
+            const repeated = Object.entries(counts).filter(([, count]) => count > 1).sort((a, b) => b[1] - a[1]);
+            const repeatText = repeated.length
+                ? repeated.map(([value, count]) => {
+                    const meaning = this.getMatrixEnergyMeaning(Number(value));
+                    return this.state.lang === 'ua'
+                        ? `${value} (${meaning.name}) повторюється ${count} рази: це сквозна тема, яку варто відстежувати в різних сферах.`
+                        : `${value} (${meaning.name}) повторяется ${count} раза: это сквозная тема, которую стоит отслеживать в разных сферах.`;
+                }).join(' ')
+                : (this.state.lang === 'ua'
+                    ? 'Явних повторів чисел немає, тому матриця виглядає більш різноплановою: важливо дивитися на зв’язки між зонами, а не на одну домінуючу енергію.'
+                    : 'Явных повторов чисел нет, поэтому матрица выглядит более разноплановой: важно смотреть на связи между зонами, а не на одну доминирующую энергию.');
+            const center = this.getMatrixEnergyMeaning(points.find(point => point.key === 'E').value);
+            const karma = this.getMatrixEnergyMeaning(points.find(point => point.key === 'G').value);
+            const material = this.getMatrixEnergyMeaning(points.find(point => point.key === 'C').value);
+            const relation = this.getMatrixEnergyMeaning(points.find(point => point.key === 'RB').value);
+            const pairText = this.state.lang === 'ua'
+                ? `Центр (${center.name}) показує, як людина повертається в ресурс, а кармічний хвіст (${karma.name}) — де найчастіше з’являється напруга. Матеріальна задача (${material.name}) і блок стосунків (${relation.name}) варто читати парою: якщо у матеріальній сфері багато контролю або страху, це може відбиватися на близькості, і навпаки.`
+                : `Центр (${center.name}) показывает, как человек возвращается в ресурс, а кармический хвост (${karma.name}) — где чаще всего появляется напряжение. Материальную задачу (${material.name}) и блок отношений (${relation.name}) стоит читать парой: если в материальной сфере много контроля или страха, это может отражаться на близости, и наоборот.`;
             return `
                 <div class="matrix-summary-group">
-                    <div class="matrix-summary-title">${this.escapeHTML(copy.title)}</div>
-                    <div class="matrix-energy-line">${this.escapeHTML(copy.text)}</div>
+                    <div class="matrix-summary-title">${this.escapeHTML(t.matrix_synthesis_title)}</div>
+                    <ul class="matrix-synthesis-list">
+                        <li class="matrix-energy-line"><strong>${this.escapeHTML(t.matrix_repeat_theme)}:</strong> ${this.escapeHTML(repeatText)}</li>
+                        <li class="matrix-energy-line"><strong>${this.escapeHTML(t.matrix_pair_theme)}:</strong> ${this.escapeHTML(pairText)}</li>
+                        <li class="matrix-energy-line">${this.escapeHTML(t.matrix_deeper_question)}</li>
+                    </ul>
                 </div>
             `;
         },
@@ -2509,9 +2523,10 @@
             const byKey = Object.fromEntries(points.map(point => [point.key, point]));
             const t = this.translations[this.state.lang];
             const groups = [
-                { title: t.matrix_group_base, keys: ['A', 'B', 'C', 'G', 'E'] },
-                { title: t.matrix_group_family, keys: ['FT', 'MT', 'FK', 'MK'] },
-                { title: t.matrix_group_channels, keys: ['RB', 'MB', 'BAL', 'P', 'R'] }
+                { title: t.matrix_group_base, keys: ['A', 'E', 'C', 'B'] },
+                { title: t.matrix_group_family, keys: ['FT', 'FK', 'MT', 'MK'] },
+                { title: t.matrix_group_channels, keys: ['RB', 'MB', 'P', 'R'] },
+                { title: t.matrix_group_karmic, keys: ['BAL', 'G'] }
             ];
             document.getElementById('matrix-summary').innerHTML = `
                 <div class="matrix-result-card">
@@ -2519,7 +2534,6 @@
                     <div class="matrix-result-value">${title}</div>
                     <div class="matrix-result-text">${t.matrix_source_note}</div>
                 </div>
-                ${this.renderMatrixOverview(byKey)}
                 ${groups.map(group => `
                     <div class="matrix-summary-group">
                         <div class="matrix-summary-title">${group.title}</div>
@@ -2540,6 +2554,7 @@
                         }).join('')}
                     </div>
                 `).join('')}
+                ${this.renderMatrixSynthesis(points)}
             `;
         },
 
